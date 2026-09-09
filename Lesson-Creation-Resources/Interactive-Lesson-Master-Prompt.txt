@@ -1,0 +1,198 @@
+Create a NEW interactive classroom lesson webpage using the same permanent design system and classroom features as my “Ready to Move to College?” lesson.
+
+IMPORTANT ORGANIZATION RULES
+
+1. Create this as a completely new lesson and a new webpage with its own unique name and link.
+2. Never overwrite, rename, replace, or delete any of my previous lessons.
+3. Keep every lesson separately organized using the lesson title.
+4. At the end, give me:
+   - The published lesson link
+   - A complete editable ZIP backup
+   - A clear filename using the lesson title
+5. Keep the reusable format consistent, but adapt the lesson content, activity types, questions, answers, timing, and differentiation to the new materials I upload.
+
+I WILL PROVIDE
+
+- Lesson title
+- Grade and class level
+- Subject or skill
+- Book pages
+- Textbook activity pictures
+- Reading text, worksheet, presentation, or other lesson materials
+- Lesson objectives and vocabulary, if available
+- Audio tracks for listening lessons
+- My school lesson-plan template, if needed
+
+PERMANENT LESSON DESIGN
+
+1. Use the same large book-style title header:
+   - Turquoise lesson/skill label
+   - Orange-red lesson title
+   - Large, readable classroom-board font
+2. Show:
+   - Grade
+   - Teacher: Saidah Khwar
+   - Unit or reading/listening number
+   - Book pages
+   - Automatically updating UAE day and date
+3. Include a compact navigation toolbar with:
+   - Previous
+   - All Activities
+   - Next
+   - Start, Pause, and Reset timer controls
+4. Include a working Full Screen mode suitable for displaying on the classroom board.
+5. Keep all fonts large and readable from the back of the classroom.
+6. Use the established turquoise, navy, yellow, coral, white, and light-grey design.
+7. Preserve the attractive cards, rounded corners, organized spacing, and clean classroom-display layout.
+
+MAIN LESSON PAGE
+
+1. Display all lesson stations clearly and in order.
+2. Each station card must show:
+   - Activity title
+   - Activity type
+   - Short description
+   - Timing
+3. Display:
+   - Lesson objectives
+   - Success criteria
+   - Key vocabulary
+   - Lesson flow and timing
+4. Choose suitable lesson stages based on the materials, normally:
+   - Starter
+   - Pre-reading or pre-listening
+   - Main activities
+   - Vocabulary practice
+   - Book activity
+   - Assessment/checking
+   - Exit ticket
+
+ACTIVITY FORMAT
+
+1. Give every activity the same lesson-title header.
+2. Keep Key Words, Activity Objective, and Student Instructions in a compact frozen panel.
+3. Use clear numbered steps beneath the frozen panel.
+4. Keep the steps slightly smaller than the objective and instructions.
+5. Show the activity type, such as individual, pair, group, or whole-class work.
+6. Add an appropriate timer to every station.
+7. Adapt the activity and question type to the material. Possible formats include:
+   - Open discussion
+   - Prediction
+   - True/false
+   - Multiple choice
+   - Matching
+   - Matching headings
+   - Sequencing
+   - Sorting
+   - Picture-word matching
+   - Main idea and details
+   - Vocabulary in context
+   - Inference
+   - Listening for gist
+   - Listening for details
+   - Gap filling
+   - Note completion
+   - Speaking or writing task
+
+BOOK PICTURES, ANSWERS, AND MAXIMIZED VIEW
+
+1. Allow all useful textbook pages and activities to be maximized.
+2. Keep the book picture clear and fitted inside the available area.
+3. Add a working highlighter in normal and maximized views.
+4. Include a Clear Marks button.
+5. When revealing answers:
+   - Write answers directly in the book’s answer gaps whenever suitable.
+   - Keep answers together with their questions.
+   - Use clean, neat, large blue handwriting that is easy to read.
+6. In maximized view:
+   - Show A− and A＋ controls for the revealed answers only.
+   - Do not zoom the book picture when using these answer controls.
+   - Do not include a Reset Answers button.
+   - Place the controls vertically in a slim panel beside the activity.
+   - Never allow controls to cover questions, answers, or the book picture.
+7. If a textbook picture is unclear:
+   - Keep it visible as a small reference picture.
+   - Rewrite each question in a large, clear font.
+   - Present one question at a time when appropriate.
+   - Include a separate Reveal Answer button.
+8. For reading paragraphs, show three comprehension questions beside the maximized text without covering it. Include a mixture of:
+   - Main idea
+   - Supporting detail
+   - Vocabulary in context
+   - Inference
+
+LISTENING LESSON REQUIREMENTS
+
+When I upload audio files, add a classroom-friendly audio player for each required track.
+
+1. Accept common audio files such as MP3, M4A, and WAV.
+2. Keep the uploaded audio inside the lesson backup so the lesson does not depend on an external audio link.
+3. Provide:
+   - Play
+   - Pause
+   - Restart track
+   - Progress bar
+   - Current time and total duration
+   - Volume control
+   - Optional playback-speed control
+4. Do not autoplay audio.
+5. Clearly label tracks, for example Track 1, Track 2, and Track 3.
+6. Keep the player large enough for classroom-board use.
+7. Add listening stages appropriate to the material:
+   - Before listening: prediction or vocabulary
+   - First listening: gist or main idea
+   - Second listening: details
+   - After listening: discussion, speaking, or writing
+8. Include replay instructions and pauses between questions when appropriate.
+9. Add an optional transcript panel with a Reveal Transcript button, but keep it hidden until the teacher reveals it.
+10. Allow listening answers to be revealed one by one.
+
+EXIT TICKET
+
+1. Create an engaging exit-ticket activity using the lesson content and vocabulary.
+2. Include at least five questions plus one final question.
+3. Use a suitable game format such as a board game, vocabulary trail, quiz, matching game, or crossword.
+4. Include clear answer reveals.
+5. Include a working Restart Game button that resets the complete game.
+
+LIVE LESSON PLAN
+
+1. Generate a live lesson plan using my school’s exact bilingual lesson-plan template.
+2. The lesson plan must update automatically whenever the lesson activities, vocabulary, objectives, timing, or content change.
+3. Include:
+   - Date
+   - Subject
+   - Teacher
+   - Lesson number/title
+   - Lesson topic
+   - A direct “Open Interactive Lesson” link below the lesson topic
+   - Learning objectives
+   - Success criteria
+   - HOT questions
+   - Key vocabulary
+   - Starter
+   - Main activities
+   - Differentiation for high, middle, and low levels
+   - Teacher’s role
+   - Students’ role
+   - AFL strategies
+   - Timing
+   - Plenary
+   - Learning skills
+   - Cross-curricular links
+   - UAE culture, values, and UAE Vision 2031
+4. Include Print / Save PDF.
+5. Keep the official school-template layout and formatting.
+
+FINAL CHECKS
+
+Before finishing:
+
+1. Confirm that this lesson has its own webpage and has not overwritten another lesson.
+2. Test navigation, timers, full screen, audio controls, highlighter, answer reveals, answer zoom, transcript reveal, exit-ticket restart, and lesson-plan link.
+3. Make sure all text is readable on a classroom board.
+4. Make sure no controls cover lesson content.
+5. Publish the lesson.
+6. Provide the unique webpage link and complete editable ZIP backup.
+
+First, study all the materials I upload. Then design the lesson activities to suit the skill and content while preserving this complete format.
