@@ -93,6 +93,23 @@ ACTIVITY FORMAT
    - Gap filling
    - Note completion
    - Speaking or writing task
+8. In every vocabulary picture-matching activity:
+   - Mix the pictures so they never appear in the same order as the word bank.
+   - Reveal the correct matches one at a time, never all together.
+9. Reveal activity answers one at a time rather than revealing every answer together. Keep each reveal control beside its own question so students always know which answer is being shown.
+10. For each suitable main reading or listening activity, add one clearly labelled “Deep Thinking Challenge.”
+   - Build the challenge directly from the text’s central idea, problem, decision, conflict, or message.
+   - Write one focused, natural-sounding question that Grade 9 or Grade 10 students can understand immediately.
+   - Make students think beyond direct comprehension by making a meaningful choice, defending a position, changing perspective, solving a realistic problem, predicting consequences, or proposing a creative action.
+   - Connect the idea to students’ lives or the real world whenever that connection is meaningful; use another creative approach when it suits the text better.
+   - Require students to combine evidence from the activity with their own reasoning, values, experience, or imagination.
+   - Avoid strange, overly imaginary, childish, vague, or ordinary comprehension questions disguised as challenges.
+   - A strong model is: “Which matters more for successful shared living: good rules or considerate people? Use evidence from the article, then suggest one creative way students could improve life in their residence.”
+   - Add the challenge only when it genuinely fits; do not force it into simple starters, vocabulary drills, or the exit ticket.
+   - Keep the question hidden by default behind a compact “Reveal Deep Thinking Challenge” button.
+   - Keep the collapsed button fully visible at all times; never allow a compact or flexible layout to squeeze, clip, or hide its label.
+   - Allow the teacher to show and hide the challenge question with one click.
+11. When an activity contains several questions or long answer choices, automatically use a compact layout so the current question, every choice, answer-reveal control, answer area, navigation, and the collapsed Deep Thinking Challenge button fit within one classroom screen. Reduce typography and spacing carefully while keeping everything readable from the board.
 
 BOOK PICTURES, ANSWERS, AND MAXIMIZED VIEW
 
