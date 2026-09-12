@@ -1,204 +1,121 @@
-Create a NEW interactive classroom lesson webpage using the same permanent design system and classroom features as my “Ready to Move to College?” lesson.
+Create a NEW interactive classroom lesson webpage using the permanent design system and classroom behavior established in the approved lessons, especially the current Grade 9 “Success in College” lesson and the original “Ready to Move to College?” lesson.
 
 IMPORTANT ORGANIZATION RULES
+1. Every new lesson must have its own unique folder, webpage and published link.
+2. Never overwrite, rename, replace or delete an existing lesson unless the user explicitly asks to update that exact lesson.
+3. Keep lessons organized by Term → Grade → Lesson Title.
+4. At the end provide the published lesson link and a complete editable backup when requested.
+5. Reuse the complete working lesson architecture, not a simplified summary page.
 
-1. Create this as a completely new lesson and a new webpage with its own unique name and link.
-2. Never overwrite, rename, replace, or delete any of my previous lessons.
-3. Keep every lesson separately organized using the lesson title.
-4. At the end, give me:
-   - The published lesson link
-   - A complete editable ZIP backup
-   - A clear filename using the lesson title
-5. Keep the reusable format consistent, but adapt the lesson content, activity types, questions, answers, timing, and differentiation to the new materials I upload.
+PERMANENT CLASSROOM DESIGN
+1. Use the approved book-style lesson header, clean cards, rounded corners and classroom-board typography.
+2. Show Grade, Teacher, lesson/unit/skill, book pages and automatic UAE day/date.
+3. Keep Previous, All Activities and Next navigation.
+4. Keep Start, Pause and Reset timer controls for each activity.
+5. Keep Full Screen/maximize support.
+6. Use the established turquoise, navy, yellow, coral, white and light-grey visual system.
+7. The interface must remain clean and uncluttered. Do not leave large blank white media areas.
 
-I WILL PROVIDE
+MAIN LESSON DASHBOARD
+1. Show Objectives, Success Criteria, Key Vocabulary and Lesson Flow.
+2. Show all activity cards in sequence.
+3. Each card shows title, activity type, short purpose, timing and book-page metadata.
+4. Normal sequence: Starter → optional Main Activities (maximum 5) → Exit Ticket → Charter Connection Activity.
 
-- Lesson title
-- Grade and class level
-- Subject or skill
-- Book pages
-- Textbook activity pictures
-- Reading text, worksheet, presentation, or other lesson materials
-- Lesson objectives and vocabulary, if available
-- Audio tracks for listening lessons
-- My school lesson-plan template, if needed
+PERMANENT ACTIVITY SCREEN LAYOUT
+Each launched activity uses two columns.
 
-PERMANENT LESSON DESIGN
+LEFT / MAIN TEACHING AREA
+1. This is where the complete student activity lives.
+2. Put ALL questions, tasks, answer controls, revealed answers, reading paragraphs, games and Deep Thinking here.
+3. Every question must have its Reveal Answer control beside/under that same question.
+4. Revealed answers appear directly with their question on the LEFT/main area.
+5. Never put activity questions, Reveal Answer buttons, answers, games or Deep Thinking in the right panel.
+6. For textbook exercises, rewrite all questions clearly on the main area even if a textbook screenshot is also available.
+7. For reading lessons, preserve readable paragraph-by-paragraph text when useful and place comprehension questions without covering the text.
+8. Exit Ticket must be a complete interactive game/activity on the main area and include Restart Game.
+9. Charter Connection must be a complete attractive activity on the main area using Think → Discuss → Write → Share.
 
-1. Use the same large book-style title header:
-   - Turquoise lesson/skill label
-   - Orange-red lesson title
-   - Large, readable classroom-board font
-2. Show:
-   - Grade
-   - Teacher: Saidah Khwar
-   - Unit or reading/listening number
-   - Book pages
-   - Automatically updating UAE day and date
-3. Include a compact navigation toolbar with:
-   - Previous
-   - All Activities
-   - Next
-   - Start, Pause, and Reset timer controls
-4. Include a working Full Screen mode suitable for displaying on the classroom board.
-5. Keep all fonts large and readable from the back of the classroom.
-6. Use the established turquoise, navy, yellow, coral, white, and light-grey design.
-7. Preserve the attractive cards, rounded corners, organized spacing, and clean classroom-display layout.
+RIGHT / FROZEN STUDENT GUIDE PANEL
+The right side is ONLY for:
+- Key Words
+- Activity Objective
+- Student Instructions
+- Lesson Steps / Agenda
+Do not put anything else on the right side.
+Keep this panel compact, frozen/sticky and easy to scan from the board.
 
-MAIN LESSON PAGE
+TEACHER MEDIA WORKFLOW
+1. Every activity may have optional teacher-added media.
+2. Teacher can add media by drag/drop, paste with Ctrl+V, or Browse.
+3. Support one or multiple images and common audio formats such as MP3, M4A and WAV.
+4. Save teacher-added media automatically with IndexedDB so it remains after refresh, closing and reopening on the same browser/device.
+5. Provide Replace and Delete controls in Teacher Media Setup.
+6. Teacher Media Setup must be separate from student instructions and hidden in classroom/display mode.
+7. Media is optional: every activity must remain fully usable without uploaded media.
+8. Saved activity pictures must display as SMALL, clean thumbnail cards rather than large slides by default.
+9. Each thumbnail must have a clear Maximize option and clicking the thumbnail may also maximize it.
+10. Never stretch a saved activity picture across a large empty white container. Keep the default media display compact and visually neat.
+11. Audio should display as a compact classroom-friendly player and must not autoplay.
+12. Browser-saved media is local to that browser/device; do not imply that it transfers automatically to another computer.
 
-1. Display all lesson stations clearly and in order.
-2. Each station card must show:
-   - Activity title
-   - Activity type
-   - Short description
-   - Timing
-3. Display:
-   - Lesson objectives
-   - Success criteria
-   - Key vocabulary
-   - Lesson flow and timing
-4. Choose suitable lesson stages based on the materials, normally:
-   - Starter
-   - Pre-reading or pre-listening
-   - Main activities
-   - Vocabulary practice
-   - Book activity
-   - Assessment/checking
-   - Exit ticket
+BOOK PICTURES / MAXIMIZED VIEW
+1. All useful textbook and teacher-added images can be maximized.
+2. Keep images clear, fitted and unobstructed.
+3. Preserve working highlight / clear-marks behavior where available.
+4. In maximized view controls must never cover questions or content.
+5. If a textbook picture is missing or unclear, the rewritten activity content must still contain everything students need.
 
-PERMANENT TWO-SLIDE ACTIVITY WORKFLOW
+QUESTION / ANSWER BEHAVIOR
+1. Reveal answers one by one.
+2. Each Reveal Answer is physically associated with its own question.
+3. Reveal All / Hide All may be added only when useful, but one-by-one reveal must remain available.
+4. For vocabulary matching, shuffle pictures/choices so answer order is not copied from the source.
+5. For suitable reading/listening tasks, include one hidden Deep Thinking Challenge connected to the real lesson idea.
+6. Deep Thinking stays on the main/left teaching area, hidden by default behind a compact reveal control.
 
-Every activity must work as two clear teaching areas so teachers can prepare lessons without struggling:
-
-SLIDE 1 — TEACHER MEDIA
-1. The upper/media slide is reserved for teacher-added lesson media.
-2. Allow the teacher to add media by:
-   - Drag and drop
-   - Paste copied images with Ctrl+V
-   - Browse/select files
-3. Support one or multiple images where appropriate and common audio files such as MP3, M4A, and WAV.
-4. Save teacher-added media automatically in IndexedDB so it remains after refresh, closing, and reopening the lesson in the same browser/device.
-5. Provide Replace and Delete controls for saved media.
-6. Clearly indicate that browser-saved media is local to that browser/device and does not automatically transfer to another computer.
-7. Keep Teacher Media Setup controls separate from student instructions and hide setup controls in classroom/display mode.
-8. Media is OPTIONAL. The activity must remain fully usable even if the teacher adds no picture or audio.
-
-SLIDE 2 — COMPLETE ACTIVITY CONTENT
-1. The lower activity area must never be an empty media placeholder or depend on an uploaded textbook picture.
-2. Always build the complete activity there using clear student-friendly content.
-3. Include the activity explanation/instructions, all questions/tasks, and all interactive answer controls in this area.
-4. Put each Reveal Answer control beside its matching question and reveal the answer directly with that question on the main activity slide.
-5. Include Reveal All / Hide All only when genuinely useful, while preserving one-by-one reveals.
-6. For textbook exercises, rewrite the questions clearly on this activity slide even when the original textbook screenshot is also available above.
-7. For reading lessons, preserve readable paragraph-by-paragraph text when that improves classroom teaching.
-8. Add a hidden Deep Thinking Challenge on suitable main reading/listening activities.
-9. Exit Ticket must be a complete interactive/game activity in this lower area, not only an uploaded picture.
-10. Charter Connection must be a visually attractive complete activity in this lower area and use Think → Discuss → Write → Share. Teacher-added media may enhance it but must not be required.
-
-ACTIVITY FORMAT
-
-1. Give every activity the same lesson-title header.
-2. Keep Key Words, Activity Objective, and Student Instructions in a compact frozen panel.
-3. Use clear numbered steps beneath the frozen panel.
-4. Keep the steps slightly smaller than the objective and instructions.
-5. Show the activity type, such as individual, pair, group, or whole-class work.
-6. Add an appropriate timer to every station.
-7. Adapt the activity and question type to the material. Possible formats include:
-   - Open discussion
-   - Prediction
-   - True/false
-   - Multiple choice
-   - Matching
-   - Matching headings
-   - Sequencing
-   - Sorting
-   - Picture-word matching
-   - Main idea and details
-   - Vocabulary in context
-   - Inference
-   - Listening for gist
-   - Listening for details
-   - Gap filling
-   - Note completion
-   - Speaking or writing task
-8. In every vocabulary picture-matching activity:
-   - Mix the pictures so they never appear in the same order as the word bank.
-   - Reveal the correct matches one at a time, never all together.
-9. Reveal activity answers one at a time rather than revealing every answer together. Keep each reveal control beside its own question so students always know which answer is being shown.
-10. For each suitable main reading or listening activity, add one clearly labelled “Deep Thinking Challenge.”
-   - Build the challenge directly from the text’s central idea, problem, decision, conflict, or message.
-   - Write one focused, natural-sounding question that Grade 9 or Grade 10 students can understand immediately.
-   - Make students think beyond direct comprehension by making a meaningful choice, defending a position, changing perspective, solving a realistic problem, predicting consequences, or proposing a creative action.
-   - Connect the idea to students’ lives or the real world whenever that connection is meaningful; use another creative approach when it suits the text better.
-   - Require students to combine evidence from the activity with their own reasoning, values, experience, or imagination.
-   - Avoid strange, overly imaginary, childish, vague, or ordinary comprehension questions disguised as challenges.
-   - Add the challenge only when it genuinely fits; do not force it into simple starters, vocabulary drills, or the exit ticket.
-   - Keep the question hidden by default behind a compact “Reveal Deep Thinking Challenge” button.
-   - Keep the collapsed button fully visible at all times; never allow a compact or flexible layout to squeeze, clip, or hide its label.
-   - Allow the teacher to show and hide the challenge question with one click.
-11. When an activity contains several questions or long answer choices, automatically use a compact layout so the current question, every choice, answer-reveal control, answer area, navigation, and the collapsed Deep Thinking Challenge button fit within one classroom screen. Reduce typography and spacing carefully while keeping everything readable from the board.
-
-BOOK PICTURES, ANSWERS, AND MAXIMIZED VIEW
-
-1. Allow all useful textbook pages and teacher-added images to be maximized.
-2. Keep pictures clear and fitted inside the available area.
-3. Add a working highlighter in normal and maximized views.
-4. Include a Clear Marks button.
-5. When revealing answers, keep answers together with their questions on the activity slide. If an original book image supports answer overlays, answers may additionally appear in the book gaps.
-6. In maximized view, never allow controls to cover questions, answers, or pictures.
-7. If a textbook picture is unclear or unavailable, the complete rewritten activity below must still contain everything students need.
-8. For reading paragraphs, show comprehension questions clearly without covering the text. Include a mixture of main idea, supporting detail, vocabulary in context, and inference.
-
-LISTENING LESSON REQUIREMENTS
-
-When audio is provided or teacher-added, add a classroom-friendly audio player for each required track.
-
-1. Accept common audio files such as MP3, M4A, and WAV.
-2. Teacher-added audio must use the permanent Teacher Media workflow and save automatically in IndexedDB on the same browser/device.
-3. Provide Play, Pause, Restart track, progress bar, current time and total duration, volume control, and optional playback speed.
-4. Do not autoplay audio.
-5. Clearly label tracks, for example Track 1, Track 2, and Track 3.
-6. Keep the player large enough for classroom-board use.
-7. Add listening stages appropriate to the material: before listening prediction/vocabulary, first listening gist, second listening details, and after listening discussion/speaking/writing.
-8. Include replay instructions and pauses between questions when appropriate.
-9. Add an optional transcript panel with a Reveal Transcript button, hidden by default.
-10. Allow listening answers to be revealed one by one.
+LISTENING LESSONS
+1. Support teacher-added audio using the permanent saved-media workflow.
+2. Include Play, Pause, Restart, progress, current/total time, volume and optional playback speed.
+3. Do not autoplay.
+4. Use suitable stages: prediction/vocabulary → gist → details → follow-up.
+5. Transcript, when useful, is hidden by default behind Reveal Transcript.
+6. Listening answers reveal one by one on the main area.
 
 EXIT TICKET
-
-1. Create an engaging exit-ticket activity using the lesson content and vocabulary.
-2. Include at least five questions plus one final question when appropriate.
-3. Use a suitable game format such as a board game, vocabulary trail, quiz, matching game, or crossword.
-4. Include clear one-by-one answer reveals directly on the main activity area.
-5. Include a working Restart Game button that resets the complete game.
-6. Teacher-added media is optional decoration/support; the game itself must work without it.
+1. Make it a real interactive classroom game, not only plain written questions.
+2. Use no more than about 5 core questions/clues unless the lesson genuinely needs more.
+3. Answers reveal one by one on the main area.
+4. Include Restart Game that resets the whole activity.
+5. Teacher-added media is optional support only.
 
 CHARTER CONNECTION
-
-1. Keep Charter Connection Activity after the Exit Ticket.
-2. Infer the most suitable axis from: Identity and Belonging; Citizenship and Responsibility; Thinking and Problem Solving; Lifelong Learning; Global Mindset and Tolerance.
+1. Keep it after Exit Ticket.
+2. Infer the best axis from: Identity and Belonging; Citizenship and Responsibility; Thinking and Problem Solving; Lifelong Learning; Global Mindset and Tolerance.
 3. Use Think 1 min → Discuss 2 min → Write → Share.
-4. Make the activity visually attractive and classroom-ready even with no uploaded picture.
-5. Teacher may add/replace a visual using the permanent Teacher Media slide.
+4. Make it visually attractive even with no uploaded picture.
+5. Teacher may optionally add/replace a visual using Teacher Media.
 
-LIVE LESSON PLAN
+LIVE BILINGUAL SCHOOL LESSON PLAN
+1. Use the exact approved two-page bilingual school lesson-plan template. Never simplify or redesign it unless explicitly requested.
+2. Keep the lesson plan synchronized with the actual activity content, objectives, vocabulary, timing and differentiation.
+3. Include Date, Subject, Teacher, Lesson #/Title, Lesson Topic, Objectives, Success Criteria, HOT Question, Keywords, Starter, Main Activities, Differentiation H/M/L, Teacher Role, Student Role, AFL, Timing, Plenary, Learning Skills, Cross Curricular and UAE Culture/Vision 2031.
+4. ALWAYS include the actual clickable “Open Interactive Lesson” link inside the lesson plan itself. This is mandatory for every lesson.
+5. Include Print / Save PDF.
+6. Preserve the lesson-plan styling that was approved in the current Success in College lesson.
 
-1. Generate a live lesson plan using my school’s exact bilingual lesson-plan template used in the approved lesson. DO NOT redesign, simplify, substitute, or reinterpret this template.
-2. The lesson plan must update automatically whenever the lesson activities, vocabulary, objectives, timing, or content change.
-3. Include Date, Subject, Teacher, Lesson number/title, Lesson topic, Open Interactive Lesson link, Learning objectives, Success criteria, HOT questions, Key vocabulary, Starter, Main activities, Differentiation H/M/L, Teacher’s role, Students’ role, AFL strategies, Timing, Plenary, Learning skills, Cross-curricular links, UAE culture/values/UAE Vision 2031.
-4. Include Print / Save PDF.
-5. Preserve the current bilingual two-page school-template layout and formatting exactly unless I explicitly request a change.
+FUTURE-USE / CREATOR RULE
+1. Treat the current Grade 9 Success in College lesson folder as a reusable working reference because its index.html loads the modular enhancements for media persistence, main-area activity layout, compact media thumbnails and lesson-plan link behavior.
+2. Future lessons should copy/adapt this architecture rather than rebuilding a simplified page from scratch.
+3. The Teacher Lesson Creator uses this Master Prompt automatically; therefore all rules above are permanent defaults for teachers unless the user explicitly changes them.
 
-FINAL CHECKS
+FINAL CHECKS BEFORE PUBLISHING
+1. Confirm the new lesson has its own unique folder/link.
+2. Test navigation, timers, fullscreen, Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, compact thumbnails, Maximize, audio controls, answer reveals on main area, right-panel cleanliness, Deep Thinking, Exit Ticket restart, Charter activity and lesson-plan link.
+3. Confirm every activity works without teacher-added media.
+4. Confirm no broken textbook-image placeholders remain.
+5. Confirm the right panel contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
+6. Confirm the lesson plan includes the clickable live lesson link.
+7. Publish only after these checks pass.
 
-Before finishing:
-
-1. Confirm that this lesson has its own webpage and has not overwritten another lesson.
-2. Test navigation, timers, full screen, teacher media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, audio controls, highlighter, answer reveals on the main activity area, Deep Thinking, exit-ticket restart, Charter activity, and lesson-plan link.
-3. Confirm every activity remains fully usable without teacher-added media.
-4. Make sure all text is readable on a classroom board and no controls cover lesson content.
-5. Publish the lesson.
-6. Provide the unique webpage link and complete editable ZIP backup.
-
-First, study all the materials I upload. Then design the lesson activities to suit the skill and content while preserving this complete format.
+First study all materials the teacher uploads, then build the lesson content around those materials while preserving this complete permanent format.
