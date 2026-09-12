@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Teacher Interactive Lesson Creator">
+  <title>Teacher Interactive Lesson Creator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <span class="eyebrow">INTERACTIVE ENGLISH LESSONS</span>
+      <h1>Teacher Lesson Creator</h1>
+      <p>Create, preview, save and export interactive classroom lessons using the same permanent lesson design system.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn secondary" id="newLessonBtn">＋ New Lesson</button>
+      <button class="btn" id="saveBtn">Save Draft</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="panel sticky">
+        <h2>Lesson Setup</h2>
+        <div class="field"><label>Teacher Name</label><input id="teacher" value="Saidah Khwar"></div>
+        <div class="two">
+          <div class="field"><label>Grade</label><select id="grade"><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9 General</option><option>Grade 9 ADV</option><option selected>Grade 10 General</option><option>Grade 10 ADV</option><option>Grade 11 General</option><option>Grade 11 ADV</option><option>Grade 12 General</option><option>Grade 12 ADV</option></select></div>
+          <div class="field"><label>Term</label><select id="term"><option selected>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+        </div>
+        <div class="two">
+          <div class="field"><label>Skill</label><select id="skill"><option>Reading</option><option>Listening</option><option>Writing</option><option>Speaking</option><option>Grammar</option><option>Vocabulary</option></select></div>
+          <div class="field"><label>Book Pages</label><input id="pages" placeholder="e.g. 12–13"></div>
+        </div>
+        <div class="field"><label>Chapter / Unit</label><input id="unit" placeholder="Chapter 1"></div>
+        <div class="field"><label>Lesson Title</label><input id="title" placeholder="Enter lesson title"></div>
+        <div class="field"><label>Lesson / Reading Number</label><input id="lessonNo" placeholder="e.g. Reading 2"></div>
+        <div class="field"><label>Objectives <span>one per line</span></label><textarea id="objectives" rows="4" placeholder="Identify the main idea.&#10;Use key vocabulary correctly."></textarea></div>
+        <div class="field"><label>Success Criteria</label><textarea id="success" rows="3" placeholder="I can answer reading questions using evidence."></textarea></div>
+        <div class="field"><label>Key Words <span>comma separated</span></label><textarea id="keywords" rows="3" placeholder="campus, residence, privacy"></textarea></div>
+        <div class="sidebar-actions">
+          <button class="btn block" id="previewBtn">Preview Lesson</button>
+          <button class="btn secondary block" id="planBtn">Lesson Plan</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div class="panel">
+        <div class="section-head">
+          <div><span class="eyebrow">ACTIVITIES</span><h2>Build the Lesson Flow</h2></div>
+          <button class="btn" id="addActivityBtn">＋ Add Activity</button>
+        </div>
+        <p class="hint">Add each station in lesson order. Every activity can include a book image, audio, questions and one-by-one answer reveals.</p>
+        <div id="activities"></div>
+      </div>
+
+      <div class="panel exit-panel">
+        <div class="section-head"><div><span class="eyebrow">EXIT TICKET</span><h2>Interactive Game</h2></div></div>
+        <div class="two">
+          <div class="field"><label>Game Type</label><select id="exitType"><option>Team Quiz</option><option>Vocabulary Trail</option><option>Crossword-style Clues</option><option>Matching Challenge</option></select></div>
+          <div class="field"><label>Game Title</label><input id="exitTitle" value="Exit Ticket Challenge"></div>
+        </div>
+        <div class="field"><label>Questions / clues <span>one per line, maximum 5</span></label><textarea id="exitQuestions" rows="5"></textarea></div>
+        <div class="field"><label>Answers <span>one per line, same order</span></label><textarea id="exitAnswers" rows="5"></textarea></div>
+      </div>
+
+      <div class="panel saved-panel">
+        <div class="section-head"><div><span class="eyebrow">MY LESSONS</span><h2>Saved Drafts</h2></div><button class="btn secondary" id="refreshSavedBtn">Refresh</button></div>
+        <p class="hint">Drafts are saved privately in this browser. Download a backup before changing device or clearing browser data.</p>
+        <div id="savedLessons" class="saved-list"></div>
+      </div>
+
+      <div class="panel export-panel">
+        <div class="section-head"><div><span class="eyebrow">BACKUP & EXPORT</span><h2>Keep a Copy</h2></div></div>
+        <div class="export-grid">
+          <button class="btn" id="downloadHtmlBtn">Download Interactive Lesson HTML</button>
+          <button class="btn secondary" id="downloadBackupBtn">Download Lesson Backup</button>
+          <label class="btn secondary file-btn">Import Lesson Backup<input id="importBackup" type="file" accept="application/json,.json"></label>
+          <button class="btn secondary" id="printPlanBtn">Print / Save Lesson Plan PDF</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="previewDialog" class="preview-dialog">
+    <div class="dialog-toolbar">
+      <strong>Lesson Preview</strong>
+      <button id="closePreview" class="btn secondary">Close</button>
+    </div>
+    <iframe id="previewFrame" title="Lesson preview"></iframe>
+  </dialog>
+
+  <dialog id="planDialog" class="plan-dialog">
+    <div class="dialog-toolbar no-print"><strong>Live Lesson Plan</strong><div><button id="printPlanInside" class="btn">Print / Save PDF</button> <button id="closePlan" class="btn secondary">Close</button></div></div>
+    <div id="planContent"></div>
+  </dialog>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
