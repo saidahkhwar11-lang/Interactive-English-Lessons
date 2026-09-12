@@ -1,31 +1,17 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="One-click Teacher Interactive Lesson Creator">
-<title>Teacher Interactive Lesson Creator</title>
-<link rel="stylesheet" href="styles.css">
-</head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teacher Lesson Creator</title><link rel="stylesheet" href="styles.css"></head>
 <body>
-<header class="hero simple-hero"><div><span class="eyebrow">INTERACTIVE ENGLISH LESSONS</span><h1>Teacher Lesson Creator</h1><p>Upload the lesson command and all lesson materials once. The creator prepares the lesson for you.</p></div></header>
-<main class="creator-shell">
-<section class="panel create-panel">
-<div class="section-head"><div><span class="eyebrow">3 SIMPLE STEPS</span><h2>Create a Complete Interactive Lesson</h2></div></div>
-<p class="lead">No manual objectives, vocabulary, questions, answers, differentiation or activity building.</p>
-<div class="steps">
-<label class="drop-card"><span class="step-no">1</span><div><h3>Upload Lesson Command</h3><p>TXT, PDF or Word lesson request.</p><strong id="commandName">Choose command file</strong></div><input id="commandFile" type="file" accept=".txt,.pdf,.doc,.docx,text/plain,application/pdf"></label>
-<label class="drop-card"><span class="step-no">2</span><div><h3>Upload All Lesson Materials</h3><p>Select all textbook/activity pictures together. Add audio too for listening lessons.</p><strong id="materialsName">Choose all pictures / audio</strong></div><input id="materials" type="file" multiple accept="image/*,audio/*,.pdf"></label>
-<div class="drop-card teacher-card"><span class="step-no">3</span><div class="teacher-field"><h3>Teacher</h3><input id="teacher" value="Saidah Khwar" aria-label="Teacher name"><p>Change only if needed.</p></div></div>
-</div>
-<button class="create-btn" id="createBtn">✨ CREATE MY LESSON</button>
-<div id="status" class="status" aria-live="polite"></div>
+<header class="hero"><div><span class="eyebrow">INTERACTIVE ENGLISH LESSONS</span><h1>Teacher Lesson Creator ✨</h1><p>Paste or upload the textbook activity. AI prepares the instructions, answers, interaction and lesson plan.</p></div><div class="top-actions"><button class="btn secondary" type="button">📚 Lesson Library</button></div></header>
+<main class="shell">
+<section class="panel intro"><div><span class="eyebrow">CREATE NEW LESSON</span><h2>Build your lesson like a conversation</h2><p>Put each textbook activity in the correct lesson part. Each activity can contain one or several pictures.</p></div><label class="teacher">Teacher <input id="teacher" value="Saidah Khwar"></label></section>
+<section class="panel"><label class="prompt-label" for="lessonPrompt">💬 Tell AI anything else about this lesson <span>optional</span></label><textarea id="lessonPrompt" class="prompt" placeholder="Example: Grade 10 General, Reading, pages 18–20. Make Main Activity 2 group work and make the exit ticket a competition between 6 groups."></textarea></section>
+<section class="activity-list">
+<div class="activity-card required" data-slot="starter"><div class="activity-head"><div><span class="badge starter">STARTER</span><h3>Starter Activity</h3><p>Paste, drop or upload the activity picture(s).</p></div><span class="ai-chip">✨ AI designs the activity</span></div><div class="paste-zone" tabindex="0"><b>📋 Click here and paste a picture</b><span>Ctrl + V &nbsp; • &nbsp; drag & drop &nbsp; • &nbsp; or</span><label class="browse">Browse Files<input class="slot-files" type="file" accept="image/*,.pdf,audio/*" multiple></label></div><div class="previews"></div></div>
+<div id="mainActivities"></div>
+<button id="addMain" class="add-main" type="button">＋ Add Main Activity <small>up to 5</small></button>
+<div class="activity-card required" data-slot="exit"><div class="activity-head"><div><span class="badge exit">EXIT TICKET</span><h3>Exit Ticket</h3><p>Paste activity picture(s), or leave empty and AI can create a suitable game.</p></div><span class="ai-chip">✨ AI adds answers & interaction</span></div><div class="paste-zone" tabindex="0"><b>📋 Click here and paste a picture</b><span>Ctrl + V &nbsp; • &nbsp; drag & drop &nbsp; • &nbsp; or</span><label class="browse">Browse Files<input class="slot-files" type="file" accept="image/*,.pdf,audio/*" multiple></label></div><div class="previews"></div></div>
+<div class="activity-card charter"><div class="activity-head"><div><span class="badge charter-badge">🌱 CHARTER CONNECTION</span><h3>National Education Charter Connection</h3><p>Automatically included in every lesson. AI connects the lesson learning to the most suitable Charter axis and creates a lesson-specific reflection prompt.</p></div><span class="locked">🔒 Always included</span></div><div class="charter-flow"><span>💡 Think</span><b>→</b><span>👥 Discuss</span><b>→</b><span>📝 Write</span><b>→</b><span>📣 Share</span></div></div>
 </section>
-<section class="panel after-panel" id="afterPanel" hidden>
-<span class="success-mark">✓</span><h2>Lesson Created</h2><p>Your generated lesson will appear here after the secure AI generator is connected.</p>
-<div class="result-actions"><button class="btn" disabled>Open Lesson</button><button class="btn secondary" disabled>Lesson Plan</button><button class="btn secondary" disabled>Edit Anything</button><button class="btn secondary" disabled>Save</button><button class="btn secondary" disabled>Download Backup</button></div>
-</section>
-<section class="panel info-panel"><h3>What the creator prepares automatically</h3><div class="auto-grid"><span>✓ Lesson structure</span><span>✓ Objectives</span><span>✓ Success criteria</span><span>✓ Key vocabulary</span><span>✓ Timings</span><span>✓ Differentiation</span><span>✓ Questions & answers</span><span>✓ Deep Thinking Challenge</span><span>✓ Exit-ticket game</span><span>✓ School lesson plan</span></div><p class="small-note">Your permanent Master Prompt and completed lesson design are locked into the generation workflow. Teachers do not need to upload or edit them.</p></section>
-</main>
-<div id="toast" class="toast" aria-live="polite"></div>
-<script src="app.js"></script>
-</body></html>
+<section class="panel create-panel"><div class="auto-note"><b>AI will prepare:</b> objectives • success criteria • keywords • timing • student instructions • activity type • answers • answer reveals • Deep Thinking Challenge when suitable • differentiation • school lesson plan</div><button class="create-btn" id="createBtn">✨ CREATE MY LESSON</button><div id="status" class="status" aria-live="polite"></div></section>
+<section class="panel after-panel" id="afterPanel" hidden><span class="success-mark">✓</span><h2>Lesson Created</h2><div class="result-actions"><button class="btn" disabled>Open Lesson</button><button class="btn secondary" disabled>Lesson Plan</button><button class="btn secondary" disabled>Edit</button><button class="btn secondary" disabled>Save to Library</button><button class="btn secondary" disabled>Download Backup</button></div></section>
+</main><div id="toast" class="toast"></div><script src="app.js"></script></body></html>
