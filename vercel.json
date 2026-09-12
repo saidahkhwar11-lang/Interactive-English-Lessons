@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Teacher-Lesson-Creator/index.html"
+    }
+  ]
+}
