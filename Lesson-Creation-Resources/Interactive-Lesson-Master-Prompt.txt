@@ -1,4 +1,4 @@
-Create a NEW interactive classroom lesson webpage using the permanent design system and classroom behavior established in the approved lessons, especially the current Grade 9 “Success in College” lesson and the original “Ready to Move to College?” lesson.
+Create a NEW interactive classroom lesson webpage using the permanent design system and classroom behavior established in the approved lessons, especially the FINAL current Grade 9 “Success in College” lesson and the original “Ready to Move to College?” lesson.
 
 IMPORTANT ORGANIZATION RULES
 1. Every new lesson must have its own unique folder, webpage and published link.
@@ -6,6 +6,7 @@ IMPORTANT ORGANIZATION RULES
 3. Keep lessons organized by Term → Grade → Lesson Title.
 4. At the end provide the published lesson link and a complete editable backup when requested.
 5. Reuse the complete working lesson architecture, not a simplified summary page.
+6. The final approved Grade 9 Success in College lesson is the PRIMARY visual/layout reference. Preserve its stable working architecture; do not reintroduce experimental picture-hide scripts or other changes that previously broke activity opening, refresh, or Live Lesson Plan.
 
 PERMANENT CLASSROOM DESIGN
 1. Use the approved book-style lesson header, clean cards, rounded corners and classroom-board typography.
@@ -26,7 +27,7 @@ PERMANENT ACTIVITY SCREEN LAYOUT
 Each launched activity uses two columns.
 
 LEFT / MAIN TEACHING AREA
-1. This is where the complete student activity lives.
+1. This is the dominant/wider area (approximately 74% on normal desktop/classroom displays).
 2. Put ALL questions, tasks, answer controls, revealed answers, reading paragraphs, games and Deep Thinking here.
 3. Use ONE clean answer-reveal control per activity wherever several questions belong to the same exercise. Each click reveals the next answer in sequence, one by one, beside its matching question. After the final answer, the same control may switch to Hide All / Reset Answers.
 4. Avoid repeating a separate Reveal Answer button under every question when a single sequential reveal button gives a cleaner classroom view.
@@ -37,14 +38,20 @@ LEFT / MAIN TEACHING AREA
 9. Exit Ticket must be a complete interactive game/activity on the main area and include Restart Game.
 10. Charter Connection must be a complete attractive activity on the main area using Think → Discuss → Write → Share.
 
-RIGHT / FROZEN STUDENT GUIDE PANEL
-The right side is ONLY for:
-- Key Words
-- Activity Objective
-- Student Instructions
-- Lesson Steps / Agenda
-Do not put anything else on the right side.
-Keep this panel compact, frozen/sticky and easy to scan from the board.
+RIGHT / FROZEN STUDENT GUIDE PANEL — FINAL APPROVED DESIGN
+The right side is ONLY for Key Words, Activity Objective, Student Instructions, and Lesson Steps / Agenda.
+1. Keep the ENTIRE right column thin/compact (approximately 26% of the activity screen on normal desktop/classroom displays), not merely narrower text cards. Give the main teaching area the larger share of the screen.
+2. Use the final soft visual style from the Grade 9 Success in College lesson: very light blue/teal guide background, white Objective card, soft pale-yellow Instructions card, white Lesson Step cards, subtle borders/shadows, rounded corners, and restrained blue/teal numbered badges.
+3. Do NOT use a large dark navy guide block. Keep colors soft, bright and classroom-friendly.
+4. Keep spacing compact so the guide does not dominate the board.
+5. Include a small ACTIVITY GUIDE heading and a clearly separated LESSON STEPS label.
+6. Key Words must be compact and easy to scan.
+7. Objective must be visually distinct but not oversized.
+8. Instructions must ALWAYS show the exact textbook reference at the top in a small visible badge, for example: “📖 Page 9 · Activity 1” or “📖 Page 9 · Activities 2–3”. Students should immediately know where to go in their book. For non-book activities, use a suitable label such as “Charter Connection · Class Activity”.
+9. Below the page/activity badge, show only clear student-facing instructions.
+10. Lesson Steps should use compact numbered cards and remain easy to scan.
+11. Keep the panel frozen/sticky and independently scrollable when needed.
+12. Do not put questions, answers, reveal buttons, games, Deep Thinking, teacher setup controls, or teacher-only notes in this panel.
 
 TEACHER MEDIA WORKFLOW
 1. Every activity may have optional teacher-added media.
@@ -59,6 +66,7 @@ TEACHER MEDIA WORKFLOW
 10. Never stretch a saved activity picture across a large empty white container. Keep the default media display compact and visually neat.
 11. Audio should display as a compact classroom-friendly player and must not autoplay.
 12. Browser-saved media is local to that browser/device; do not imply that it transfers automatically to another computer.
+13. IMPORTANT STABILITY RULE: do NOT hide the book/saved picture behind a new toggle/button or load experimental media-hiding scripts. The approved stable compact thumbnail behavior should be preserved unless the user explicitly requests a tested redesign.
 
 BOOK PICTURES / MAXIMIZED VIEW
 1. All useful textbook and teacher-added images can be maximized.
@@ -107,18 +115,23 @@ LIVE BILINGUAL SCHOOL LESSON PLAN
 5. Include Print / Save PDF.
 6. Preserve the lesson-plan styling that was approved in the current Success in College lesson.
 
-FUTURE-USE / CREATOR RULE
-1. Treat the current Grade 9 Success in College lesson folder as a reusable working reference because its index.html loads the modular enhancements for media persistence, main-area activity layout, compact media thumbnails and lesson-plan link behavior.
+FUTURE-USE / TEAM CREATOR RULE
+1. Treat the FINAL current Grade 9 Success in College lesson folder as the primary reusable working reference and template.
 2. Future lessons should copy/adapt this architecture rather than rebuilding a simplified page from scratch.
-3. The Teacher Lesson Creator uses this Master Prompt automatically; therefore all rules above are permanent defaults for teachers unless the user explicitly changes them.
+3. The Teacher Lesson Creator uses this Master Prompt automatically; therefore all rules above are permanent defaults unless explicitly changed.
+4. A teacher may provide the approved lesson index.html/reference plus textbook/activity pictures, audio if needed, grade, lesson title, pages, timing and any special instructions. Study those materials first and create a NEW lesson using this exact format.
+5. Never edit the approved reference lesson when creating another teacher’s lesson. Create a separate lesson folder/page.
+6. Preserve the final thin soft right sidebar and page/activity badge in Instructions for every future lesson.
 
 FINAL CHECKS BEFORE PUBLISHING
 1. Confirm the new lesson has its own unique folder/link.
-2. Test navigation, timers, fullscreen, Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, compact thumbnails, Maximize, audio controls, sequential one-button answer reveal on the main area, right-panel cleanliness, Deep Thinking, Exit Ticket restart, Charter activity and lesson-plan link.
+2. Test activity-card opening, navigation, timers, fullscreen, Live Lesson Plan, Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, compact thumbnails, Maximize, audio controls, sequential one-button answer reveal on the main area, right-panel cleanliness, Deep Thinking, Exit Ticket restart, Charter activity and lesson-plan link.
 3. Confirm every activity works without teacher-added media.
 4. Confirm no broken textbook-image placeholders remain.
-5. Confirm the right panel contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
-6. Confirm the lesson plan includes the clickable live lesson link.
-7. Publish only after these checks pass.
+5. Confirm the right panel is thin and contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
+6. Confirm EVERY book-based activity shows its exact Page · Activity/Activities reference inside the Instructions card.
+7. Confirm the lesson plan includes the clickable live lesson link.
+8. Do not publish if activity cards or Live Lesson Plan fail to open.
+9. Publish only after these checks pass.
 
 First study all materials the teacher uploads, then build the lesson content around those materials while preserving this complete permanent format.
