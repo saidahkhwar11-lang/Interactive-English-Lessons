@@ -28,13 +28,14 @@ Each launched activity uses two columns.
 LEFT / MAIN TEACHING AREA
 1. This is where the complete student activity lives.
 2. Put ALL questions, tasks, answer controls, revealed answers, reading paragraphs, games and Deep Thinking here.
-3. Every question must have its Reveal Answer control beside/under that same question.
-4. Revealed answers appear directly with their question on the LEFT/main area.
-5. Never put activity questions, Reveal Answer buttons, answers, games or Deep Thinking in the right panel.
-6. For textbook exercises, rewrite all questions clearly on the main area even if a textbook screenshot is also available.
-7. For reading lessons, preserve readable paragraph-by-paragraph text when useful and place comprehension questions without covering the text.
-8. Exit Ticket must be a complete interactive game/activity on the main area and include Restart Game.
-9. Charter Connection must be a complete attractive activity on the main area using Think → Discuss → Write → Share.
+3. Use ONE clean answer-reveal control per activity wherever several questions belong to the same exercise. Each click reveals the next answer in sequence, one by one, beside its matching question. After the final answer, the same control may switch to Hide All / Reset Answers.
+4. Avoid repeating a separate Reveal Answer button under every question when a single sequential reveal button gives a cleaner classroom view.
+5. Revealed answers appear directly with their question on the LEFT/main area.
+6. Never put activity questions, answer controls, answers, games or Deep Thinking in the right panel.
+7. For textbook exercises, rewrite all questions clearly on the main area even if a textbook screenshot is also available.
+8. For reading lessons, preserve readable paragraph-by-paragraph text when useful and place comprehension questions without covering the text.
+9. Exit Ticket must be a complete interactive game/activity on the main area and include Restart Game.
+10. Charter Connection must be a complete attractive activity on the main area using Think → Discuss → Write → Share.
 
 RIGHT / FROZEN STUDENT GUIDE PANEL
 The right side is ONLY for:
@@ -68,11 +69,13 @@ BOOK PICTURES / MAXIMIZED VIEW
 
 QUESTION / ANSWER BEHAVIOR
 1. Reveal answers one by one.
-2. Each Reveal Answer is physically associated with its own question.
-3. Reveal All / Hide All may be added only when useful, but one-by-one reveal must remain available.
-4. For vocabulary matching, shuffle pictures/choices so answer order is not copied from the source.
-5. For suitable reading/listening tasks, include one hidden Deep Thinking Challenge connected to the real lesson idea.
-6. Deep Thinking stays on the main/left teaching area, hidden by default behind a compact reveal control.
+2. For multi-question exercises, default to ONE sequential Reveal Next Answer button for the whole activity. Each click reveals the next answer beside its own question.
+3. After all answers are revealed, the same control should provide Hide All / Reset Answers, or an equally simple reset control.
+4. Use separate per-question answer buttons only when the activity type genuinely requires independent question control.
+5. Reveal All / Hide All may be added only when useful and must not make the view cluttered.
+6. For vocabulary matching, shuffle pictures/choices so answer order is not copied from the source.
+7. For suitable reading/listening tasks, include one hidden Deep Thinking Challenge connected to the real lesson idea.
+8. Deep Thinking stays on the main/left teaching area, hidden by default behind a compact reveal control.
 
 LISTENING LESSONS
 1. Support teacher-added audio using the permanent saved-media workflow.
@@ -80,7 +83,7 @@ LISTENING LESSONS
 3. Do not autoplay.
 4. Use suitable stages: prediction/vocabulary → gist → details → follow-up.
 5. Transcript, when useful, is hidden by default behind Reveal Transcript.
-6. Listening answers reveal one by one on the main area.
+6. Listening answers reveal one by one on the main area, preferably through the same clean sequential reveal pattern when multiple questions are grouped together.
 
 EXIT TICKET
 1. Make it a real interactive classroom game, not only plain written questions.
@@ -111,7 +114,7 @@ FUTURE-USE / CREATOR RULE
 
 FINAL CHECKS BEFORE PUBLISHING
 1. Confirm the new lesson has its own unique folder/link.
-2. Test navigation, timers, fullscreen, Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, compact thumbnails, Maximize, audio controls, answer reveals on main area, right-panel cleanliness, Deep Thinking, Exit Ticket restart, Charter activity and lesson-plan link.
+2. Test navigation, timers, fullscreen, Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete, compact thumbnails, Maximize, audio controls, sequential one-button answer reveal on the main area, right-panel cleanliness, Deep Thinking, Exit Ticket restart, Charter activity and lesson-plan link.
 3. Confirm every activity works without teacher-added media.
 4. Confirm no broken textbook-image placeholders remain.
 5. Confirm the right panel contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
