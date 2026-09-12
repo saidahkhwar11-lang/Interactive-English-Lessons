@@ -147,6 +147,14 @@ function downloadHtml(html, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
+function apiEndpoint() {
+  if (window.LESSON_CREATOR_API) return window.LESSON_CREATOR_API;
+  if (location.hostname.endsWith('github.io')) {
+    return 'https://interactive-english-lessons.vercel.app/api/create-lesson';
+  }
+  return '/api/create-lesson';
+}
+
 async function createLesson() {
   const grade = $('grade').value;
   const term = $('term').value;
@@ -168,7 +176,7 @@ async function createLesson() {
     return;
   }
 
-  const endpoint = window.LESSON_CREATOR_API || '/api/create-lesson';
+  const endpoint = apiEndpoint();
   create.disabled = true;
   create.textContent = '✨ AI IS BUILDING YOUR LESSON…';
   status.textContent = 'Reading your textbook activities and preparing the complete lesson…';
