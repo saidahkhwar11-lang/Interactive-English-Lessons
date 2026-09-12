@@ -1,0 +1,7 @@
+(()=>{
+function lessonUrl(){try{return window.parent.location.href.split('#')[0].split('?')[0]}catch{return 'https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Term-1/Grade-9/Success-in-College-Reading-2-2026/'}}
+function addLink(){const plan=document.getElementById('plan');if(!plan||!plan.classList.contains('open'))return;const page=plan.querySelector('.schoolpage');if(!page||page.querySelector('.lessonPlanLiveLink'))return;const box=document.createElement('div');box.className='lessonPlanLiveLink';const url=lessonUrl();box.innerHTML=`<b>Open Interactive Lesson:</b> <a href="${url}" target="_blank" rel="noopener">${url}</a>`;page.insertBefore(box,page.querySelector('.schooltable'));}
+const style=document.createElement('style');style.textContent='.lessonPlanLiveLink{margin:0 0 10px;padding:8px 10px;border:1px solid #8aa4c4;border-radius:8px;background:#f4f8fd;font:700 .76rem Arial;color:#17345a}.lessonPlanLiveLink a{color:#244a8b;text-decoration:underline;word-break:break-all}@media print{.lessonPlanLiveLink{font-size:9pt;padding:5px 7px;margin-bottom:6px}}';document.head.appendChild(style);
+const old=window.openPlan;if(typeof old==='function'){window.openPlan=function(){old.apply(this,arguments);setTimeout(addLink,0)}}
+new MutationObserver(addLink).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+})();
