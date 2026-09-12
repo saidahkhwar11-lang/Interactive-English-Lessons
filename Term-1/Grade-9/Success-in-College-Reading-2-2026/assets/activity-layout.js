@@ -11,13 +11,19 @@ const css=`
 .activity-content .reveal{font-size:.9rem}
 .activity-content .ans{font-size:.96rem;line-height:1.45}
 .activity-content .deep{margin-top:14px}
-.task>.q,.task>.deep,.task>.restart{display:none!important}
+.task .q,.task .deep,.task .restart{display:none!important}
 .task .guide{position:sticky;top:0}
-@media(max-width:1000px){.activity-content{padding:15px}.task>.q,.task>.deep,.task>.restart{display:none!important}}
+.exitMainBoard{display:none!important}
+@media(max-width:1000px){.activity-content{padding:15px}.task .q,.task .deep,.task .restart{display:none!important}}
 `;
 const st=document.createElement('style');st.id='mainActivityLayoutStyle';st.textContent=css;document.head.appendChild(st);
 
-function qCard(q,a){const d=document.createElement('div');d.className='q';d.innerHTML=`<b>${q}</b><br><button class="reveal" type="button">Reveal Answer</button><div class="ans">${a}</div>`;d.querySelector('.reveal').onclick=()=>d.querySelector('.ans').classList.toggle('show');return d}
+function qCard(q,a){
+ const d=document.createElement('div');d.className='q';
+ d.innerHTML=`<b>${q}</b><br><button class="reveal" type="button">Reveal Answer</button><div class="ans">${a}</div>`;
+ d.querySelector('.reveal').onclick=()=>{const ans=d.querySelector('.ans');ans.classList.toggle('show');d.querySelector('.reveal').textContent=ans.classList.contains('show')?'Hide Answer':'Reveal Answer'};
+ return d;
+}
 
 const custom={
 1:[
@@ -31,13 +37,38 @@ const custom={
 };
 
 document.querySelectorAll('.activity').forEach((act,i)=>{
- const canvas=act.querySelector('.canvas'), task=act.querySelector('.task'); if(!canvas||!task)return;
- const panel=document.createElement('section');panel.className='activity-content';panel.innerHTML=`<div class="content-title"><h2>${i===3?'Vocabulary Challenge':i===4?'Charter Connection Activity':'Activity Questions & Answers'}</h2><span>${act.querySelector('.identity>div:last-child')?.textContent||''}</span></div>`;
+ const canvas=act.querySelector('.canvas'), task=act.querySelector('.task');
+ if(!canvas||!task)return;
+
+ // Remove old broken textbook-image placeholders. Teacher Media remains above and reading/charter content stays.
+ const media=canvas.querySelector('.media');
+ if(media){
+   media.querySelectorAll('img[data-b64]').forEach(img=>img.remove());
+   if(!media.children.length) media.remove();
+ }
+
+ const oldPanel=canvas.querySelector('.activity-content');if(oldPanel)oldPanel.remove();
+ const panel=document.createElement('section');panel.className='activity-content';
+ panel.innerHTML=`<div class="content-title"><h2>${i===3?'Vocabulary Challenge':i===4?'Charter Connection Activity':'Activity Questions & Answers'}</h2><span>${act.querySelector('.identity>div:last-child')?.textContent||''}</span></div>`;
+
  if(custom[i]) custom[i].forEach(x=>panel.appendChild(qCard(x[0],x[1])));
- else task.querySelectorAll(':scope > .q').forEach(q=>panel.appendChild(q.cloneNode(true)));
- panel.querySelectorAll('.q').forEach(q=>{const b=q.querySelector('.reveal'),a=q.querySelector('.ans');if(b&&a)b.onclick=()=>a.classList.toggle('show')});
- const deep=task.querySelector(':scope > .deep');if(deep){const c=deep.cloneNode(true);panel.appendChild(c)}
- if(i===3){const r=document.createElement('button');r.className='restart';r.textContent='↻ Restart Game';r.onclick=()=>panel.querySelectorAll('.ans').forEach(x=>x.classList.remove('show'));panel.appendChild(r)}
+ else {
+   const originalQuestions=[...task.querySelectorAll('.q')];
+   originalQuestions.forEach(q=>{
+     const question=q.querySelector('b')?.textContent?.trim()||'';
+     const answer=q.querySelector('.ans')?.innerHTML||'';
+     if(question)panel.appendChild(qCard(question,answer));
+   });
+ }
+
+ const deep=task.querySelector('.deep');
+ if(deep){const c=deep.cloneNode(true);c.querySelectorAll('.reveal').forEach(btn=>btn.remove());panel.appendChild(c)}
+
+ if(i===3){
+   const r=document.createElement('button');r.className='restart';r.textContent='↻ Restart Game';
+   r.onclick=()=>{panel.querySelectorAll('.ans').forEach(x=>x.classList.remove('show'));panel.querySelectorAll('.reveal').forEach(x=>x.textContent='Reveal Answer')};
+   panel.appendChild(r)
+ }
  canvas.appendChild(panel);
 });
 })();
