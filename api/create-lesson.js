@@ -7,9 +7,23 @@ export const config = { maxDuration: 60 };
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const MASTER_PROMPT_URL = 'https://raw.githubusercontent.com/saidahkhwar11-lang/Interactive-English-Lessons/main/Lesson-Creation-Resources/Interactive-Lesson-Master-Prompt.txt';
+const ALLOWED_ORIGINS = new Set([
+  'https://saidahkhwar11-lang.github.io',
+  'https://interactive-english-lessons.vercel.app'
+]);
 
 function first(v='') { return Array.isArray(v) ? (v[0] || '') : (v || ''); }
 function arr(v) { return !v ? [] : (Array.isArray(v) ? v : [v]); }
+
+function applyCors(req, res) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
 
 async function parseMultipart(req) {
   return await new Promise((resolve, reject) => {
@@ -58,8 +72,15 @@ async function appendFiles(content, label, files) {
 }
 
 export default async function handler(req, res) {
+  applyCors(req, res);
+  if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error:'Method not allowed' });
   if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error:'OPENAI_API_KEY is not configured in Vercel yet.' });
+
+  const origin = req.headers.origin || '';
+  if (origin && !ALLOWED_ORIGINS.has(origin)) {
+    return res.status(403).json({ error:'This website is not allowed to use the lesson creator API.' });
+  }
 
   try {
     const { fields, files } = await parseMultipart(req);
