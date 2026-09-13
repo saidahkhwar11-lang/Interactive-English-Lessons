@@ -126,6 +126,10 @@ LISTENING LESSONS
 4. Use suitable stages: prediction/vocabulary → gist → details → follow-up.
 5. Transcript, when useful, is hidden by default behind Reveal Transcript.
 6. Listening answers reveal one by one on the main area, preferably through the same sequential reveal pattern.
+7. Never infer answers from the textbook image when audio is available. Transcribe the complete recording first and verify every answer against the exact exercise wording.
+8. Double-check names, places, numbers, negatives, reduced forms and multi-word blanks before publishing.
+9. Every activity picture must include a teacher-only “Add answer text” tool. It must let the teacher place multiple editable text boxes over the image, type or correct answers, drag and resize boxes, change their background color and delete them.
+10. Save picture annotations in browser storage so they remain after refresh on the same browser/device. Hide edit handles—not the written answers—when Hide Setup is selected.
 
 EXIT TICKET
 1. Make it a real interactive classroom game, not only plain written questions.
@@ -149,6 +153,8 @@ LIVE BILINGUAL SCHOOL LESSON PLAN
 5. ALWAYS include the actual clickable “Open Interactive Lesson” link inside the lesson plan itself.
 6. Include Print / Save PDF.
 7. Preserve the lesson-plan styling already approved in the Success in College lesson.
+8. Describe every Main Activity in enough detail for another teacher to deliver it. Include the page/activity number, learning purpose, teacher actions, student actions, grouping, resources or audio track, AFL/check for understanding, relevant scaffolding and exact timing.
+9. Keep those descriptions concise enough for the approved two-page plan, but do not reduce them to one-line summaries.
 
 FUTURE-USE / TEAM CREATOR RULE
 1. Treat the FINAL approved Grade 9 Success in College lesson as the primary reusable working reference and template.
@@ -159,6 +165,7 @@ FUTURE-USE / TEAM CREATOR RULE
 6. Create a separate unique lesson folder/page for every new lesson.
 7. Preserve the final thin soft right sidebar and exact Page · Activity badge in Instructions for every future lesson.
 8. Do not require teachers to understand or edit HTML.
+9. Preserve the teacher picture-annotation tool in every future lesson template.
 
 GITHUB ORGANIZATION
 When GitHub publishing is requested and authorized, use:
