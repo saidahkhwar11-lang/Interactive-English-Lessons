@@ -90,7 +90,7 @@ function initExit(){
 
 function openPlan(A){
   document.getElementById('liveplan')?.remove();
-  const clean=s=>(s||'').replace(/\s+/g,' ').trim(),link=location.href.split('#')[0];
+  const clean=s=>(s||'').replace(/\s+/g,' ').trim(),link='https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Term-1/Grade-10/dist/';
   const objectives=[...document.querySelectorAll('.part1only.objectives .objectivegrid p')].map(x=>clean(x.textContent));
   const keywords=[...document.querySelectorAll('.part1only.objectives .keywords span')].map(x=>clean(x.textContent));
   const data=A.map(a=>({title:a.title,badge:(a.page==='EXIT'?'EXIT TICKET':'BOOK PAGE '+a.page)+' · '+a.mins+' MIN',mode:a.mode,objective:a.objective,instruction:a.instruction,steps:a.steps,challenge:a.n===4?'Which housing choice best balances money, safety and wellbeing? Use text evidence, then redesign one part of it for a student like you.':''}));
