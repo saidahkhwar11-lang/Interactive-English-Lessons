@@ -1,135 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>English Department Digital Portfolio 2026–2027</title>
-<style>
-:root{--navy:#173a55;--teal:#19777a;--gold:#f2c75c;--bg:#f4f8fb;--card:#fff;--line:#dbe6ed;--muted:#667b8a;--green:#1f8a5b;--red:#c65a5a}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#1b3448}
-.starbar{background:#0f2f48;color:#fff;overflow:hidden;white-space:nowrap;border-bottom:3px solid var(--gold)}
-.startrack{display:inline-block;padding:10px 0;min-width:100%;animation:move 18s linear infinite;font-weight:800}
-@keyframes move{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
-.hero{background:linear-gradient(135deg,#143c58,#19777a);color:#fff;padding:34px 6vw 28px}
-.hero small{letter-spacing:.11em;text-transform:uppercase;opacity:.85}.hero h1{margin:6px 0;font-size:clamp(30px,4vw,48px)}.hero p{max-width:900px;line-height:1.55;color:#e9f4f5}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nav button{border:0;border-radius:999px;padding:9px 15px;background:#fff;color:#164b60;font-weight:800;cursor:pointer}.nav button.active{background:var(--gold)}
-.wrap{max-width:1260px;margin:auto;padding:24px 20px 50px}
-.sectionhead{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:28px 0 12px}.sectionhead h2{margin:0}.sectionhead p{margin:4px 0 0;color:var(--muted);font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.systemgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.duogrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.systemgrid .card,.duogrid .card{padding:14px 16px}.systemgrid .card h3,.duogrid .card h3{font-size:18px;margin-bottom:4px}.systemgrid .card p,.duogrid .card p{margin:5px 0 7px;font-size:13px;line-height:1.35}.systemgrid .actions,.duogrid .actions{margin-top:7px}.systemgrid .btn,.duogrid .btn{padding:8px 11px;font-size:13px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 7px 24px #17324a0b}
-.card h3{margin:0 0 7px}.card p{color:var(--muted);font-size:14px;line-height:1.45}.wide{grid-column:1/-1}
-.btn{border:0;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;background:#eaf1f5;color:#21475d;text-decoration:none;display:inline-block}.btn.primary{background:var(--teal);color:#fff}.btn.gold{background:var(--gold);color:#263946}.btn.danger{background:#fae5e5;color:#8c3131}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.subgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfdfe}
-.mini b{display:block;margin-bottom:6px}
-.progress{height:10px;background:#e8eef2;border-radius:999px;overflow:hidden}.bar{height:100%;background:var(--teal);width:0}.low .bar{background:#c86b55}.done .bar{background:var(--green)}
-.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.teacher{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
-.teacher .row{display:flex;justify-content:space-between;gap:8px;align-items:center}.teacher small{color:var(--muted)}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}.dow,.day{border:1px solid var(--line);border-radius:10px;background:#fff;min-height:88px;padding:8px;font-size:12px}.dow{min-height:auto;text-align:center;font-weight:800;background:#edf5f6}.day strong{font-size:14px}.event{margin-top:5px;padding:5px 6px;background:#e9f6f4;border-left:3px solid var(--teal);border-radius:6px;font-size:11px;cursor:pointer}
-.sharegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sharecard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.sharecard h3{margin:8px 0}.ico{font-size:24px}
-.modal{position:fixed;inset:0;background:#0e24358c;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.box{width:min(620px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:20px}
-label{display:block;font-size:13px;font-weight:800;margin:10px 0 5px} input,textarea,select{width:100%;padding:10px;border:1px solid #cfdce4;border-radius:10px;font:inherit} textarea{min-height:90px}
-.list{display:grid;gap:6px;margin-top:8px}.duogrid .list .item{padding:8px}.item{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fbfdfe}.item b{display:block}
-.notice{background:#fff8dc;border:1px solid #ecd78b;border-radius:14px;padding:12px;margin-top:12px;font-size:13px}
-.hidden{display:none}
-@media(max-width:900px){.grid,.sharegrid{grid-template-columns:1fr 1fr}.systemgrid{grid-template-columns:1fr 1fr}.duogrid{grid-template-columns:1fr 1fr}.subgrid,.teacher-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.grid,.sharegrid,.systemgrid,.duogrid,.subgrid,.teacher-grid{grid-template-columns:1fr}.calendar{grid-template-columns:repeat(7,minmax(70px,1fr));overflow:auto}}
-</style>
-</head>
-<body>
-<header class="hero">
-<small>Al Reyadah School · English Department</small>
-<h1>English Department Digital Portfolio</h1>
-<p>Academic Year 2026–2027 · Department collaboration, SLT follow-up, lesson-plan compliance, professional sharing and evidence collection in one place.</p>
-<div class="nav">
-<button class="active" onclick="setTerm('Term 1',this)">Term 1</button>
-<button onclick="setTerm('Term 2',this)">Term 2</button>
-<button onclick="setTerm('Term 3',this)">Term 3</button>
-</div>
-</header>
-<div class="starbar"><div class="startrack" id="starTrack">⭐ Star Teachers of the Week: Teachers who upload at least 4 lesson plans this week will appear here automatically.</div></div>
-
-<main class="wrap">
-<div class="sectionhead"><div><h2>Section 1 · SLT & Department Management</h2><p>Core department systems, planning and follow-up.</p></div><b id="termLabel">Term 1</b></div>
-<section class="grid">
-<div class="systemgrid wide">
-<article class="card"><h3>📊 Department Assessment Tracker</h3><p>Open the admin or teacher tracker.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/admin/">Admin Tracker</a><a class="btn gold" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/teacher/">Teacher Tracker</a></div></article>
-
-<article class="card"><h3>🧪 Diagnostic Test Platform</h3><p>Student diagnostic testing and results.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/alreyada-diagnostic-2026/">Open Diagnostic Test</a></div></article>
-
-<article class="card"><h3>📝 English Exam Platform</h3><p>Department assessments and student exams.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/english-exam-platform/">Open Exam Platform</a></div></article>
-</div>
-
-<div class="duogrid wide">
-<article class="card"><h3>📝 Meeting Minutes</h3><p>Save department meeting minutes and follow-up notes.</p><div class="actions"><button class="btn primary" onclick="openMeeting()">Add Meeting Minutes</button></div><div class="list" id="meetingList"></div></article>
-
-<article class="card"><h3>📅 Department Calendar</h3><p>Open when needed to add department events and goals.</p>
-<div class="actions"><button class="btn primary" onclick="toggleCalendar()" id="calendarToggle">Open Department Calendar</button></div>
-<div id="calendarPanel" class="hidden" style="margin-top:12px">
-<div class="actions"><button class="btn primary" onclick="openEvent()">+ Add Event</button><button class="btn" onclick="changeMonth(-1)">Previous Month</button><button class="btn" onclick="changeMonth(1)">Next Month</button><b id="monthTitle" style="align-self:center;margin-left:6px"></b></div>
-<div class="calendar" id="calendar"></div>
-</div></article>
-</div>
-
-<article class="card wide"><h3>📚 Lesson Plans · Weekly Compliance</h3>
-<p>Each teacher has a folder. Weekly target = <b>4 uploaded lesson plans</b>. Teachers reaching 4/4 automatically earn a certificate and appear in the Star Teachers bar.</p>
-<div class="actions"><button class="btn primary" onclick="addTeacher()">+ Add Teacher Folder</button><button class="btn" onclick="newWeek()">Start New Week</button></div>
-<div class="notice"><b>Target:</b> 100% = at least 4 lesson plans per week. Below 4 plans is shown as low progress.</div>
-<div class="teacher-grid" id="teacherGrid"></div></article>
-</section>
-
-<div class="sectionhead"><div><h2>Section 2 · Teacher Share & Inspire</h2><p>Teachers share practical experience, evidence and successful practice with the department.</p></div></div>
-<section class="sharegrid" id="shareGrid"></section>
-
-<div class="notice"><b>Important:</b> This GitHub version is a working interface and saves entries on the current browser/device. For all teachers to upload files and see the same shared content from different devices, the next step is connecting the page to the department SharePoint/OneDrive storage.</div>
-</main>
-
-<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
-
-<script>
-const K='engDeptPortfolioV2';
-let state=JSON.parse(localStorage.getItem(K)||'null')||{term:'Term 1',events:[],meetings:[],teachers:[],shares:[],week:1};
-let current=new Date();
-const cats=[
-['🧠','Teaching Strategies','Share successful teaching strategies and classroom approaches.'],
-['🧾','Assessment Samples','Upload assessment papers, rubrics, model answers and moderated samples.'],
-['💡','Innovations','Share innovative lessons, digital tools, AI-supported ideas and creative projects.']
-];
-function save(){localStorage.setItem(K,JSON.stringify(state));renderAll()}
-function setTerm(t,b){state.term=t;document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');save()}
-function openModal(html){document.getElementById('modalBox').innerHTML=html;document.getElementById('modal').classList.add('show')}
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal()}
-function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-
-function openMeeting(){
-openModal(`<h2>Add Meeting Minutes</h2><label>Date</label><input id="mdate" type="date"><label>Meeting title</label><input id="mtitle" placeholder="e.g. English Department Meeting"><label>Main notes / decisions</label><textarea id="mnotes"></textarea><label>Actions / follow-up</label><textarea id="mactions"></textarea><div class="actions"><button class="btn primary" onclick="saveMeeting()">Save Meeting</button><button class="btn" onclick="closeModal()">Cancel</button></div>`)
-}
-function saveMeeting(){let d=mdate.value,t=mtitle.value.trim(),n=mnotes.value.trim(),a=mactions.value.trim();if(!d||!t)return alert('Add date and meeting title.');state.meetings.push({term:state.term,d,t,n,a});save();closeModal()}
-function toggleCalendar(){const p=document.getElementById('calendarPanel'),b=document.getElementById('calendarToggle');const hidden=p.classList.toggle('hidden');b.textContent=hidden?'Open Department Calendar':'Hide Department Calendar';if(!hidden)renderCalendar()}
-function openEvent(date=''){openModal(`<h2>Add Department Calendar Event</h2><label>Date</label><input id="edate" type="date" value="${date}"><label>Event name</label><input id="ename" placeholder="e.g. Writing Assessment"><label>Grades / classes</label><input id="egrades" placeholder="e.g. Grades 9–10"><label>Main goal</label><textarea id="egoal" placeholder="Short description of the main purpose"></textarea><div class="actions"><button class="btn primary" onclick="saveEvent()">Add Event</button><button class="btn" onclick="closeModal()">Cancel</button></div>`) }
-function saveEvent(){let d=edate.value,n=ename.value.trim(),g=egrades.value.trim(),o=egoal.value.trim();if(!d||!n)return alert('Add date and event name.');state.events.push({term:state.term,d,n,g,o});save();closeModal()}
-function changeMonth(x){current=new Date(current.getFullYear(),current.getMonth()+x,1);renderCalendar()}
-function renderCalendar(){
-let y=current.getFullYear(),m=current.getMonth();document.getElementById('monthTitle').textContent=current.toLocaleString('en',{month:'long',year:'numeric'});
-let days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let out=days.map(d=>`<div class="dow">${d}</div>`).join('');
-let first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();for(let i=0;i<first;i++)out+='<div></div>';
-for(let d=1;d<=count;d++){let iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;let ev=state.events.filter(e=>e.term===state.term&&e.d===iso);out+=`<div class="day" ondblclick="openEvent('${iso}')"><strong>${d}</strong>${ev.map(e=>`<div class="event" title="${esc(e.g)} · ${esc(e.o)}">${esc(e.n)}</div>`).join('')}</div>`}
-document.getElementById('calendar').innerHTML=out
-}
-function addTeacher(){let n=prompt('Teacher name');if(!n)return;if(state.teachers.some(t=>t.name.toLowerCase()===n.toLowerCase()))return alert('Teacher folder already exists.');state.teachers.push({name:n,plans:{}});save()}
-function weekKey(){return `${state.term}-W${state.week}`}
-function uploadPlan(i){let t=state.teachers[i];openModal(`<h2>${esc(t.name)} · Upload Lesson Plan</h2><p>Current: ${esc(state.term)} · Week ${state.week}</p><label>Grade / class</label><input id="pgrade"><label>Lesson plan file</label><input id="pfile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx"><div class="actions"><button class="btn primary" onclick="savePlan(${i})">Add Plan</button><button class="btn" onclick="closeModal()">Cancel</button></div>`) }
-function savePlan(i){let grade=pgrade.value.trim(),file=pfile.files[0];if(!file)return alert('Choose a lesson plan file.');let k=weekKey();state.teachers[i].plans[k]=state.teachers[i].plans[k]||[];let r=new FileReader();r.onload=()=>{state.teachers[i].plans[k].push({grade,file:file.name,data:r.result,date:new Date().toISOString()});save();closeModal()};r.readAsDataURL(file)}
-function openFolder(i){let t=state.teachers[i],keys=Object.keys(t.plans).filter(k=>k.startsWith(state.term));let plans=keys.flatMap(k=>(t.plans[k]||[]).map(p=>({...p,week:k.split('-W')[1]})));let html=`<h2>📁 ${esc(t.name)} · ${esc(state.term)}</h2>`;if(!plans.length)html+='<p>No lesson plans uploaded for this term.</p>';else html+=`<div class="list">${plans.map(p=>`<div class="item"><b>${esc(p.grade||'Grade not specified')} · Week ${esc(p.week)}</b><small>${esc(p.file)}</small><div class="actions">${p.data?`<a class="btn primary" href="${p.data}" target="_blank">Open</a><a class="btn" href="${p.data}" download="${esc(p.file)}">Download</a>`:'<span class="btn">Older entry: file was not stored</span>'}</div></div>`).join('')}</div>`;html+=`<div class="actions"><button class="btn" onclick="closeModal()">Close</button></div>`;openModal(html)}
-function newWeek(){if(confirm('Start a new weekly tracking cycle?')){state.week++;save()}}
-function certificate(i){let t=state.teachers[i];let k=weekKey();let c=(t.plans[k]||[]).length;if(c<4)return alert('Teacher needs at least 4 lesson plans this week.');openModal(`<div style="text-align:center;padding:24px;border:8px double #f2c75c"><h1>Certificate of Achievement</h1><p>This certificate is proudly presented to</p><h2>${esc(t.name)}</h2><p>for achieving 100% weekly lesson-plan compliance by uploading at least four lesson plans.</p><h3>${esc(state.term)} · Week ${state.week}</h3><p>English Department · Al Reyadah School · 2026–2027</p></div><div class="actions"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn" onclick="closeModal()">Close</button></div>`) }
-function addShare(cat){openModal(`<h2>Add ${esc(cat)}</h2><label>Title</label><input id="stitle"><label>Teacher name</label><input id="steacher"><label>Grade / class</label><input id="sgrade"><label>Short description</label><textarea id="sdesc"></textarea><label>Evidence file</label><input id="sfile" type="file"><div class="actions"><button class="btn primary" onclick="saveShare('${cat.replace(/'/g,"\\'")}')">Add Evidence</button><button class="btn" onclick="closeModal()">Cancel</button></div>`) }
-function saveShare(cat){let title=stitle.value.trim(),teacher=steacher.value.trim(),grade=sgrade.value.trim(),desc=sdesc.value.trim(),file=sfile.files[0];if(!title||!teacher)return alert('Add title and teacher name.');let finish=data=>{state.shares.push({term:state.term,cat,title,teacher,grade,desc,file:file?file.name:'',data:data||'',date:new Date().toISOString()});save();closeModal()};if(file){let r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(file)}else finish('')}
-function viewShares(cat){let arr=state.shares.filter(s=>s.term===state.term&&s.cat===cat);openModal(`<h2>${esc(cat)} · ${esc(state.term)}</h2>${arr.length?`<div class="list">${arr.map(s=>`<div class="item"><b>${esc(s.title)}</b><small>${esc(s.teacher)}${s.grade?' · '+esc(s.grade):''}</small><p>${esc(s.desc)}</p>${s.file?`<small>📎 ${esc(s.file)}</small>${s.data?`<div class="actions"><a class="btn primary" href="${s.data}" target="_blank">Open</a><a class="btn" href="${s.data}" download="${esc(s.file)}">Download</a></div>`:''}`:''}</div>`).join('')}</div>`:'<p>No evidence saved for this term yet.</p>'}<div class="actions"><button class="btn" onclick="closeModal()">Close</button></div>`) }
-function renderTeachers(){let k=weekKey();let out='';state.teachers.forEach((t,i)=>{let c=(t.plans[k]||[]).length,p=Math.min(100,c/4*100),cls=c>=4?'done':'low';out+=`<div class="teacher ${cls}"><div class="row"><b>📁 ${esc(t.name)}</b><strong>${Math.round(p)}%</strong></div><small>${c}/4 lesson plans · ${esc(state.term)} Week ${state.week}</small><div class="progress" style="margin:10px 0"><div class="bar" style="width:${p}%"></div></div><div class="actions"><button class="btn primary" onclick="uploadPlan(${i})">Upload Plan</button><button class="btn" onclick="openFolder(${i})">Open Folder</button>${c>=4?`<button class="btn gold" onclick="certificate(${i})">Certificate</button>`:''}</div></div>`});teacherGrid.innerHTML=out||'<p>No teacher folders yet. Click “Add Teacher Folder”.</p>';let stars=state.teachers.filter(t=>(t.plans[k]||[]).length>=4).map(t=>t.name);starTrack.textContent=stars.length?'⭐ Star Teachers of the Week: '+stars.join(' ⭐ '):'⭐ Star Teachers of the Week: Teachers who upload at least 4 lesson plans this week will appear here automatically.'}
-function renderMeetings(){let arr=state.meetings.filter(m=>m.term===state.term);meetingList.innerHTML=arr.length?arr.map(m=>`<div class="item"><b>${esc(m.d)} · ${esc(m.t)}</b><small>${esc(m.n)}</small></div>`).join(''):'<div class="item">No meeting minutes saved for this term.</div>'}
-function renderShares(){shareGrid.innerHTML=cats.map(c=>{let n=state.shares.filter(s=>s.term===state.term&&s.cat===c[1]).length;return `<article class="sharecard"><div class="ico">${c[0]}</div><h3>${c[1]}</h3><p>${c[2]}</p><small>${n} item(s) in ${esc(state.term)}</small><div class="actions"><button class="btn primary" onclick="addShare('${c[1]}')">Add Evidence</button><button class="btn" onclick="viewShares('${c[1]}')">View</button></div></article>`}).join('')}
-function renderAll(){termLabel.textContent=state.term;renderMeetings();renderTeachers();renderShares();if(!calendarPanel.classList.contains('hidden'))renderCalendar()}
-renderAll();
-</script>
-</body>
-</html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>English Department Digital Portfolio</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{border:0;width:100%;height:100vh;display:block}</style></head><body><iframe id="app" src="base.html"></iframe><script>
+const patch=`
+function openTeacherFolder(i){let t=state.teachers[i],rows=[];Object.entries(t.plans||{}).forEach(([k,arr])=>{if(k.startsWith(state.term+'-'))(arr||[]).forEach((x,idx)=>rows.push({...x,week:k.split('-W')[1]||'',planKey:k,planIndex:idx}))});rows.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));openModal(\`<h2>📁 \${esc(t.name)} · \${esc(state.term)}</h2>\${rows.length?\`<div class="list">\${rows.map(x=>{let open=x.fileId?\`<button class="btn primary" onclick="openStoredFile('\\${x.fileId}')">Open</button><button class="btn" onclick="downloadStoredFile('\\${x.fileId}','\\${esc((x.file||'lesson-plan').replace(/'/g,"\\\\'"))}')">Download</button>\`:x.data?\`<a class="btn primary" href="\\${x.data}" target="_blank">Open</a><a class="btn" href="\\${x.data}" download="\\${esc(x.file||'lesson-plan')}">Download</a>\`:'<small>File copy is not available on this device.</small>';return \`<div class="item"><b>\\${esc(x.file||'Lesson plan')}</b><small>\\${esc(x.grade||'')} · Week \\${esc(x.week)}</small><div class="actions">\\${open}<button class="btn gold" onclick="editPlan(\\${i},'\\${x.planKey}',\\${x.planIndex})">Edit</button><button class="btn" onclick="replacePlan(\\${i},'\\${x.planKey}',\\${x.planIndex})">Replace File</button><button class="btn danger" onclick="deletePlan(\\${i},'\\${x.planKey}',\\${x.planIndex})">Delete</button></div></div>\`}).join('')}</div>\`:'<p>No lesson plans uploaded for this term yet.</p>'}<div class="actions"><button class="btn" onclick="closeModal()">Close</button></div>\`)}
+function editPlan(i,k,j){let p=state.teachers[i].plans[k][j];openModal(\`<h2>Edit Lesson Plan</h2><label>Grade / class</label><input id="editGrade" value="\${esc(p.grade||'')}"><div class="actions"><button class="btn primary" onclick="savePlanEdit(\${i},'\${k}',\${j})">Save Changes</button><button class="btn" onclick="openTeacherFolder(\${i})">Cancel</button></div>\`)}
+function savePlanEdit(i,k,j){state.teachers[i].plans[k][j].grade=editGrade.value.trim();save();openTeacherFolder(i)}
+function replacePlan(i,k,j){let p=state.teachers[i].plans[k][j];openModal(\`<h2>Replace Lesson Plan File</h2><p>\${esc(p.file||'Current file')}</p><label>Choose replacement file</label><input id="replaceFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx"><div class="actions"><button class="btn primary" onclick="savePlanReplacement(\${i},'\${k}',\${j})">Replace File</button><button class="btn" onclick="openTeacherFolder(\${i})">Cancel</button></div>\`)}
+async function savePlanReplacement(i,k,j){let file=replaceFile.files[0];if(!file)return alert('Choose a replacement file.');let p=state.teachers[i].plans[k][j],oldId=p.fileId;if(typeof putFile==='function'){let id='plan-'+Date.now()+'-'+Math.random().toString(36).slice(2);await putFile(id,file);p.file=file.name;p.fileId=id;p.type=file.type;delete p.data;if(oldId&&typeof deleteStoredFile==='function')await deleteStoredFile(oldId)}else{let data=await new Promise(r=>{let f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(file)});p.file=file.name;p.data=data;delete p.fileId}p.date=new Date().toISOString();save();openTeacherFolder(i)}
+async function deletePlan(i,k,j){let p=state.teachers[i].plans[k][j];if(!confirm('Delete this lesson plan?'))return;if(p.fileId&&typeof deleteStoredFile==='function')await deleteStoredFile(p.fileId);state.teachers[i].plans[k].splice(j,1);save();openTeacherFolder(i)}
+function viewShare(cat){let arr=state.shares.map((x,i)=>({...x,shareIndex:i})).filter(x=>x.term===state.term&&x.cat===cat);openModal(\`<h2>\${esc(cat)} · \${esc(state.term)}</h2>\${arr.length?\`<div class="list">\${arr.map(x=>{let open=x.fileId?\`<button class="btn primary" onclick="openStoredFile('\\${x.fileId}')">Open</button><button class="btn" onclick="downloadStoredFile('\\${x.fileId}','\\${esc((x.file||'evidence').replace(/'/g,"\\\\'"))}')">Download</button>\`:x.data?\`<a class="btn primary" href="\\${x.data}" target="_blank">Open</a><a class="btn" href="\\${x.data}" download="\\${esc(x.file||'evidence')}">Download</a>\`:'';return \`<div class="item"><b>\\${esc(x.title)}</b><small>\\${esc(x.teacher)} · \\${esc(x.grade||'')}\\${x.file?' · '+esc(x.file):''}</small><p>\\${esc(x.desc||'')}</p><div class="actions">\\${open}<button class="btn gold" onclick="editShare(\\${x.shareIndex})">Edit</button><button class="btn" onclick="replaceShareFile(\\${x.shareIndex})">Replace File</button><button class="btn danger" onclick="deleteShare(\\${x.shareIndex})">Delete</button></div></div>\`}).join('')}</div>\`:'<p>No evidence added yet.</p>'}<div class="actions"><button class="btn" onclick="closeModal()">Close</button></div>\`)}
+function editShare(i){let x=state.shares[i];openModal(\`<h2>Edit \${esc(x.cat)}</h2><label>Title</label><input id="editSTitle" value="\${esc(x.title)}"><label>Teacher name</label><input id="editSTeacher" value="\${esc(x.teacher)}"><label>Grade / class</label><input id="editSGrade" value="\${esc(x.grade||'')}"><label>Short description</label><textarea id="editSDesc">\${esc(x.desc||'')}</textarea><div class="actions"><button class="btn primary" onclick="saveShareEdit(\${i})">Save Changes</button><button class="btn" onclick="viewShare('\${esc(x.cat)}')">Cancel</button></div>\`)}
+function saveShareEdit(i){let x=state.shares[i];x.title=editSTitle.value.trim();x.teacher=editSTeacher.value.trim();x.grade=editSGrade.value.trim();x.desc=editSDesc.value.trim();if(!x.title||!x.teacher)return alert('Add title and teacher name.');save();viewShare(x.cat)}
+function replaceShareFile(i){let x=state.shares[i];openModal(\`<h2>Replace Evidence File</h2><p>\${esc(x.file||'No current file')}</p><label>Choose replacement file</label><input id="replaceShareInput" type="file"><div class="actions"><button class="btn primary" onclick="saveShareReplacement(\${i})">Replace File</button><button class="btn" onclick="viewShare('\${esc(x.cat)}')">Cancel</button></div>\`)}
+async function saveShareReplacement(i){let file=replaceShareInput.files[0];if(!file)return alert('Choose a replacement file.');let x=state.shares[i],oldId=x.fileId;if(typeof putFile==='function'){let id='share-'+Date.now()+'-'+Math.random().toString(36).slice(2);await putFile(id,file);x.file=file.name;x.fileId=id;x.type=file.type;delete x.data;if(oldId&&typeof deleteStoredFile==='function')await deleteStoredFile(oldId)}else{let data=await new Promise(r=>{let f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(file)});x.file=file.name;x.data=data;delete x.fileId}x.date=new Date().toISOString();save();viewShare(x.cat)}
+async function deleteShare(i){let x=state.shares[i];if(!confirm('Delete this evidence item?'))return;let cat=x.cat;if(x.fileId&&typeof deleteStoredFile==='function')await deleteStoredFile(x.fileId);state.shares.splice(i,1);save();viewShare(cat)}
+if(typeof renderShares==='function')renderShares();
+`;
+app.addEventListener('load',()=>{const d=app.contentDocument,s=d.createElement('script');s.textContent=patch;d.body.appendChild(s)});
+</script></body></html>
