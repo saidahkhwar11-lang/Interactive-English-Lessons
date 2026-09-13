@@ -314,7 +314,7 @@ document.addEventListener('fullscreenchange',()=>document.getElementById('fullBt
 const uaDate=new Intl.DateTimeFormat('en-AE',{timeZone:'Asia/Dubai',weekday:'long',year:'numeric',month:'long',day:'numeric'}).format(new Date());
 document.getElementById('date').textContent=uaDate;document.getElementById('planDate').textContent=uaDate;
 document.getElementById('planBtn').onclick=()=>document.getElementById('plan').classList.add('open');document.getElementById('closePlan').onclick=()=>document.getElementById('plan').classList.remove('open');
-let live=location.href.split('#')[0].split('?')[0];document.getElementById('liveLessonLink').href=live;document.getElementById('liveLessonLink').textContent=live;
+const publishedLessonUrl='https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Term-1/Grade-10/Freshman-Workshop-Youre-On-Your-Own-Listening-2/';let live=publishedLessonUrl;document.getElementById('liveLessonLink').href=live;document.getElementById('liveLessonLink').textContent=live;
 updateNav();
 </script>
 </body></html>

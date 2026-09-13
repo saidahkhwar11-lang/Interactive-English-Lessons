@@ -181,7 +181,7 @@ LIVE SCHOOL LESSON PLAN — FINAL APPROVED FORMAT
 8. Use soft, professional color coding: pale blue section headers, light backgrounds for timing/tool areas, and subtle H/M/L differentiation colors. Keep it neat and print-friendly.
 9. Include Print / Save PDF.
 10. ALWAYS include the actual clickable “Open Interactive Lesson” link inside the lesson plan.
-11. The clickable lesson link must point to the PUBLISHED GITHUB PAGES URL, never to a local C:\ path, file:// URL, localhost URL, sandbox URL, or temporary ChatGPT file URL.
+11. The clickable lesson link must point to the PUBLISHED GITHUB PAGES URL, never to a local C:\ path, file:// URL, localhost URL, sandbox URL, or temporary ChatGPT or chatgpt.site URL.
 12. Do not generate the final Live Lesson Plan link from location.href when the lesson may be opened locally. Instead, set the final published GitHub Pages URL explicitly after the lesson folder/path is known.
 13. If the lesson has not yet been published, compute the intended GitHub Pages URL from the repository organization below and use that as the target publication URL; after publishing, verify that it matches the actual live page.
 
