@@ -1,10 +1,95 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>English Department Digital Portfolio 2026–2027</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f5f8fb;color:#19324a}.hero{background:linear-gradient(135deg,#123c5a,#176b73);color:#fff;padding:36px 6vw 30px}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;opacity:.82}.hero h1{margin:7px 0 6px;font-size:clamp(28px,4vw,48px)}.hero p{margin:0;max-width:760px;line-height:1.6;color:#e6f3f4}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.nav button,.term{border:0;border-radius:999px;padding:10px 16px;background:#fff;color:#164b60;font-weight:700;cursor:pointer}.nav button.active{background:#f5d88b}.wrap{max-width:1240px;margin:auto;padding:26px 22px 50px}.topgrid{display:grid;grid-template-columns:2fr 1fr;gap:18px}.panel{background:#fff;border:1px solid #dce7ee;border-radius:18px;padding:20px;box-shadow:0 8px 28px #17324a0b}.panel h2{margin:0 0 14px}.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.termcard{padding:18px;border-radius:16px;background:#eef7f8;border:1px solid #d5e8ea;cursor:pointer}.termcard strong{display:block;font-size:18px}.termcard span{font-size:13px;color:#5d7486}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick a{padding:13px;border-radius:13px;background:#f7fafc;border:1px solid #e1e9ef;text-decoration:none;color:#21475d;font-weight:700}.section-title{display:flex;justify-content:space-between;align-items:end;margin:30px 2px 13px}.section-title h2{margin:0}.section-title small{color:#728696}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:#fff;border:1px solid #dce7ee;border-radius:17px;padding:18px;min-height:168px;box-shadow:0 6px 20px #17324a08;transition:.18s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px #17324a12}.icon{width:43px;height:43px;border-radius:12px;background:#e8f4f4;display:grid;place-items:center;font-size:22px}.card h3{margin:12px 0 7px}.card p{font-size:14px;line-height:1.5;color:#617788;margin:0 0 14px}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{border:0;border-radius:9px;padding:8px 11px;font-weight:700;cursor:pointer;background:#eaf1f5;color:#21475d}.actions .primary{background:#176b73;color:#fff}.upload{margin-top:28px;background:#fff9e8;border-color:#efdfae}.upload-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.field{background:#fff;border:1px solid #e3dcc8;border-radius:12px;padding:12px;color:#52697a}.footer{text-align:center;color:#7c8d99;padding:18px}.hidden{display:none}@media(max-width:900px){.topgrid,.cards{grid-template-columns:1fr 1fr}.upload-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.topgrid,.cards,.terms{grid-template-columns:1fr}.quick,.upload-grid{grid-template-columns:1fr}}
-</style></head><body><header class="hero"><div class="eyebrow">Al Reyadah School · English Department</div><h1>English Department Digital Portfolio</h1><p>Academic Year 2026–2027 · One collaborative space for department evidence, planning, assessment, innovation, professional sharing and leadership follow-up.</p><div class="nav"><button class="active" onclick="showTerm('all',this)">Whole Year</button><button onclick="showTerm('t1',this)">Term 1</button><button onclick="showTerm('t2',this)">Term 2</button><button onclick="showTerm('t3',this)">Term 3</button></div></header><main class="wrap">
-<div class="topgrid"><section class="panel"><h2>Academic Year Overview</h2><div class="terms"><div class="termcard" onclick="clickTerm('t1')"><strong>Term 1</strong><span>Evidence · Plans · Assessments · Meetings</span></div><div class="termcard" onclick="clickTerm('t2')"><strong>Term 2</strong><span>Evidence · Plans · Assessments · Meetings</span></div><div class="termcard" onclick="clickTerm('t3')"><strong>Term 3</strong><span>Evidence · Plans · Assessments · Meetings</span></div></div></section><aside class="panel"><h2>Quick Access</h2><div class="quick"><a href="#">Assessment Tracker</a><a href="#">Department Calendar</a><a href="#">Charter Connection</a><a href="#upload">Add Evidence</a></div></aside></div>
-<div class="section-title"><h2>Department Portfolio</h2><small id="scope">Showing the whole academic year</small></div><section class="cards" id="cards"></section>
-<section class="panel upload" id="upload"><h2>+ Add Evidence</h2><p style="color:#687c89">A simple evidence-entry flow for teachers. The live version can connect these fields to your shared storage.</p><div class="upload-grid"><div class="field"><b>Term</b><br>Term 1 / 2 / 3</div><div class="field"><b>Category</b><br>Select portfolio section</div><div class="field"><b>Grade / Class</b><br>Grade 5–12</div><div class="field"><b>Teacher</b><br>Teacher name</div></div><div class="actions" style="margin-top:12px"><button class="primary">Upload / Link Evidence</button><button>Add Description</button></div></section>
-</main><footer class="footer">English Department · Academic Year 2026–2027 · Department Coordinator: Ms. Saidah Khwar</footer><script>
-const data=[['📁','Evidence Collection','Walkthrough evidence, classroom activities, projects, student work, events, certificates and department initiatives.'],['📝','SLT & Meeting Minutes','SLT notes, English Department meeting minutes, action points, responsibilities and follow-up evidence.'],['📊','Department Assessment Tracker','Permanent access to the department assessment planner, diagnostic results and assessment follow-up.'],['📚','Assessment Samples','Organize samples by term, grade and assessment type: Diagnostic, Reading, Writing, Listening, Speaking, Spelling and CA.'],['🔗','Charter Connection','Charter activities, From a Lesson to an Impact, Charter Ambassadors, nominations and supporting evidence.'],['📖','Lesson Plans','Lesson plans organized by term, Grade 5–12 and teacher, including interactive lesson links and supporting materials.'],['💡','Innovation & Creativity','Innovative lessons, digital tools, AI-supported resources, competitions, projects and teacher-created ideas.'],['📅','Department Calendar','Meetings, assessment dates, deadlines, events, walkthroughs, projects and key department milestones.'],['🤝','Share & Inspire','Teachers share successful strategies, useful resources, classroom experiences and professional practice.']];
-const cards=document.getElementById('cards');function render(){cards.innerHTML=data.map(x=>`<article class="card"><div class="icon">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p><div class="actions"><button class="primary">Open</button><button>Add File</button><button>View Evidence</button></div></article>`).join('')}render();function showTerm(t,b){document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('scope').textContent=t==='all'?'Showing the whole academic year':`Showing ${t==='t1'?'Term 1':t==='t2'?'Term 2':'Term 3'} portfolio`;window.scrollTo({top:250,behavior:'smooth'})}function clickTerm(t){const map={t1:1,t2:2,t3:3};showTerm(t,document.querySelectorAll('.nav button')[map[t]])}
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Department Digital Portfolio 2026–2027</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f5f8fb;color:#19324a}.hero{background:linear-gradient(135deg,#123c5a,#176b73);color:#fff;padding:36px 6vw 30px}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;opacity:.82}.hero h1{margin:7px 0 6px;font-size:clamp(28px,4vw,48px)}.hero p{margin:0;max-width:780px;line-height:1.6;color:#e6f3f4}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.nav button,.btn{border:0;border-radius:999px;padding:10px 16px;background:#fff;color:#164b60;font-weight:700;cursor:pointer}.nav button.active{background:#f5d88b}.wrap{max-width:1240px;margin:auto;padding:26px 22px 50px}.topgrid{display:grid;grid-template-columns:2fr 1fr;gap:18px}.panel{background:#fff;border:1px solid #dce7ee;border-radius:18px;padding:20px;box-shadow:0 8px 28px #17324a0b}.panel h2{margin:0 0 14px}.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.termcard{padding:18px;border-radius:16px;background:#eef7f8;border:1px solid #d5e8ea;cursor:pointer;transition:.18s}.termcard:hover{transform:translateY(-2px)}.termcard strong{display:block;font-size:18px}.termcard span{font-size:13px;color:#5d7486}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick button{padding:13px;border-radius:13px;background:#f7fafc;border:1px solid #e1e9ef;color:#21475d;font-weight:700;cursor:pointer;text-align:left}.section-title{display:flex;justify-content:space-between;align-items:end;margin:30px 2px 13px}.section-title h2{margin:0}.section-title small{color:#728696}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:#fff;border:1px solid #dce7ee;border-radius:17px;padding:18px;min-height:180px;box-shadow:0 6px 20px #17324a08;transition:.18s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px #17324a12}.icon{width:43px;height:43px;border-radius:12px;background:#e8f4f4;display:grid;place-items:center;font-size:22px}.card h3{margin:12px 0 7px}.card p{font-size:14px;line-height:1.5;color:#617788;margin:0 0 14px}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{border:0;border-radius:9px;padding:8px 11px;font-weight:700;cursor:pointer;background:#eaf1f5;color:#21475d}.actions .primary{background:#176b73;color:#fff}.upload{margin-top:28px;background:#fff9e8;border-color:#efdfae}.upload-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.field{background:#fff;border:1px solid #e3dcc8;border-radius:12px;padding:12px;color:#52697a}.field select,.field input,.field textarea{width:100%;margin-top:7px;border:1px solid #d9e2e8;border-radius:8px;padding:9px;background:#fff;font:inherit}.footer{text-align:center;color:#7c8d99;padding:18px}.modal{position:fixed;inset:0;background:#0d2437b8;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.show{display:flex}.modal-card{width:min(900px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px;box-shadow:0 25px 70px #0004}.modal-head{display:flex;justify-content:space-between;gap:14px;align-items:center;border-bottom:1px solid #e5edf2;padding-bottom:12px}.close{border:0;background:#eef3f6;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}.list{display:grid;gap:10px;margin-top:16px}.item{border:1px solid #dfe9ef;border-radius:13px;padding:13px;background:#f9fbfc}.item b{display:block;margin-bottom:4px}.empty{color:#728696;font-style:italic}.notice{margin-top:12px;padding:11px 13px;border-radius:11px;background:#fff7db;border:1px solid #efd98a;color:#6a5622;font-size:13px}.file-name{font-size:12px;color:#607688;margin-top:7px}@media(max-width:900px){.topgrid,.cards{grid-template-columns:1fr 1fr}.upload-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.topgrid,.cards,.terms{grid-template-columns:1fr}.quick,.upload-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="eyebrow">Al Reyadah School · English Department</div>
+<h1>English Department Digital Portfolio</h1>
+<p>Academic Year 2026–2027 · One collaborative space for department evidence, planning, assessment, innovation, professional sharing and leadership follow-up.</p>
+<div class="nav">
+<button class="active" data-term="all">Whole Year</button>
+<button data-term="t1">Term 1</button>
+<button data-term="t2">Term 2</button>
+<button data-term="t3">Term 3</button>
+</div>
+</header>
+<main class="wrap">
+<div class="topgrid">
+<section class="panel"><h2>Academic Year Overview</h2><div class="terms">
+<div class="termcard" data-term="t1"><strong>Term 1</strong><span>Evidence · Plans · Assessments · Meetings</span></div>
+<div class="termcard" data-term="t2"><strong>Term 2</strong><span>Evidence · Plans · Assessments · Meetings</span></div>
+<div class="termcard" data-term="t3"><strong>Term 3</strong><span>Evidence · Plans · Assessments · Meetings</span></div>
+</div></section>
+<aside class="panel"><h2>Quick Access</h2><div class="quick">
+<button data-open="assessment-tracker">Assessment Tracker</button>
+<button data-open="department-calendar">Department Calendar</button>
+<button data-open="charter-connection">Charter Connection</button>
+<button id="goUpload">Add Evidence</button>
+</div></aside>
+</div>
+<div class="section-title"><h2>Department Portfolio</h2><small id="scope">Showing the whole academic year</small></div>
+<section class="cards" id="cards"></section>
+<section class="panel upload" id="upload">
+<h2>+ Add Evidence</h2>
+<p style="color:#687c89">Use this form to prepare an evidence entry. Files selected here stay on this device until we connect the portfolio to shared storage.</p>
+<div class="upload-grid">
+<div class="field"><b>Term</b><select id="evTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+<div class="field"><b>Category</b><select id="evCategory"></select></div>
+<div class="field"><b>Grade / Class</b><input id="evGrade" placeholder="e.g. Grade 9 / 9-1"></div>
+<div class="field"><b>Teacher</b><input id="evTeacher" placeholder="Teacher name"></div>
+</div>
+<div class="field" style="margin-top:10px"><b>Description</b><textarea id="evDescription" rows="3" placeholder="Short description of the evidence"></textarea></div>
+<div class="actions" style="margin-top:12px"><button class="primary" id="pickEvidence">Choose File</button><button id="saveEvidence">Save Entry</button></div>
+<input type="file" id="fileInput" hidden>
+<div class="file-name" id="fileName">No file selected</div>
+<div class="notice">For true department-wide sharing and uploads, this website needs a shared storage connection such as SharePoint/OneDrive. The interface is ready for that connection.</div>
+</section>
+</main>
+<footer class="footer">English Department · Academic Year 2026–2027 · Department Coordinator: Ms. Saidah Khwar</footer>
+<div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><div class="icon" id="modalIcon">📁</div><h2 id="modalTitle" style="margin:10px 0 0"></h2></div><button class="close" id="closeModal">Close ✕</button></div><p id="modalDesc"></p><div class="actions"><button class="primary" id="modalAdd">Add Evidence</button><button id="modalView">Refresh Evidence</button></div><div class="list" id="evidenceList"></div></div></div>
+<script>
+const data=[
+{id:'evidence-collection',icon:'📁',title:'Evidence Collection',desc:'Walkthrough evidence, classroom activities, projects, student work, events, certificates and department initiatives.'},
+{id:'slt-meeting-minutes',icon:'📝',title:'SLT & Meeting Minutes',desc:'SLT notes, English Department meeting minutes, action points, responsibilities and follow-up evidence.'},
+{id:'assessment-tracker',icon:'📊',title:'Department Assessment Tracker',desc:'Permanent access to the department assessment planner, diagnostic results and assessment follow-up.'},
+{id:'assessment-samples',icon:'📚',title:'Assessment Samples',desc:'Organize samples by term, grade and assessment type: Diagnostic, Reading, Writing, Listening, Speaking, Spelling and CA.'},
+{id:'charter-connection',icon:'🔗',title:'Charter Connection',desc:'Charter activities, From a Lesson to an Impact, Charter Ambassadors, nominations and supporting evidence.'},
+{id:'lesson-plans',icon:'📖',title:'Lesson Plans',desc:'Lesson plans organized by term, Grade 5–12 and teacher, including interactive lesson links and supporting materials.'},
+{id:'innovation-creativity',icon:'💡',title:'Innovation & Creativity',desc:'Innovative lessons, digital tools, AI-supported resources, competitions, projects and teacher-created ideas.'},
+{id:'department-calendar',icon:'📅',title:'Department Calendar',desc:'Meetings, assessment dates, deadlines, events, walkthroughs, projects and key department milestones.'},
+{id:'share-inspire',icon:'🤝',title:'Share & Inspire',desc:'Teachers share successful strategies, useful resources, classroom experiences and professional practice.'}
+];
+let currentTerm='all', currentSection=null, selectedFile='';
+const cards=document.getElementById('cards');
+const category=document.getElementById('evCategory');
+category.innerHTML=data.map(x=>`<option value="${x.id}">${x.title}</option>`).join('');
+function termLabel(t){return t==='t1'?'Term 1':t==='t2'?'Term 2':t==='t3'?'Term 3':'Whole Year'}
+function renderCards(){cards.innerHTML=data.map(x=>`<article class="card"><div class="icon">${x.icon}</div><h3>${x.title}</h3><p>${x.desc}</p><div class="actions"><button class="primary" data-action="open" data-id="${x.id}">Open</button><button data-action="add" data-id="${x.id}">Add File</button><button data-action="view" data-id="${x.id}">View Evidence</button></div></article>`).join('')}
+function setTerm(t){currentTerm=t;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.term===t));document.getElementById('scope').textContent=t==='all'?'Showing the whole academic year':`Showing ${termLabel(t)} portfolio`;if(t!=='all')document.getElementById('evTerm').value=termLabel(t);window.scrollTo({top:250,behavior:'smooth'})}
+function getEntries(section){try{return JSON.parse(localStorage.getItem('edpEntries')||'[]').filter(e=>(!section||e.section===section)&&(currentTerm==='all'||e.term===termLabel(currentTerm)))}catch(e){return[]}}
+function renderEvidence(){const list=document.getElementById('evidenceList');const entries=getEntries(currentSection);list.innerHTML=entries.length?entries.map(e=>`<div class="item"><b>${e.term} · ${e.grade||'No grade/class'}</b><div>${e.teacher||'Teacher not entered'}</div><div>${e.description||'No description'}</div>${e.file?`<div class="file-name">📎 ${e.file}</div>`:''}</div>`).join(''):`<div class="item empty">No saved evidence entries yet for ${currentTerm==='all'?'the selected section':termLabel(currentTerm)}.</div>`}
+function openSection(id){const x=data.find(y=>y.id===id);if(!x)return;currentSection=id;document.getElementById('modalIcon').textContent=x.icon;document.getElementById('modalTitle').textContent=x.title;document.getElementById('modalDesc').textContent=x.desc;renderEvidence();document.getElementById('modal').classList.add('show')}
+function goAdd(id){if(id){category.value=id;currentSection=id}document.getElementById('modal').classList.remove('show');document.getElementById('upload').scrollIntoView({behavior:'smooth',block:'start'})}
+renderCards();
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setTerm(b.dataset.term)));
+document.querySelectorAll('.termcard').forEach(b=>b.addEventListener('click',()=>setTerm(b.dataset.term)));
+document.getElementById('cards').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.id;if(b.dataset.action==='add')goAdd(id);else openSection(id)});
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSection(b.dataset.open)));
+document.getElementById('goUpload').addEventListener('click',()=>goAdd());
+document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('modal').classList.remove('show'));
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('show')});
+document.getElementById('modalAdd').addEventListener('click',()=>goAdd(currentSection));
+document.getElementById('modalView').addEventListener('click',renderEvidence);
+document.getElementById('pickEvidence').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',e=>{selectedFile=e.target.files[0]?.name||'';document.getElementById('fileName').textContent=selectedFile?`Selected: ${selectedFile}`:'No file selected'});
+document.getElementById('saveEvidence').addEventListener('click',()=>{const entry={term:document.getElementById('evTerm').value,section:category.value,grade:document.getElementById('evGrade').value.trim(),teacher:document.getElementById('evTeacher').value.trim(),description:document.getElementById('evDescription').value.trim(),file:selectedFile,created:new Date().toISOString()};let all=[];try{all=JSON.parse(localStorage.getItem('edpEntries')||'[]')}catch(e){}all.push(entry);localStorage.setItem('edpEntries',JSON.stringify(all));alert('Evidence entry saved on this device.');currentSection=entry.section;selectedFile='';document.getElementById('fileInput').value='';document.getElementById('fileName').textContent='No file selected';openSection(entry.section)});
+</script>
+</body>
+</html>
