@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Did You Say That? | Grade 10 General</title>
+<style>
+:root{--navy:#17233f;--teal:#18a7a0;--teal2:#e4f7f4;--coral:#ef6f51;--yellow:#ffd469;--paper:#f5f7fa;--line:#dbe4ee;--muted:#657389}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef2f6;color:var(--navy)}
+button{font:inherit} .top{background:white;border-bottom:1px solid var(--line);padding:12px 20px;position:sticky;top:0;z-index:20}
+.titleline{display:flex;gap:14px;align-items:center;flex-wrap:wrap} .skill{font-weight:1000;color:var(--teal);letter-spacing:.08em;font-size:.78rem}
+h1{font-family:Georgia,serif;color:var(--coral);font-size:1.72rem;margin:0;flex:1} .meta{font-size:.78rem;color:var(--muted);font-weight:800}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px} .btn{border:1px solid #cbd7e3;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850;cursor:pointer;color:var(--navy)}
+.btn.primary{background:var(--teal);color:white;border-color:var(--teal)} .btn.coral{background:var(--coral);color:white;border-color:var(--coral)} .btn:disabled{opacity:.45;cursor:not-allowed}
+.dashboard{padding:16px 20px 34px;max-width:1500px;margin:auto} .overview{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px} .card h3{margin:0 0 6px;font-size:.78rem;color:var(--teal);letter-spacing:.08em}
+.card p{margin:0;line-height:1.45}.dashlist{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.84rem;line-height:1.35}.dashlist li::marker{color:var(--teal)}.vocablist{grid-template-columns:1fr 1fr;column-gap:18px} .flow{display:grid;gap:8px} .flow span{display:flex;justify-content:space-between;border-bottom:1px dashed #dce3eb;padding-bottom:6px;font-size:.84rem}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:11px;margin-top:14px} .activity-card{text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;min-height:150px;box-shadow:0 4px 12px #17233f0a}
+.activity-card:hover{border-color:#a8c8ce} .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--teal2);color:#13776f;font-size:.64rem;font-weight:1000}
+.activity-card h2{font-size:1rem;margin:10px 0 5px} .activity-card p{font-size:.78rem;color:var(--muted);line-height:1.38} .page{font-size:.67rem;font-weight:1000;color:#425774}
+.activity{display:none;max-width:1600px;margin:auto} .activity.open{display:block} .activitybar{display:flex;align-items:center;gap:12px;padding:10px 15px;background:white;border-bottom:1px solid var(--line);position:sticky;top:97px;z-index:15}
+.activitybar .grow{flex:1} .activitybar h2{margin:0;font-size:1rem} .tags{font-size:.68rem;color:var(--muted);font-weight:900} .timer{display:flex;align-items:center;gap:5px} .time{font-size:1.05rem;font-weight:1000;min-width:55px}
+.main{display:grid;grid-template-columns:minmax(680px,74%) minmax(270px,26%);min-height:calc(100vh - 155px)} .canvas{padding:14px;background:#f8fafc;min-width:0} .task{padding:12px;background:#f8fafc;border-left:1px solid var(--line);min-width:0}
+.mediaframe{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:12px} .mediaframe img{display:block;width:100%;max-height:55vh;object-fit:contain;border-radius:9px;background:white} .mediaActions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}
+.audio{background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px;margin:8px 0} audio{width:100%} .content{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
+.q{border:1px solid #e1e8f0;border-radius:11px;padding:11px;margin:8px 0;background:#fcfdff;line-height:1.42} .ans{display:none;margin-top:8px;background:#edf8f7;border-left:4px solid var(--teal);padding:8px 10px;border-radius:7px;color:#155f5b;font-weight:850} .ans.show{display:block}
+.revealbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0} .count{font-size:.74rem;color:var(--muted);font-weight:900}
+.guide{position:sticky;top:155px;width:calc(100% - 8px);margin:0 auto 22px;padding:12px;background:linear-gradient(145deg,#eef6ff,#f2fbfa);border:1px solid #d9e7f1;border-radius:16px}
+.guide:before{content:'ACTIVITY GUIDE';display:block;margin-bottom:8px;color:#38527a;font-size:.62rem;font-weight:1000;letter-spacing:.14em} .keywords{padding:7px 9px;background:#e2f5f2;border:1px solid #c9e9e4;border-radius:10px;font-size:.68rem;font-weight:800;color:#176d69;margin-bottom:7px}
+.objective{padding:9px;background:white;border:1px solid #e2e9f2;border-radius:10px;font-size:.78rem;line-height:1.35;margin-bottom:7px} .objective b{display:block;color:var(--coral);font-size:.58rem;letter-spacing:.08em;margin-bottom:3px}
+.instruction{position:relative;padding:9px 9px 9px 34px;background:#fff9e8;border:1px solid #f0dca6;border-radius:10px;font-size:.7rem;line-height:1.4} .instruction:before{content:'✓';position:absolute;left:8px;top:9px;width:19px;height:19px;display:grid;place-items:center;background:var(--yellow);border-radius:6px;font-weight:1000}
+.bookRef{display:inline-flex;align-items:center;gap:4px;margin-bottom:6px;padding:4px 8px;border-radius:999px;background:#dfeaf8;color:#35527a;font-size:.61rem;font-weight:1000} .step{display:flex;gap:8px;align-items:center;margin:8px auto;padding:8px;background:white;border:1px solid #dce6ef;border-radius:11px;font-size:.69rem} .num{width:27px;height:27px;display:grid;place-items:center;background:#5a78ba;color:#fff;border-radius:8px;font-weight:1000;flex:0 0 27px}
+.deep{margin-top:12px;border:1px dashed #a9b8c8;border-radius:11px;padding:10px;background:#fbfcfe} .deepbody{display:none;margin-top:8px;line-height:1.45} .deepbody.show{display:block}
+.game{display:grid;gap:8px} .habit{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid #dfe7ef;border-radius:10px;background:#fff} .choice button{margin-left:5px} .feedback{font-weight:900;font-size:.78rem}
+.charter{display:none} .charter.show{display:block} .charterbox{background:linear-gradient(135deg,#eef8ff,#f2fbf3);border:1px solid #d5e7e0;border-radius:14px;padding:16px;line-height:1.5}
+.modal{position:fixed;inset:0;background:#0c1321e8;display:none;z-index:50;padding:22px} .modal.open{display:grid;place-items:center} .modal img{max-width:95vw;max-height:88vh;object-fit:contain;background:white;border-radius:10px} .modal .close{position:absolute;top:16px;right:18px;background:white;border:0;border-radius:9px;padding:9px 12px;font-weight:900}
+.transcript{display:none;white-space:pre-wrap;line-height:1.55;font-size:.86rem;background:#fbfcfd;border:1px solid #e1e7ee;border-radius:11px;padding:12px;margin-top:10px} .transcript.show{display:block}
+.plan{display:none;position:fixed;inset:0;z-index:70;background:#e9edf2;overflow:auto;padding:18px} .plan.open{display:block} .planbar{position:sticky;top:0;display:flex;gap:8px;justify-content:flex-end;background:#e9edf2;padding-bottom:10px;z-index:3} .schoolpage{background:white;max-width:1100px;margin:0 auto 16px;padding:18px 20px;box-shadow:0 3px 14px #0002;min-height:720px} .schoolhead{text-align:center;border-bottom:3px solid #3d668f;padding-bottom:8px} .schoolhead h2{margin:0;font-size:1.3rem} table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.76rem} th,td{border:1px solid #8fa0b0;padding:6px;vertical-align:top} th{background:#eaf1f8;text-align:left} .ar{direction:rtl;text-align:right} .diffH{background:#eef8ee} .diffM{background:#fff9e8} .diffL{background:#fff0ec} .liveLink{margin:8px 0;padding:8px;border:1px solid #8aa4c4;border-radius:8px;background:#f4f8fd;font-size:.72rem;font-weight:800}
+@media(max-width:1050px){.overview{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}.main{grid-template-columns:1fr}.task{border-left:0}.guide{position:relative;top:auto}}
+@media(max-width:620px){.cards{grid-template-columns:1fr}.activitybar{position:relative;top:auto;flex-wrap:wrap}.main{display:block}}
+@media print{body>*:not(.plan){display:none!important} .plan{position:static;display:block;background:white;padding:0} .planbar{display:none} .schoolpage{box-shadow:none;page-break-after:always;margin:0;padding:12mm;min-height:auto}}
+
+.exactschool{max-width:1320px;direction:ltr;text-align:left}
+.schoolTop,.schoolProcedure{table-layout:fixed}
+.schoolTop th,.schoolProcedure th{background:#e7eef5;font-weight:900;text-align:center}
+.schoolTop td,.schoolProcedure td{background:#fff}
+.sectionbar{background:#d9e6f2!important;font-size:.9rem;letter-spacing:.03em}
+.planbullets{margin:0;padding-left:18px;display:grid;gap:4px}
+.successbullets{list-style:none;padding-left:0}
+.timingCell{text-align:center;font-weight:900;white-space:nowrap}
+.levelCell{text-align:center;font-size:1.1rem;font-weight:1000}
+.schoolProcedure td,.schoolProcedure th{line-height:1.35}
+@media print{.exactschool{max-width:none}.schoolTop,.schoolProcedure{font-size:9pt}.schoolTop th,.schoolTop td,.schoolProcedure th,.schoolProcedure td{padding:4px}}
+
+/* FINAL SCHOOL PLAN REFINEMENT */
+.exactschool,.exactschool *{direction:ltr}
+.exactschool th,.exactschool td{text-align:left}
+.exactschool .schoolhead{text-align:center}
+.schoolProcedure tr:first-child th,
+.schoolProcedure tr:nth-child(2) th{text-align:center}
+.schoolProcedure td:nth-child(1),
+.schoolProcedure th:nth-child(1){width:8%}
+.schoolProcedure td:nth-child(2),
+.schoolProcedure th:nth-child(2){width:52%}
+.schoolProcedure td:nth-child(3),
+.schoolProcedure th:nth-child(3){width:22%}
+.schoolProcedure td:nth-child(4),
+.schoolProcedure th:nth-child(4){width:5%}
+.schoolProcedure td:nth-child(5),
+.schoolProcedure th:nth-child(5){width:13%}
+.schoolProcedure td:nth-child(6),
+.schoolProcedure th:nth-child(6){width:13%}
+
+/* neat color coding */
+.schoolTop th{background:#dfeaf6!important;color:#18324f}
+.schoolTop .sectionbar{background:#cfe3f3!important;color:#17385c}
+.schoolProcedure th{background:#dfeaf6!important;color:#18324f}
+.schoolProcedure tr:nth-child(3) td:nth-child(3){background:#eef8ee}
+.schoolProcedure tr:nth-child(4) td:nth-child(1){background:#fff9e8}
+.schoolProcedure tr:nth-child(5) td:nth-child(1){background:#fff0ec}
+.levelCell{background:#eef3fb!important;color:#27466b}
+.timingCell{background:#f6f8fb!important}
+.schoolProcedure td[rowspan="3"]:nth-child(2){background:#fcfdff}
+.schoolProcedure td[rowspan="3"]:last-child{background:#eef8fb}
+.liveLink{border-color:#7fb4c5!important;background:#eff9fb!important}
+.schoolhead{border-bottom-color:#2a8f8a!important}
+.schoolhead h2{color:#1d4768}
+@media print{
+  .exactschool,.exactschool *{direction:ltr!important}
+  .exactschool th,.exactschool td{text-align:left!important}
+  .schoolProcedure{table-layout:fixed}
+}
+.picturegame .pict{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center}.picturegame .pict .choice,.picturegame .pict .feedback{grid-column:2}.sceneEmoji{font-size:48px;text-align:center;background:#f6fbff;border:1px solid #dbe4ee;border-radius:14px;padding:10px}.feedback.ok{background:#e8f7ef;border-color:#9bd6b5}.feedback.bad{background:#fff0ed;border-color:#f2b3a6}</style>
+</head>
+<body>
+<header class="top">
+  <div class="titleline">
+    <span class="skill">CHAPTER 1 · LISTENING 3</span>
+    <h1>Did You Say That?</h1>
+    <span class="meta">Grade 10 General · Ms. Saidah Khwar · Pages 12–13 · <span id="date"></span></span>
+  </div>
+  <div class="toolbar">
+    <button class="btn" id="prev">← Previous</button><button class="btn" id="home">All Activities</button><button class="btn" id="next">Next →</button>
+    <button class="btn coral" id="planBtn">Live Lesson Plan</button>
+    <button class="btn" id="fullBtn">Full Screen</button>
+  </div>
+</header>
+
+<main class="dashboard" id="dash">
+  <div class="overview">
+    <div class="card"><h3>OBJECTIVES</h3>
+      <ul class="dashlist">
+        <li>Use key vocabulary about time management.</li>
+        <li>Identify the main ideas in a college workshop.</li>
+        <li>Listen for specific supporting details.</li>
+        <li>Evaluate useful study habits.</li>
+      </ul>
+    </div>
+    <div class="card"><h3>SUCCESS CRITERIA</h3>
+      <ul class="dashlist">
+        <li>I can use the target vocabulary correctly.</li>
+        <li>I can identify Terry Sargent’s three main tips.</li>
+        <li>I can record accurate details from the listening.</li>
+        <li>I can explain which advice is useful and why.</li>
+      </ul>
+    </div>
+    <div class="card"><h3>KEY WORDS</h3>
+      <ul class="dashlist vocablist">
+        <li>deadline</li><li>cross it off</li><li>schedule</li><li>on my own</li>
+        <li>tip</li><li>tutor</li><li>manage</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px"><h3>45-MINUTE FLOW</h3><div class="flow">
+<span><b>Starter · Picture Clues</b><em>7 min</em></span><span><b>Main 1 · Listening</b><em>18 min</em></span><span><b>Main 2 · Body Language</b><em>13 min</em></span><span><b>Exit · Context Clue Challenge</b><em>7 min</em></span>
+</div><div class="cards">
+    <button class="activity-card" data-open="0"><span class="pill">GROUP WORK</span><h2>Starter · Away From Home</h2><p>Brainstorm independence, campus life, choices and consequences.</p><span class="page">PAGE 9 · ACTIVITY 1 · 5 MIN</span></button>
+    <button class="activity-card" data-open="1"><span class="pill">PAIR WORK</span><h2>Main 1 · Vocabulary & Sound</h2><p>Listen, pronounce and understand seven key words and phrases.</p><span class="page">PAGE 9 · ACTIVITY 2 · 7 MIN</span></button>
+    <button class="activity-card" data-open="2"><span class="pill">INDIVIDUAL → PAIR</span><h2>Main 2 · Fill in the Gaps</h2><p>Apply the vocabulary to definitions and real sentences.</p><span class="page">PAGE 10 · ACTIVITY 3 · 8 MIN</span></button>
+    <button class="activity-card" data-open="3"><span class="pill">INDIVIDUAL LISTENING</span><h2>Main 3 · Terry's Time Tips</h2><p>Listen for the three main ideas and their supporting details.</p><span class="page">PAGE 11 · ACTIVITY 4 · 18 MIN</span></button>
+    <button class="activity-card" data-open="4"><span class="pill">GROUP CHALLENGE</span><h2>Exit Ticket · Good Advice?</h2><p>Evaluate study habits and justify which advice helps students succeed.</p><span class="page">PAGE 11 · ACTIVITY 5 · 7 MIN</span></button>
+  </div>
+</main>
+
+<div id="activities"></div>
+
+<section class="charter" id="charter"><div class="dashboard"><div class="charterbox">
+  <span class="pill">CHARTER CONNECTION · LIFELONG LEARNING</span>
+  <h2>Independence means managing yourself.</h2>
+  <p><b>Think — 1 min:</b> Which one of Terry’s three tips would improve your school life most?</p>
+  <p><b>Discuss — 2 min:</b> Compare your choice with a partner and give one reason.</p>
+  <p><b>Write:</b> “This week I will ______ because ______.”</p>
+  <p><b>Share:</b> One practical commitment with the class.</p>
+  <button class="btn" id="backFromCharter">← Back to Activities</button>
+</div></div></section>
+
+<div class="modal" id="modal"><button class="close">Close ✕</button><img alt="Maximized textbook page"></div>
+
+<div class="plan" id="plan">
+ <div class="planbar"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn" id="closePlan">Close ✕</button></div>
+
+ <section class="schoolpage exactschool">
+  <div class="schoolhead"><h2>Lesson Plan</h2><div>Academic Year 2026–2027</div></div>
+  <div class="liveLink"><b>Open Interactive Lesson:</b> <a id="liveLessonLink" href="#" target="_blank"></a></div>
+
+  <table class="schoolTop">
+    <tr>
+      <th>Date</th><td><span id="planDate"></span></td>
+      <th>Subject</th><td>English</td>
+      <th>Teacher(s)</th><td>Ms. Saidah Khwar</td>
+      <th>Lesson # / Title</th><td>Chapter 1 – Listening 2: Did You Say That?</td>
+    </tr>
+    <tr>
+      <td colspan="4">
+        <ul class="planbullets">
+          <li>Use vocabulary related to time management and independence.</li>
+          <li>Identify main ideas and specific details in a listening text.</li>
+          <li>Evaluate study habits and time-management choices.</li>
+        </ul>
+      </td>
+      <th colspan="2">Key Learning Objective(s)</th>
+      <td>Listening for Main Ideas and Specific Information</td>
+      <th>Lesson Topic</th>
+    </tr>
+    <tr>
+      <td colspan="7">
+        <ul class="planbullets">
+          <li>Which is more important for becoming an independent learner: creating a good schedule or learning to say “no”?</li>
+          <li>How can one of Terry Sargent’s tips help a Grade 10 student now?</li>
+        </ul>
+      </td>
+      <th>H.O.T. Question(s)</th>
+    </tr>
+    <tr>
+      <td colspan="7">deadline, cross it off, schedule, on my own, tip, tutor, manage, calendar, daily planner, to-do list</td>
+      <th>Keywords / New Vocabulary</th>
+    </tr>
+    <tr><th colspan="8" class="sectionbar">Lesson's Procedures</th></tr>
+    <tr>
+      <td colspan="7">
+        <ul class="planbullets successbullets">
+          <li>✅ I can use the target vocabulary correctly in context.</li>
+          <li>✅ I can identify the speaker, purpose, and three main tips.</li>
+          <li>✅ I can record at least one accurate supporting detail for each tip.</li>
+          <li>✅ I can evaluate a study habit and explain why it is helpful or unhelpful.</li>
+        </ul>
+      </td>
+      <th>Success Criteria</th>
+    </tr>
+  </table>
+
+  <table class="schoolProcedure">
+    <tr>
+      <td class="timingCell"><b>5 mins</b></td>
+      <td colspan="3">
+        <b>Starter (5 min): Page 9 – Activity 1</b><br>
+        Display the four textbook images. Students work in groups to brainstorm words and phrases connected to being away from home, making decisions, remembering deadlines, managing time, campus life versus home life, and the consequences of choices. Each group shares one advantage, one challenge, and one consequence of independent living.
+      </td>
+      <th colspan="2">Warm up / Starter</th>
+    </tr>
+
+    <tr>
+      <th>Timing</th>
+      <th>Main Activities linked to LO / AFL Strategy</th>
+      <th colspan="2">Differentiation</th>
+      <th colspan="2">E-Implementation Tool</th>
+    </tr>
+
+    <tr>
+      <td rowspan="3" class="timingCell"><b>33 mins</b></td>
+      <td rowspan="3">
+        <b>Main Activity 1 (7 min) – Page 9, Activity 2: Vocabulary & Audio</b><br>
+        Teacher introduces <i>deadline, cross it off, schedule, on my own, tip, tutor, manage</i>. Play Audio 1 once for listening only, then replay and pause after each item for repetition. Students match words to meanings, answer seven quick-check questions, and create two short examples with a partner. Answers are revealed one at a time.<br><br>
+
+        <b>Main Activity 2 (8 min) – Page 10, Activity 3: Fill in the Gaps</b><br>
+        Students read the seven definitions, then complete sentences A–G independently using context clues. They compare answers with a partner before checking. Teacher uses the single sequential answer-reveal control and asks students to explain the clue that helped them choose selected words. Expected answers: A manage; B schedule; C on my own; D deadline; E tip; F tutor; G cross it off.<br><br>
+
+        <b>Main Activity 3 (18 min) – Page 11, Activity 4: Listening for Main Ideas & Specific Information</b><br>
+        <b>First listening:</b> Students close the book and listen to Audio 2 for gist. They identify Terry Sargent, the purpose of the workshop, and the three main tips: use a calendar/daily planner; make a daily to-do list; learn to say no.<br>
+        <b>Second listening:</b> Students listen again and add details. Tip 1: write classes, social plans, exercise/sports, appointments, deadlines and meetings; set phone reminders. Tip 2: start with important tasks, keep goals reasonable, cross off finished items, and begin the next day's list. Tip 3: say no to distractions when necessary so you can follow your plan.<br>
+        <b>Comprehension:</b> Students answer additional questions about why college time management is different, what belongs in a planner, how reminders help, and why saying no matters. Answers reveal sequentially.<br>
+        <b>Deep Thinking:</b> Students choose the tip most useful for Grade 10 and support their answer with one detail from the listening and one realistic action they can start this week.<br><br>
+
+        <b>Teacher Role:</b> Model, play/replay audio, question, scaffold note-taking, reveal answers, and provide feedback.<br>
+        <b>Student Role:</b> Listen actively, repeat vocabulary, complete tasks, take notes, compare with peers, justify answers, and reflect on personal time management.<br>
+        <b>AFL:</b> Cold calling, quick checks, peer checking, listening notes, sequential answer reveal, verbal justification.
+      </td>
+      <td colspan="2"><b>High:</b> Compare two of Terry’s tips, justify which is more effective, and create a realistic personal time-management action plan.</td>
+      <td class="levelCell">H</td>
+      <td rowspan="3">
+        Interactive lesson webpage<br>
+        Embedded Audio 1 & Audio 2<br>
+        Sequential answer reveal<br>
+        Full-screen textbook images<br>
+        Timer<br>
+        Deep Thinking Challenge
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Medium:</b> Identify all three tips and at least one accurate supporting detail for each, then explain one tip in their own words.</td>
+      <td class="levelCell">M</td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Low:</b> Use the vocabulary bank, textbook images, replay support, sentence stems, and partner support to identify the key vocabulary and three main tips.</td>
+      <td class="levelCell">L</td>
+    </tr>
+
+    <tr>
+      <th>Timing</th>
+      <th>Plenary</th>
+      <td colspan="4">
+        <b>Exit Ticket (7 min) – Page 11, Activity 5: Good Advice?</b><br>
+        Groups evaluate five study habits: using a to-do list, making time for friends, setting deadline reminders, studying all night, and taking a refreshing break. For each habit, students choose <b>Good Advice</b> or <b>Not Good Advice</b> and justify at least one choice. Finish with the transfer question: when is changing your schedule for a new opportunity responsible, and when does it become a distraction?
+      </td>
+    </tr>
+
+    <tr>
+      <td class="timingCell"><b>7 mins</b></td>
+      <th>Plenary</th>
+      <td colspan="4">Interactive group challenge with immediate feedback and whole-class justification.</td>
+    </tr>
+
+    <tr>
+      <th colspan="2">Learning Skills (please highlight)</th>
+      <td colspan="4">Independent Learners · Critical Thinking · Self-Learning · Clear Communication · Positive Interactions · Collaboration · Real World Connections</td>
+    </tr>
+
+    <tr>
+      <th colspan="2">Cross Curricular (Links with other subjects)</th>
+      <td colspan="4">Personal Development / Study Skills – organization, planning, prioritization, wellbeing, and responsible decision-making.</td>
+    </tr>
+
+    <tr>
+      <th colspan="2">UAE Culture and Heritage (UAE Vision 2031)</th>
+      <td colspan="4">Develop responsible, independent learners who manage their time effectively, make thoughtful choices, and take ownership of lifelong learning and future study.</td>
+    </tr>
+  </table>
+ </section>
+</div>
+
+<script>
+const DATA = [
+{title:"Starter · Picture Clues",page:"Page 12 · Activity 1",mode:"PAIR → CLASS",mins:7,keys:"clue · sensory · associate · place · activity · feeling",obj:"Use visual and sensory context clues to make associations and predictions.",inst:"Look at the four images. Identify a possible place or activity and name the clue that helped you decide.",steps:["Study all four pictures silently.","Choose a place/activity for each image.","Name a clue: sound, smell, light, image, object, or feeling.","Compare one answer with a partner and share your strongest clue."],media:"starter-page12.png",qs:[["Picture 1: What place is shown, and what clues might you associate with it?","A lecture hall/classroom. Possible clues: rows of seats, quiet voices, a lecturer, bright lights, note-taking."],["Picture 2: What activity is shown?","Reading or studying outdoors. Possible clues: book, grass, quiet, fresh air, calm feeling."],["Picture 3: What activity is shown?","Online shopping. Clues include the laptop screen, shopping interface, devices, and items on the desk."],["Picture 4: What activity is shown?","Running or working out. Clues include sports clothes, movement, an outdoor path, and physical effort."]],deep:"Why can a picture sometimes communicate an idea faster than a sentence? Give one example from the starter."},
+{title:"Main 1 · Listening for Specific Information",page:"Page 12 · Activity 2",mode:"INDIVIDUAL → PAIR",mins:18,keys:"specific information · context · work out · infer · stress · intonation",obj:"Listen for specific information and use context clues to infer meaning.",inst:"Read the five questions first. Listen once for the situation, then listen again for details. Compare your answers and explain the clue that helped you.",steps:["Preview the five textbook questions.","Listen once for gist: Who? Where? What are they discussing?","Listen again and record specific details.","Compare answers with a partner and identify the context clue used."],media:"main1-page12.png",audio:"audio1.mp3",qs:[["1. Where are the students?","Listen for place clues in the conversation and identify the university setting."],["2. What do they buy online?","Listen for the item(s) the students mention buying online."],["3. What is the meaning of “work out”?","Use the surrounding words and situation to decide what “work out” means in this conversation."],["4. What can you guess from this conversation?","Make an inference and support it with a word, situation, stress, or intonation clue."],["5. What do you think about the student who can’t get much sleep?","Give an evidence-based opinion using details from the conversation."]],deep:"Which is more useful when a word is unfamiliar: the words around it, the speaker’s tone, or the situation? Defend your choice with an example from the listening."},
+{title:"Main 2 · Communication Through Body Language",page:"Page 13 · Activity 4",mode:"GROUP WORK",mins:13,keys:"gesture · body language · annoyed · disappointed · unhappy · confused · surprised · call me · happy",obj:"Interpret common gestures and explain how body language conveys meaning.",inst:"Study each numbered gesture. Match it with one clue word or phrase, then explain the visual evidence that supports your answer.",steps:["Study the seven gestures.","Match each gesture to the clue bank.","Explain what you noticed in the face, hands, or posture.","Reveal answers one at a time and discuss alternative meanings."],media:"main2-page13.png",qs:[["Gesture 1","confused"],["Gesture 2","annoyed"],["Gesture 3","call me"],["Gesture 4","unhappy"],["Gesture 5","happy"],["Gesture 6","disappointed"],["Gesture 7","surprised"]],deep:"Can the same gesture mean different things in different cultures or situations? What should a careful communicator do before deciding what it means?"},
+{title:"Exit Ticket · Context Clue Picture Challenge",page:"Wrap-up",mode:"GROUP CHALLENGE",mins:7,keys:"picture clue · word clue · symbol · expression · situation · infer",obj:"Use pictures, symbols, words, and situations to infer a message.",inst:"Look at each mini-scene. Choose the meaning that best matches the clues. Be ready to name the clue that proves your answer.",steps:["Study the picture clue.","Choose the best meaning.","Check the feedback.","For the final challenge, name the type of clue you used."],pictureGame:true,scenes:[["🌧️☂️","A person holds an umbrella under dark clouds.","It is raining.","It is very hot.","The umbrella + rain clouds convey rainy weather."],["🤫🔇","A finger is held to the lips beside a mute symbol.","Please be quiet.","Please call me.","The gesture and mute symbol convey silence."],["😮🎁","A person opens a gift with wide eyes.","The person is surprised.","The person is bored.","Wide eyes + unexpected gift convey surprise."],["🏃‍♀️💨⏰","A runner moves quickly while looking at a clock.","The person may be late or in a hurry.","The person is relaxing.","Fast movement + clock convey urgency."]],finalQ:"Complete: “I understood the message because the ______ clue showed me ______.”"}
+];
+
+let current=-1, timers=[];
+const actWrap=document.getElementById('activities');
+
+function renderActivities(){
+ actWrap.innerHTML=DATA.map((a,i)=>{
+   const media = `<div class="mediaframe"><img src="${a.media}" alt="Textbook reference for ${a.title}"><div class="mediaActions"><button class="btn" data-max="${i}">Maximize</button></div></div>` +
+     (a.media2?`<div class="mediaframe"><img src="${a.media2}" alt="Second textbook reference"><div class="mediaActions"><button class="btn" data-max2="${i}">Maximize</button></div></div>`:"");
+   const audio = a.audio?`<div class="audio"><b>${i===1?"Vocabulary Track":"Listening Track"}</b><audio controls preload="metadata" src="${a.audio}"></audio></div>`:"";
+   const qs = a.qs?`<div class="revealbar"><button class="btn primary reveal" data-i="${i}">Reveal Next Answer</button><span class="count" id="count${i}">0 / ${a.qs.length} revealed</span></div>`+
+     a.qs.map((q,j)=>`<div class="q"><b>${j+1}.</b> ${q[0]}<div class="ans" id="ans-${i}-${j}">${q[1]}</div></div>`).join(""):"";
+   const deep = a.deep?`<div class="deep"><button class="btn" data-deep="${i}">Deep Thinking Challenge</button><div class="deepbody" id="deep${i}">${a.deep}</div></div>`:"";
+   const transcript = a.transcript?`<button class="btn" data-trans="${i}" style="margin-top:10px">Reveal Transcript</button><div class="transcript" id="trans${i}">${a.transcript}</div>`:"";
+   const game = a.game?`<div class="game" id="game${i}">${a.habits.map((h,j)=>`<div class="habit"><span><b>${j+1}.</b> ${h[0]}</span><span class="choice"><button class="btn" data-game="${i},${j},1">Good Advice</button><button class="btn" data-game="${i},${j},0">Not Good</button></span><div class="feedback" id="fb-${i}-${j}"></div></div>`).join("")}<div class="q"><b>Final transfer:</b> ${a.finalQ}</div><button class="btn coral" data-restart="${i}">Restart Game</button></div>`:"";\n   const pictureGame = a.pictureGame?`<div class="game picturegame" id="pgame${i}">${a.scenes.map((s,j)=>`<div class="habit pict"><span class="sceneEmoji">${s[0]}</span><span><b>${j+1}.</b> ${s[1]}</span><span class="choice"><button class="btn" data-pgame="${i},${j},0">${s[2]}</button><button class="btn" data-pgame="${i},${j},1">${s[3]}</button></span><div class="feedback" id="pfb-${i}-${j}"></div></div>`).join("")}<div class="q"><b>Final transfer:</b> ${a.finalQ}</div><button class="btn coral" data-prestart="${i}">Restart Challenge</button></div>`:"";
+   return `<section class="activity" id="a${i}"><div class="activitybar"><button class="btn" data-home>← Activities</button><div class="grow"><h2>${a.title}</h2><div class="tags">${a.mode} · ${a.page}</div></div><div class="timer" data-min="${a.mins}"><span class="time">${String(a.mins).padStart(2,'0')}:00</span><button class="btn tstart">Start</button><button class="btn tpause">Pause</button><button class="btn treset">Reset</button></div></div>
+   <div class="main"><div class="canvas">${media}${audio}<div class="content">${pictureGame||game||qs}${deep}${transcript}</div></div>
+   <aside class="task"><div class="guide"><div class="keywords">◆ KEY WORDS · ${a.keys}</div><div class="objective"><b>◎ OBJECTIVE</b>${a.obj}</div><div class="instruction"><div class="bookRef">📖 ${a.page}</div>${a.inst}</div></div>${a.steps.map((s,k)=>`<div class="step"><span class="num">${k+1}</span><span>${s}</span></div>`).join("")}</aside></div></section>`;
+ }).join("");
+}
+renderActivities();
+
+function show(i){
+ current=i; document.getElementById('dash').style.display='none'; document.getElementById('charter').classList.remove('show');
+ document.querySelectorAll('.activity').forEach((e,k)=>e.classList.toggle('open',k===i));
+ window.scrollTo(0,0); updateNav();
+}
+function home(){
+ current=-1; document.getElementById('dash').style.display='block'; document.getElementById('charter').classList.remove('show');
+ document.querySelectorAll('.activity').forEach(e=>e.classList.remove('open')); updateNav(); window.scrollTo(0,0);
+}
+function updateNav(){document.getElementById('prev').disabled=current<=0;document.getElementById('next').disabled=current<0;document.getElementById('next').textContent=current===DATA.length-1?'Charter →':'Next →';}
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.open)));
+document.querySelectorAll('[data-home]').forEach(b=>b.addEventListener('click',home)); document.getElementById('home').onclick=home;
+document.getElementById('prev').onclick=()=>{if(current>0)show(current-1)};
+document.getElementById('next').onclick=()=>{if(current<0)return;if(current<DATA.length-1)show(current+1);else{document.querySelectorAll('.activity').forEach(e=>e.classList.remove('open'));document.getElementById('charter').classList.add('show');window.scrollTo(0,0)}};
+document.getElementById('backFromCharter').onclick=home;
+
+document.querySelectorAll('.reveal').forEach(btn=>btn.addEventListener('click',()=>{
+ const i=+btn.dataset.i,a=DATA[i],shown=[...document.querySelectorAll(`[id^="ans-${i}-"]`)].filter(x=>x.classList.contains('show')).length;
+ if(shown>=a.qs.length){document.querySelectorAll(`[id^="ans-${i}-"]`).forEach(x=>x.classList.remove('show'));btn.textContent='Reveal Next Answer';document.getElementById('count'+i).textContent=`0 / ${a.qs.length} revealed`;return}
+ document.getElementById(`ans-${i}-${shown}`).classList.add('show');let n=shown+1;document.getElementById('count'+i).textContent=`${n} / ${a.qs.length} revealed`;if(n===a.qs.length)btn.textContent='Hide All Answers';
+}));
+document.querySelectorAll('[data-deep]').forEach(b=>b.onclick=()=>document.getElementById('deep'+b.dataset.deep).classList.toggle('show'));
+document.querySelectorAll('[data-trans]').forEach(b=>b.onclick=()=>{let x=document.getElementById('trans'+b.dataset.trans);x.classList.toggle('show');b.textContent=x.classList.contains('show')?'Hide Transcript':'Reveal Transcript';});
+
+document.querySelectorAll('[data-pgame]').forEach(b=>b.onclick=()=>{const [i,j,choice]=b.dataset.pgame.split(',').map(Number),s=DATA[i].scenes[j],fb=document.getElementById(`pfb-${i}-${j}`);const correct=choice===0;fb.textContent=(correct?"✓ Correct — ":"Try again — ")+s[4];fb.className="feedback show "+(correct?"ok":"bad");});
+document.querySelectorAll('[data-prestart]').forEach(b=>b.onclick=()=>{const i=+b.dataset.prestart;document.querySelectorAll(`[id^="pfb-${i}-"]`).forEach(x=>{x.textContent="";x.className="feedback"});});
+document.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>{
+ let [i,j,v]=b.dataset.game.split(',').map(Number),h=DATA[i].habits[j],fb=document.getElementById(`fb-${i}-${j}`);
+ let ok=(!!v)===h[1];fb.textContent=(ok?'✓ ':'Try again · ')+(ok?h[2]:'Think about whether this habit supports planning, wellbeing and responsibility.');
+});
+document.querySelectorAll('[data-restart]').forEach(b=>b.onclick=()=>document.querySelectorAll(`#game${b.dataset.restart} .feedback`).forEach(x=>x.textContent=''));
+
+document.querySelectorAll('[data-max],[data-max2]').forEach(b=>b.onclick=()=>{
+ let i=+(b.dataset.max??b.dataset.max2),src=b.hasAttribute('data-max2')?DATA[i].media2:DATA[i].media,m=document.getElementById('modal');m.querySelector('img').src=src;m.classList.add('open');
+});
+document.querySelector('#modal .close').onclick=()=>document.getElementById('modal').classList.remove('open');
+
+document.querySelectorAll('.timer').forEach((box,idx)=>{
+ let left=+box.dataset.min*60, id=null, out=box.querySelector('.time');
+ const draw=()=>out.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+ box.querySelector('.tstart').onclick=()=>{if(id)return;id=setInterval(()=>{if(left>0){left--;draw()}else{clearInterval(id);id=null}},1000)};
+ box.querySelector('.tpause').onclick=()=>{clearInterval(id);id=null};
+ box.querySelector('.treset').onclick=()=>{clearInterval(id);id=null;left=+box.dataset.min*60;draw()};
+});
+
+document.getElementById('fullBtn').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
+document.addEventListener('fullscreenchange',()=>document.getElementById('fullBtn').style.display=document.fullscreenElement?'none':'inline-block');
+
+const uaDate=new Intl.DateTimeFormat('en-AE',{timeZone:'Asia/Dubai',weekday:'long',year:'numeric',month:'long',day:'numeric'}).format(new Date());
+document.getElementById('date').textContent=uaDate;document.getElementById('planDate').textContent=uaDate;
+document.getElementById('planBtn').onclick=()=>document.getElementById('plan').classList.add('open');document.getElementById('closePlan').onclick=()=>document.getElementById('plan').classList.remove('open');
+const publishedLessonUrl='https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Term-1/Grade-10/Did-You-Say-That-Listening-3/';
+let live=publishedLessonUrl;
+document.getElementById('liveLessonLink').href=live;
+document.getElementById('liveLessonLink').textContent=live;
+updateNav();
+</script>
+</body></html>
