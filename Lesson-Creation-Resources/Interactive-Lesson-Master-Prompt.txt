@@ -130,6 +130,8 @@ LISTENING LESSONS
 8. Double-check names, places, numbers, negatives, reduced forms and multi-word blanks before publishing.
 9. Every activity picture must include a teacher-only “Add answer text” tool. It must let the teacher place multiple editable text boxes over the image, type or correct answers, drag and resize boxes, change their background color and delete them.
 10. Save picture annotations in browser storage so they remain after refresh on the same browser/device. Hide edit handles—not the written answers—when Hide Setup is selected.
+11. When a teacher uploads an audio track, ChatGPT—not the teacher—must listen to/transcribe the COMPLETE recording internally, use it to create the activity and verify every answer against the exact exercise wording.
+12. Audio transcription and verification are internal quality-control steps. Never ask the teacher to prepare a transcript or answer key when the uploaded recording provides the information.
 
 EXIT TICKET
 1. Make it a real interactive classroom game, not only plain written questions.
@@ -156,7 +158,7 @@ LIVE BILINGUAL SCHOOL LESSON PLAN
 8. Describe every Main Activity in enough detail for another teacher to deliver it. Include the page/activity number, learning purpose, teacher actions, student actions, grouping, resources or audio track, AFL/check for understanding, relevant scaffolding and exact timing.
 9. Keep those descriptions concise enough for the approved two-page plan, but do not reduce them to one-line summaries.
 
-FUTURE-USE / TEAM CREATOR RULE
+FUTURE-USE / DIRECT CHAT WORKFLOW
 1. Treat the FINAL approved Grade 9 Success in College lesson as the primary reusable working reference and template.
 2. Future lessons should copy/adapt this architecture rather than rebuilding a simplified page from scratch.
 3. A teacher should normally only need to upload textbook/activity pictures, audio if needed, grade, lesson title/skill, pages, timing and special instructions.
@@ -166,6 +168,8 @@ FUTURE-USE / TEAM CREATOR RULE
 7. Preserve the final thin soft right sidebar and exact Page · Activity badge in Instructions for every future lesson.
 8. Do not require teachers to understand or edit HTML.
 9. Preserve the teacher picture-annotation tool in every future lesson template.
+10. Do not require or direct teachers to use a separate Lesson Creator page.
+11. The approved teacher workflow is: teacher says “Create my interactive lesson using our approved department format” → provides lesson details, pictures and audio → ChatGPT creates the lesson and internally transcribes/verifies the audio → teacher says “Publish” → ChatGPT publishes and returns the working link.
 
 GITHUB ORGANIZATION
 When GitHub publishing is requested and authorized, use:
