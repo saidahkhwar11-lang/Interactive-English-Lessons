@@ -15,7 +15,7 @@
 .nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nav button{border:0;border-radius:999px;padding:9px 15px;background:#fff;color:#164b60;font-weight:800;cursor:pointer}.nav button.active{background:var(--gold)}
 .wrap{max-width:1260px;margin:auto;padding:24px 20px 50px}
 .sectionhead{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:28px 0 12px}.sectionhead h2{margin:0}.sectionhead p{margin:4px 0 0;color:var(--muted);font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 7px 24px #17324a0b}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.systemgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.duogrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.systemgrid .card,.duogrid .card{padding:14px 16px}.systemgrid .card h3,.duogrid .card h3{font-size:18px;margin-bottom:4px}.systemgrid .card p,.duogrid .card p{margin:5px 0 7px;font-size:13px;line-height:1.35}.systemgrid .actions,.duogrid .actions{margin-top:7px}.systemgrid .btn,.duogrid .btn{padding:8px 11px;font-size:13px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 7px 24px #17324a0b}
 .card h3{margin:0 0 7px}.card p{color:var(--muted);font-size:14px;line-height:1.45}.wide{grid-column:1/-1}
 .btn{border:0;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;background:#eaf1f5;color:#21475d;text-decoration:none;display:inline-block}.btn.primary{background:var(--teal);color:#fff}.btn.gold{background:var(--gold);color:#263946}.btn.danger{background:#fae5e5;color:#8c3131}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -28,10 +28,10 @@
 .sharegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sharecard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.sharecard h3{margin:8px 0}.ico{font-size:24px}
 .modal{position:fixed;inset:0;background:#0e24358c;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.box{width:min(620px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:20px}
 label{display:block;font-size:13px;font-weight:800;margin:10px 0 5px} input,textarea,select{width:100%;padding:10px;border:1px solid #cfdce4;border-radius:10px;font:inherit} textarea{min-height:90px}
-.list{display:grid;gap:8px;margin-top:10px}.item{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fbfdfe}.item b{display:block}
+.list{display:grid;gap:6px;margin-top:8px}.duogrid .list .item{padding:8px}.item{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fbfdfe}.item b{display:block}
 .notice{background:#fff8dc;border:1px solid #ecd78b;border-radius:14px;padding:12px;margin-top:12px;font-size:13px}
 .hidden{display:none}
-@media(max-width:900px){.grid,.sharegrid{grid-template-columns:1fr 1fr}.subgrid,.teacher-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.grid,.sharegrid,.subgrid,.teacher-grid{grid-template-columns:1fr}.calendar{grid-template-columns:repeat(7,minmax(70px,1fr));overflow:auto}}
+@media(max-width:900px){.grid,.sharegrid{grid-template-columns:1fr 1fr}.systemgrid{grid-template-columns:1fr 1fr}.duogrid{grid-template-columns:1fr 1fr}.subgrid,.teacher-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.grid,.sharegrid,.systemgrid,.duogrid,.subgrid,.teacher-grid{grid-template-columns:1fr}.calendar{grid-template-columns:repeat(7,minmax(70px,1fr));overflow:auto}}
 </style>
 </head>
 <body>
@@ -50,20 +50,24 @@ label{display:block;font-size:13px;font-weight:800;margin:10px 0 5px} input,text
 <main class="wrap">
 <div class="sectionhead"><div><h2>Section 1 · SLT & Department Management</h2><p>Core department systems, planning and follow-up.</p></div><b id="termLabel">Term 1</b></div>
 <section class="grid">
-<article class="card"><h3>📊 Department Assessment Tracker</h3><p>Choose the correct tracker portal.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/admin/">Admin Tracker</a><a class="btn gold" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/teacher/">Teacher Tracker</a></div></article>
+<div class="systemgrid wide">
+<article class="card"><h3>📊 Department Assessment Tracker</h3><p>Open the admin or teacher tracker.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/admin/">Admin Tracker</a><a class="btn gold" target="_blank" href="https://saidahkhwar11-lang.github.io/assessment-follow-up/teacher/">Teacher Tracker</a></div></article>
 
-<article class="card"><h3>🧪 Diagnostic Test Platform</h3><p>Open the English Diagnostic Test platform for student diagnostic testing and results.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/alreyada-diagnostic-2026/">Open Diagnostic Test</a></div></article>
+<article class="card"><h3>🧪 Diagnostic Test Platform</h3><p>Student diagnostic testing and results.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/alreyada-diagnostic-2026/">Open Diagnostic Test</a></div></article>
 
-<article class="card wide"><h3>📝 English Exam Platform</h3><p>Open the English Exam Platform for department assessments and student exams.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/english-exam-platform/">Open English Exam Platform</a></div></article>
+<article class="card"><h3>📝 English Exam Platform</h3><p>Department assessments and student exams.</p><div class="actions"><a class="btn primary" target="_blank" href="https://saidahkhwar11-lang.github.io/english-exam-platform/">Open Exam Platform</a></div></article>
+</div>
 
-<article class="card"><h3>📝 Meeting Minutes</h3><p>Record SLT and English Department meetings, actions, responsibilities and follow-up notes.</p><div class="actions"><button class="btn primary" onclick="openMeeting()">Add Meeting Minutes</button></div><div class="list" id="meetingList"></div></article>
+<div class="duogrid wide">
+<article class="card"><h3>📝 Meeting Minutes</h3><p>Save department meeting minutes and follow-up notes.</p><div class="actions"><button class="btn primary" onclick="openMeeting()">Add Meeting Minutes</button></div><div class="list" id="meetingList"></div></article>
 
-<article class="card"><h3>📅 Department Calendar</h3><p>Keep the calendar hidden until needed. Teachers can add events with the event name, grades/classes and main goal.</p>
+<article class="card"><h3>📅 Department Calendar</h3><p>Open when needed to add department events and goals.</p>
 <div class="actions"><button class="btn primary" onclick="toggleCalendar()" id="calendarToggle">Open Department Calendar</button></div>
 <div id="calendarPanel" class="hidden" style="margin-top:12px">
 <div class="actions"><button class="btn primary" onclick="openEvent()">+ Add Event</button><button class="btn" onclick="changeMonth(-1)">Previous Month</button><button class="btn" onclick="changeMonth(1)">Next Month</button><b id="monthTitle" style="align-self:center;margin-left:6px"></b></div>
 <div class="calendar" id="calendar"></div>
 </div></article>
+</div>
 
 <article class="card wide"><h3>📚 Lesson Plans · Weekly Compliance</h3>
 <p>Each teacher has a folder. Weekly target = <b>4 uploaded lesson plans</b>. Teachers reaching 4/4 automatically earn a certificate and appear in the Star Teachers bar.</p>
