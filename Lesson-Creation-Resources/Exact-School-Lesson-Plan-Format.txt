@@ -1,0 +1,66 @@
+FINAL APPROVED SCHOOL LESSON PLAN FORMAT — ENGLISH ONLY
+
+Use the uploaded school example “Lesson Plan EOT Revision- Tuesday11th” as the controlling visual/structural reference for all future Live Lesson Plans.
+
+IMPORTANT
+- English only unless the user explicitly asks for Arabic or bilingual.
+- Preserve the exact school-table structure rather than inventing a new lesson-plan layout.
+- Keep the Live Lesson Plan inside the interactive webpage.
+- Include Print / Save PDF and the clickable Open Interactive Lesson link.
+- Main activities must be detailed enough for another teacher to deliver the lesson directly.
+
+TOP INFORMATION TABLE — FOLLOW THIS ORDER/STRUCTURE
+Row 1: Date | Subject | Teacher(s) | Lesson # / Title
+Row 2: Key Learning Objective(s) content | Key Learning Objective(s) label | Lesson Topic content | Lesson Topic label
+Row 3: H.O.T. Question(s) content | H.O.T. Question(s) label
+Row 4: Keywords / New Vocabulary content | Keywords / New Vocabulary label
+Row 5: Full-width “Lesson's Procedures” heading
+Row 6: Success Criteria content | Success Criteria label
+
+PROCEDURES TABLE — FOLLOW THIS SCHOOL STRUCTURE
+1. Warm up / Starter row with timing.
+2. Header row containing:
+   - Timing
+   - Main Activities linked to LO / AFL Strategy
+   - Differentiation
+   - E-Implementation Tool
+3. Main Activities area with one shared Timing column and detailed Main Activities content.
+4. Differentiation shown as three separate levels:
+   - High — H
+   - Medium — M
+   - Low — L
+5. E-Implementation Tool shown in its own column.
+6. Plenary row with timing and detailed Exit Ticket / closing activity.
+7. Learning Skills row.
+8. Cross Curricular row.
+9. UAE Culture and Heritage / UAE Vision 2031 row.
+
+MAIN ACTIVITIES DETAIL RULE
+For every Main Activity, include:
+- exact activity name
+- page and activity number
+- exact timing
+- learning purpose
+- what the teacher does
+- what students do
+- grouping (individual / pair / group)
+- textbook or audio resource used
+- sequence of listening/reading/task stages where relevant
+- answer-check method / AFL
+- scaffolding or support where relevant
+- important expected answers/details when useful for delivery
+
+Do not reduce Main Activities to one-line summaries.
+
+MAIN DASHBOARD FORMAT
+Objectives, Success Criteria and Key Words should be visually organized and easy to scan from the classroom board.
+Default to short bullet points rather than long paragraph text.
+- Objectives: 3–4 short action-based bullets.
+- Success Criteria: 3–4 short “I can…” bullets.
+- Key Words: compact bullet list or two-column bullet list when space allows.
+Keep the cards compact and balanced.
+
+REFERENCE CONTENT FROM THE APPROVED EXAMPLE
+The school template includes these sections and labels: Date, Subject, Teacher(s), Lesson #/Title, Key Learning Objective(s), Lesson Topic, H.O.T. Question(s), Keywords/New Vocabulary, Lesson's Procedures, Success Criteria, Warm up/Starter, Timing, Main Activities linked to LO, AFL Strategy, Differentiation, E-Implementation Tool, Plenary, Learning Skills, Cross Curricular (Links with other subjects), and UAE Culture and Heritage (UAE Vision 2031).
+
+This file is the permanent controlling reference for lesson-plan FORMAT. Lesson content must still adapt to each new lesson.
