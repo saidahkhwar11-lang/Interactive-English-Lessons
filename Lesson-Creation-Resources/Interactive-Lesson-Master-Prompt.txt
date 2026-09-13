@@ -1,17 +1,18 @@
-Create a NEW interactive classroom lesson webpage using the FINAL APPROVED Grade 9 “Success in College” lesson as the PRIMARY and controlling reference for layout, architecture, behavior and lesson-plan presentation.
+Create a NEW interactive classroom lesson webpage using the FINAL APPROVED Grade 9 “Success in College” lesson as the PRIMARY and controlling reference for layout, architecture and classroom behavior, together with the FINAL APPROVED English-only school lesson-plan format established from Ms. Saidah Khwar’s school template.
 
-If any older lesson, older prompt, or previous experimental behavior conflicts with the current approved Success in College lesson, FOLLOW THE CURRENT SUCCESS IN COLLEGE FORMAT.
+If any older lesson, older prompt, or previous experimental behavior conflicts with the current approved Success in College lesson or the current approved English school lesson-plan format, FOLLOW THE CURRENT APPROVED FORMAT.
 
 IMPORTANT ORGANIZATION RULES
 1. Every new lesson must have its own unique folder, webpage and published link.
 2. Never overwrite, rename, replace or delete an existing lesson unless the user explicitly asks to update that exact lesson.
 3. Keep lessons organized by Term → Grade → Lesson Title.
 4. Reuse the complete working lesson architecture, not a simplified summary page.
-5. The approved Success in College lesson is the GOLD-STANDARD template for future lessons.
+5. The approved Success in College lesson is the GOLD-STANDARD classroom template for future lessons.
+6. The final English school lesson-plan format is the controlling reference for all future Live Lesson Plans.
 
 FINAL APPROVED STABLE WRAPPER ARCHITECTURE
-1. The lesson wrapper uses an iframe loading lesson-core.html.
-2. The wrapper loads ONLY these approved enhancement scripts into the lesson core:
+1. The lesson wrapper uses an iframe loading lesson-core.html when using the approved modular architecture.
+2. The wrapper loads ONLY these approved enhancement scripts into the lesson core when those modules are used:
    - assets/media-persistence.js
    - assets/activity-layout.js
    - assets/lesson-plan-link.js
@@ -19,7 +20,7 @@ FINAL APPROVED STABLE WRAPPER ARCHITECTURE
 4. Do NOT add experimental image-hide/show scripts, picture toggles, hidden-media buttons, or similar behavior.
 5. Preserve the stable modular approach: lesson-core.html contains the lesson; wrapper enhancements should remain isolated and safe.
 6. Prefer CSS-only/DOM-only wrapper refinements for cosmetic changes when possible. Do not change core lesson behavior unnecessarily.
-7. Never publish a lesson if activity cards, refresh, or Live Lesson Plan stop working.
+7. Never publish a lesson if activity cards, refresh, navigation, audio, or Live Lesson Plan stop working.
 
 PERMANENT CLASSROOM DESIGN
 1. Use the approved book-style lesson header, clean rounded cards and classroom-board typography.
@@ -32,9 +33,13 @@ PERMANENT CLASSROOM DESIGN
 
 MAIN LESSON DASHBOARD
 1. Show Objectives, Success Criteria, Key Vocabulary and Lesson Flow.
-2. Show all activity cards in sequence.
-3. Each card shows title, activity type, short purpose, timing and book-page metadata.
-4. Normal sequence: Starter → optional Main Activities (maximum about 5) → Exit Ticket → Charter Connection Activity.
+2. Present Objectives as short, organized bullet points rather than one long paragraph.
+3. Present Success Criteria as short “I can…” bullet points.
+4. Present Key Vocabulary as a neat bulleted/two-column list when space allows.
+5. Keep dashboard wording concise enough to read clearly on the classroom board.
+6. Show all activity cards in sequence.
+7. Each card shows title, activity type, short purpose, timing and book-page metadata.
+8. Normal sequence: Starter → optional Main Activities (maximum about 5) → Exit Ticket → Charter Connection Activity.
 
 PERMANENT ACTIVITY SCREEN LAYOUT
 Each launched activity uses the FINAL APPROVED Success in College layout.
@@ -128,10 +133,9 @@ LISTENING LESSONS
 6. Listening answers reveal one by one on the main area, preferably through the same sequential reveal pattern.
 7. Never infer answers from the textbook image when audio is available. Transcribe the complete recording first and verify every answer against the exact exercise wording.
 8. Double-check names, places, numbers, negatives, reduced forms and multi-word blanks before publishing.
-9. Every activity picture must include a teacher-only “Add answer text” tool. It must let the teacher place multiple editable text boxes over the image, type or correct answers, drag and resize boxes, change their background color and delete them.
-10. Save picture annotations in browser storage so they remain after refresh on the same browser/device. Hide edit handles—not the written answers—when Hide Setup is selected.
-11. When a teacher uploads an audio track, ChatGPT—not the teacher—must listen to/transcribe the COMPLETE recording internally, use it to create the activity and verify every answer against the exact exercise wording.
-12. Audio transcription and verification are internal quality-control steps. Never ask the teacher to prepare a transcript or answer key when the uploaded recording provides the information.
+9. Every activity picture should preserve the approved teacher annotation/answer-text behavior where that tool exists in the reference architecture.
+10. When a teacher uploads an audio track, ChatGPT—not the teacher—must listen to/transcribe the COMPLETE recording internally, use it to create the activity and verify every answer against the exact exercise wording.
+11. Audio transcription and verification are internal quality-control steps. Never ask the teacher to prepare a transcript or answer key when the uploaded recording provides the information.
 
 EXIT TICKET
 1. Make it a real interactive classroom game, not only plain written questions.
@@ -147,62 +151,103 @@ CHARTER CONNECTION
 4. Make it visually attractive even with no uploaded picture.
 5. Teacher may optionally add/replace a visual using Teacher Media.
 
-LIVE BILINGUAL SCHOOL LESSON PLAN
-1. Use the exact approved two-page bilingual school lesson-plan template from the Success in College lesson.
-2. Never simplify or redesign it unless explicitly requested.
-3. Keep the lesson plan synchronized with the actual activity content, objectives, vocabulary, timing and differentiation.
-4. Include Academic Year 2026–2027, Date, Subject, Teacher, Lesson #/Title, Lesson Topic, Objectives, Success Criteria, HOT Question, Keywords, Starter, Main Activities, Differentiation H/M/L, Teacher Role, Student Role, AFL, Timing, Plenary, Learning Skills, Cross Curricular and UAE Culture/Vision 2031.
-5. ALWAYS include the actual clickable “Open Interactive Lesson” link inside the lesson plan itself.
-6. Include Print / Save PDF.
-7. Preserve the lesson-plan styling already approved in the Success in College lesson.
-8. Describe every Main Activity in enough detail for another teacher to deliver it. Include the page/activity number, learning purpose, teacher actions, student actions, grouping, resources or audio track, AFL/check for understanding, relevant scaffolding and exact timing.
-9. Keep those descriptions concise enough for the approved two-page plan, but do not reduce them to one-line summaries.
+LIVE SCHOOL LESSON PLAN — FINAL APPROVED FORMAT
+1. Use Ms. Saidah Khwar’s exact school lesson-plan structure as the controlling format.
+2. The Live Lesson Plan is ENGLISH ONLY unless the user explicitly requests another language.
+3. The whole plan must render LEFT-TO-RIGHT. Do not use RTL direction for the English plan.
+4. Use the school field order and labels:
+   - Date
+   - Subject
+   - Teacher(s)
+   - Lesson # / Title
+   - Key Learning Objective(s)
+   - Lesson Topic
+   - H.O.T. Question(s)
+   - Keywords / New Vocabulary
+   - Lesson’s Procedures
+   - Success Criteria
+   - Warm up / Starter
+   - Timing
+   - Main Activities linked to LO / AFL Strategy
+   - Differentiation with H / M / L
+   - E-Implementation Tool
+   - Plenary
+   - Learning Skills
+   - Cross Curricular (Links with other subjects)
+   - UAE Culture and Heritage (UAE Vision 2031)
+5. Keep Main Activities detailed enough for another teacher to deliver the lesson. Include page/activity number, learning purpose, teacher actions, student actions, grouping, resources/audio, AFL/check for understanding, scaffolding and exact timing.
+6. The Main Activities column must be the WIDEST section of the procedure table. Do not make it narrow. Use approximately half of the available table width for Main Activities when practical.
+7. Keep Differentiation and E-Implementation Tool narrower than the Main Activities section.
+8. Use soft, professional color coding: pale blue section headers, light backgrounds for timing/tool areas, and subtle H/M/L differentiation colors. Keep it neat and print-friendly.
+9. Include Print / Save PDF.
+10. ALWAYS include the actual clickable “Open Interactive Lesson” link inside the lesson plan.
+11. The clickable lesson link must point to the PUBLISHED GITHUB PAGES URL, never to a local C:\ path, file:// URL, localhost URL, sandbox URL, or temporary ChatGPT file URL.
+12. Do not generate the final Live Lesson Plan link from location.href when the lesson may be opened locally. Instead, set the final published GitHub Pages URL explicitly after the lesson folder/path is known.
+13. If the lesson has not yet been published, compute the intended GitHub Pages URL from the repository organization below and use that as the target publication URL; after publishing, verify that it matches the actual live page.
 
 FUTURE-USE / DIRECT CHAT WORKFLOW
-1. Treat the FINAL approved Grade 9 Success in College lesson as the primary reusable working reference and template.
-2. Future lessons should copy/adapt this architecture rather than rebuilding a simplified page from scratch.
-3. A teacher should normally only need to upload textbook/activity pictures, audio if needed, grade, lesson title/skill, pages, timing and special instructions.
-4. Study all teacher-uploaded materials first and create a NEW lesson using this exact format.
-5. Never edit the approved reference lesson when creating another teacher’s lesson.
-6. Create a separate unique lesson folder/page for every new lesson.
-7. Preserve the final thin soft right sidebar and exact Page · Activity badge in Instructions for every future lesson.
-8. Do not require teachers to understand or edit HTML.
-9. Preserve the teacher picture-annotation tool in every future lesson template.
+1. Treat the FINAL approved Grade 9 Success in College lesson as the primary reusable working reference for classroom behavior and layout.
+2. Treat the FINAL English school lesson-plan format above as the primary reference for Live Lesson Plan presentation.
+3. Future lessons should copy/adapt this architecture rather than rebuilding a simplified page from scratch.
+4. A teacher should normally only need to upload textbook/activity pictures, audio if needed, grade, lesson title/skill, pages, timing and special instructions.
+5. Study all teacher-uploaded materials first and create a NEW lesson using this exact format.
+6. Never edit the approved reference lesson when creating another teacher’s lesson.
+7. Create a separate unique lesson folder/page for every new lesson.
+8. Preserve the final thin soft right sidebar and exact Page · Activity badge in Instructions for every future lesson.
+9. Do not require teachers to understand or edit HTML.
 10. Do not require or direct teachers to use a separate Lesson Creator page.
-11. The approved teacher workflow is: teacher says “Create my interactive lesson using our approved department format” → provides lesson details, pictures and audio → ChatGPT creates the lesson and internally transcribes/verifies the audio → teacher says “Publish” → ChatGPT publishes and returns the working link.
+11. The approved teacher workflow is: teacher says “Create my interactive lesson using our approved department format” → provides lesson details, pictures and audio → ChatGPT creates the lesson and internally transcribes/verifies the audio → lesson is reviewed → when publishing is authorized, ChatGPT publishes and returns the working GitHub Pages link.
 
-GITHUB ORGANIZATION
-When GitHub publishing is requested and authorized, use:
+GITHUB ORGANIZATION — PERMANENT
+Repository:
 saidahkhwar11-lang/Interactive-English-Lessons
 
-Preserve organization by:
-Term → Grade → Unique Lesson Folder
+Every published lesson must be organized as:
+Term-X/Grade-Y/Unique-Lesson-Folder/
 
-Never overwrite an existing lesson unless explicitly instructed to update that exact lesson.
+Examples:
+Term-1/Grade-10/Freshman-Workshop-Youre-On-Your-Own-Listening-2/
+Term-1/Grade-9/Success-in-College-Reading-2-2026/
+
+GitHub Pages base URL:
+https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/
+
+Therefore the published lesson URL must always be:
+https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Term-X/Grade-Y/Unique-Lesson-Folder/
+
+Rules:
+1. Determine the correct Term and Grade from the teacher’s request.
+2. Create a unique lesson folder under that exact Term/Grade path.
+3. Never save a lesson at repository root when the Term/Grade is known.
+4. Never overwrite an existing lesson unless explicitly instructed to update that exact lesson.
+5. The Live Lesson Plan must use the exact GitHub Pages URL for that lesson folder.
+6. Never leave a local C:\, file://, localhost, sandbox, or temporary ChatGPT URL inside a published lesson.
+7. When GitHub publishing is requested and authorized, publish to this repository and return the working GitHub Pages link.
 
 FINAL CHECKS BEFORE PUBLISHING
-1. Confirm the new lesson has its own unique folder/link.
-2. Confirm ONLY the approved stable wrapper enhancement scripts are loaded: media-persistence.js, activity-layout.js, lesson-plan-link.js.
-3. Confirm media-thumbnail.js is NOT loaded.
-4. Confirm no hidden-picture/show-picture behavior exists.
-5. Test activity-card opening, refresh, navigation, timers, fullscreen and Live Lesson Plan.
-6. Test Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete and audio if relevant.
-7. Test sequential one-button answer reveal on the main area.
-8. Confirm every activity works without teacher-added media.
-9. Confirm no broken textbook-image placeholders remain.
-10. Confirm the right panel is thin and contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
-11. Confirm EVERY book-based activity shows its exact Page · Activity/Activities reference inside the Instructions card.
-12. Confirm Deep Thinking works when included.
-13. Confirm Exit Ticket works and restarts.
-14. Confirm Charter activity works.
-15. Confirm the lesson plan matches the lesson and includes the clickable live lesson link.
-16. Do not publish if activity cards, refresh, Teacher Media, or Live Lesson Plan fail.
+1. Confirm the new lesson has its own unique Term/Grade/folder path and GitHub Pages URL.
+2. Confirm the Live Lesson Plan link equals the intended published GitHub Pages URL and contains no local/temporary path.
+3. Confirm ONLY the approved stable enhancement scripts are loaded when using the modular wrapper: media-persistence.js, activity-layout.js, lesson-plan-link.js.
+4. Confirm media-thumbnail.js is NOT loaded.
+5. Confirm no hidden-picture/show-picture behavior exists.
+6. Test activity-card opening, refresh, navigation, timers, fullscreen and Live Lesson Plan.
+7. Test Teacher Media drag/drop/paste/browse, IndexedDB persistence, Replace/Delete and audio if relevant.
+8. Test sequential one-button answer reveal on the main area.
+9. Confirm every activity works without teacher-added media.
+10. Confirm no broken textbook-image placeholders remain.
+11. Confirm the right panel is thin and contains ONLY Key Words, Objective, Student Instructions and Lesson Steps/Agenda.
+12. Confirm EVERY book-based activity shows its exact Page · Activity/Activities reference inside the Instructions card.
+13. Confirm Deep Thinking works when included.
+14. Confirm Exit Ticket works and restarts.
+15. Confirm Charter activity works.
+16. Confirm the lesson plan is English-only, LTR, follows the exact school field order, gives Main Activities the widest column, and includes the clickable GitHub Pages lesson link.
+17. Do not publish if activity cards, refresh, Teacher Media, audio, or Live Lesson Plan fail.
 
 SIMPLE TEACHER EXPERIENCE
 The intended workflow is:
-UPLOAD LESSON MATERIALS → CREATE → REVIEW → PUBLISH.
+UPLOAD LESSON MATERIALS → CREATE → REVIEW → PUBLISH TO THE CORRECT TERM/GRADE FOLDER.
 
 A teacher should be able to say:
 “Create my interactive lesson using our approved department format.”
 
-Then use this Master Prompt and the approved Success in College reference automatically.
+Then use this Master Prompt and the approved references automatically.
