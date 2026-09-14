@@ -5,9 +5,20 @@
 function shareFiles(s){
   if(!s)return[];
   if(!Array.isArray(s.files))s.files=[];
-  if(s.file&&!s.files.some(f=>f.name===s.file&&f.data===s.data)){
-    s.files.unshift({name:s.file,data:s.data||'',date:s.date||''});
+  if(s.file){
+    if(!s.files.some(f=>f.name===s.file&&f.data===(s.data||''))){
+      s.files.unshift({name:s.file,data:s.data||'',date:s.date||''});
+    }
+    delete s.file;
+    delete s.data;
   }
+  const seen=new Set();
+  s.files=s.files.filter(f=>{
+    const key=String(f.name||'')+'|'+String(f.data||'');
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
   return s.files;
 }
 function openShareFile(shareIndex,fileIndex){
@@ -32,13 +43,15 @@ function saveExtraShareFiles(i){
     r.onerror=reject;
     r.readAsDataURL(file);
   }))).then(files=>{
-    target.push(...files);
+    const fresh=files.filter(f=>!target.some(x=>x.name===f.name&&x.data===f.data));
+    if(!fresh.length)return alert('The selected file is already inside this folder.');
+    target.push(...fresh);
     try{
       localStorage.setItem(K,JSON.stringify(state));
       renderAll();
       openShareFolder(i);
     }catch(e){
-      target.splice(target.length-files.length,files.length);
+      target.splice(target.length-fresh.length,fresh.length);
       alert('These files are too large for this browser storage. Please choose smaller files.');
     }
   }).catch(()=>alert('One or more files could not be read.'));
