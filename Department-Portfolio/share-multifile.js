@@ -3,7 +3,7 @@
  * Existing single-file uploads are preserved and migrated in place.
  */
 const PERMANENT_KIT_TITLE='Interactive Lesson Creation Kit – English Department';
-const PERMANENT_KIT_BASE='../Lesson-Creation-Resources/Interactive-Lesson-Creation-Kit-English-Department/Interactive-Lesson-Creation-Kit-English-Department/';
+const PERMANENT_KIT_BASE='https://raw.githubusercontent.com/saidahkhwar11-lang/Interactive-English-Lessons/main/Lesson-Creation-Resources/Interactive-Lesson-Creation-Kit-English-Department/Interactive-Lesson-Creation-Kit-English-Department/';
 const PERMANENT_KIT_NAMES=[
   '00-README.txt',
   '01-START-HERE-TEACHER-INSTRUCTIONS.txt',
