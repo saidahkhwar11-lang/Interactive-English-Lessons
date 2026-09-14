@@ -5,15 +5,15 @@
 const PERMANENT_KIT_TITLE='Interactive Lesson Creation Kit – English Department';
 const PERMANENT_KIT_BASE='https://raw.githubusercontent.com/saidahkhwar11-lang/Interactive-English-Lessons/main/Lesson-Creation-Resources/Interactive-Lesson-Creation-Kit-English-Department/Interactive-Lesson-Creation-Kit-English-Department/';
 const PERMANENT_KIT_NAMES=[
-  '00-README.txt',
-  '01-START-HERE-TEACHER-INSTRUCTIONS.txt',
-  '02-MASTER-PROMPT.txt',
-  '03-TEACHER-REQUEST-TEMPLATE.txt',
-  '04-APPROVED-LESSON-STRUCTURE-AND-RULES.txt',
-  '05-EXAMPLE-TEACHER-REQUEST.txt',
-  '06-EXAMPLE-INTERACTIVE-LESSON-LINK.txt',
+  '00-README.docx',
+  '01-START-HERE-TEACHER-INSTRUCTIONS.docx',
+  '02-MASTER-PROMPT.docx',
+  '03-TEACHER-REQUEST-TEMPLATE.docx',
+  '04-APPROVED-LESSON-STRUCTURE-AND-RULES.docx',
+  '05-EXAMPLE-TEACHER-REQUEST.docx',
+  '06-EXAMPLE-INTERACTIVE-LESSON-LINK.docx',
   '07-APPROVED-LESSON-PLAN-EXAMPLE.pdf',
-  '08-DETAILED-REQUEST-REFERENCE.txt'
+  '08-DETAILED-REQUEST-REFERENCE.docx'
 ];
 function isKitShare(s){
   const n=String(s&&s.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
