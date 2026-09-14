@@ -1,0 +1,51 @@
+Create my interactive lesson using our approved department format.
+
+LESSON DETAILS
+Grade:
+Term:
+Chapter / Unit:
+Skill: Reading / Listening / Writing / Speaking
+Lesson Title:
+Book Pages:
+Teacher:
+Time: 45 minutes
+
+SOURCE MATERIAL / LESSON ORDER
+
+STARTER
+Picture/Page:
+Instructions:
+
+MAIN ACTIVITY 1
+Picture/Page:
+Audio (if applicable):
+Instructions:
+
+MAIN ACTIVITY 2
+Picture/Page:
+Audio (if applicable):
+Instructions:
+
+MAIN ACTIVITY 3
+Picture/Page:
+Audio (if applicable):
+Instructions:
+
+ADDITIONAL MAIN ACTIVITY (only if needed)
+Picture/Page:
+Audio (if applicable):
+Instructions:
+
+EXIT TICKET
+Picture/Page (if applicable):
+Instructions: Design a suitable interactive game using this lesson.
+
+IMPORTANT
+- Use the uploaded textbook pictures and audio as the source of truth.
+- Keep the order I gave above.
+- You may add suitable checking-understanding questions and interactive activities where needed, but keep textbook content accurate.
+- Automatically create concise objectives, success criteria, vocabulary, timings, differentiation, instructions, questions, answers, HOT question and the approved school lesson plan.
+- Follow the Master Prompt completely.
+- Create a NEW lesson and do not overwrite another lesson.
+- No GitHub, publishing or coding is required.
+- Give me the complete downloadable lesson folder/ZIP. I should only need to open index.html to use the lesson.

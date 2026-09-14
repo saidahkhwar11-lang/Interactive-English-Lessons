@@ -1,0 +1,45 @@
+INTERACTIVE LESSON CREATION KIT — START HERE
+Al Reyadah English Department
+
+Teachers only need the Master Prompt + Teacher Request Template.
+
+STEP 1
+Open a NEW ChatGPT chat.
+
+STEP 2
+Upload:
+1. 02-MASTER-PROMPT.txt
+2. Clear pictures/screenshots of the textbook pages you want to teach.
+3. Audio files if it is a listening lesson.
+
+STEP 3
+Open 03-TEACHER-REQUEST-TEMPLATE.txt.
+Fill in the lesson basics:
+Grade, Term, Chapter/Unit, Skill, Lesson Title, Book Pages, Teacher, and 45 minutes.
+Then explain which picture/page/audio belongs to:
+Starter → Main Activities → Exit Ticket.
+
+STEP 4
+Paste the completed Teacher Request into ChatGPT and include:
+“Create my interactive lesson using our approved department format.”
+
+STEP 5
+ChatGPT creates the interactive lesson files and approved lesson plan.
+Download the lesson folder/ZIP.
+
+STEP 6
+Extract the ZIP and double-click index.html.
+The lesson should open in the browser and be ready for the classroom board.
+
+THAT'S IT.
+No GitHub. No publishing. No coding.
+
+BEFORE YOU START
+- Use clear textbook pictures.
+- Upload audio as MP3/M4A/WAV when possible.
+- Keep files in lesson order so ChatGPT can understand them.
+- If one textbook activity uses several screenshots, say which screenshots belong together.
+- Do not ask ChatGPT to invent missing textbook content.
+
+BEFORE CLASS
+Quickly check Previous/Next, timers, fullscreen, answer reveals, audio (if used), Exit Ticket restart, and lesson-plan link.

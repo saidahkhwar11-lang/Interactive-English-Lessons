@@ -1,0 +1,41 @@
+APPROVED LESSON STRUCTURE — QUICK REFERENCE
+
+Dashboard:
+Objectives | Success Criteria | Key Vocabulary | Lesson Flow
+
+Lesson sequence:
+Starter → Main Activity 1 → Main Activity 2 → additional Main Activities only when needed → Exit Ticket → Charter Connection
+
+Activity screen:
+- Large main teaching area (~74%)
+- Thin frozen Activity Guide (~26%)
+- Right guide contains ONLY: Key Words, Objective, Student Instructions, Lesson Steps/Agenda
+- Student Instructions show the textbook page/activity
+- Questions, games, reading/listening content and answers stay in the large main area
+
+Permanent classroom features:
+Previous | All Activities | Next | Timer | Full Screen/Maximize | Highlighting/Clear Marks where appropriate
+
+Answers:
+Reveal one by one; answers appear beside the matching question.
+
+Reading:
+Main idea, details, vocabulary in context, context clues, inference; Deep Thinking when suitable.
+
+Listening:
+Prediction/Vocabulary → Gist → Details → Follow-up.
+No autoplay. Include classroom-friendly audio controls; transcript hidden until teacher reveals it when appropriate.
+
+Exit Ticket:
+Real interactive game; normally no more than ~5 core questions/clues; one-by-one answers; complete Restart Game.
+
+Charter Connection:
+After Exit Ticket. Think (1 min) → Discuss (2 min) → Write → Share.
+
+Lesson Plan:
+Exact approved two-page English school format, synchronized with the lesson.
+Includes Academic Year 2026–2027, date, subject, teacher, title/topic, objectives, success criteria, HOT question, keywords, procedures, H/M/L differentiation, roles, AFL, timing, plenary, learning skills, cross-curricular, UAE Culture/UAE Vision 2031, Print/Save PDF and clickable OPEN INTERACTIVE LESSON.
+
+Stability:
+Never use media-thumbnail.js or hidden-picture behavior.
+Teacher media is optional.

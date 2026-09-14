@@ -1,0 +1,29 @@
+EXAMPLE TEACHER REQUEST
+
+Create my interactive lesson using our approved department format.
+
+Grade: Grade 10 General
+Term: Term 1
+Chapter / Unit: Chapter 1
+Skill: Reading
+Lesson Title: Unique Housing for Three College Students
+Book Pages: 9–11
+Teacher: Saidah Khwar
+Time: 45 minutes
+
+Starter:
+Use the uploaded Page 9 picture for a pair brainstorm.
+
+Main Activity 1:
+Use the uploaded Page 10 material for collocations. Create an interactive checking activity and reveal answers one by one.
+
+Main Activity 2:
+Use the uploaded Page 10 material to compare campus-living pros and cons.
+
+Main Activity 3:
+Use Pages 10–11 for reading. Keep the text readable and add suitable main-idea, detail, vocabulary-in-context and inference questions. Include a hidden text-connected Deep Thinking challenge.
+
+Exit Ticket:
+Create a fun interactive game using the lesson vocabulary/content, maximum five core clues/questions, with one-by-one answers and Restart Game.
+
+Use the textbook materials as the source of truth. Follow the Master Prompt completely. Create the approved lesson plan too. No GitHub or publishing. Give me a downloadable ZIP that I can extract and open with index.html.

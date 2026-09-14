@@ -1,0 +1,137 @@
+AL REYADAH ENGLISH DEPARTMENT
+PERMANENT INTERACTIVE LESSON MASTER FORMAT
+
+PURPOSE
+Create complete, classroom-ready interactive English lessons from the textbook pages, activity pictures, audio, and lesson details uploaded by the teacher.
+
+The approved Grade 9 “Success in College” interactive lesson is the GOLD-STANDARD working reference. Preserve its approved structure, appearance, behavior, and lesson-plan format.
+
+1. LESSON CREATION WORKFLOW
+- Study ALL uploaded materials first.
+- Identify actual textbook content, activities, vocabulary, reading/listening content, page numbers and activity numbers.
+- Build from the uploaded materials. Do not invent textbook content.
+- The teacher should not need HTML or coding.
+- Ask for missing information only when genuinely necessary.
+- Produce a NEW lesson; never overwrite another lesson unless explicitly asked.
+
+Normal information needed:
+Grade; Term; Lesson/skill/title; textbook pages/materials; teacher name; special instructions.
+
+2. PERMANENT VISUAL DESIGN
+Keep the approved classroom-board design:
+- book-style lesson header
+- clean rounded cards
+- classroom-friendly typography
+- Grade, Teacher, lesson/unit/skill, textbook pages
+- automatic UAE day/date
+- Previous / All Activities / Next
+- activity timers
+- Full Screen / Maximize
+- highlighting / Clear Marks where appropriate
+The interface must be compact, attractive, professional and readable on a classroom board. Avoid unnecessary blank areas.
+
+3. DASHBOARD
+Show Objectives, Success Criteria, Key Vocabulary, Lesson Flow and activity cards.
+Typical sequence:
+Starter → Main Activity 1 → Main Activity 2 → additional Main Activities as needed → Exit Ticket → Charter Connection.
+Normally no more than about five Main Activities.
+
+4. APPROVED ACTIVITY SCREEN LAYOUT
+Desktop: approximately 74% main teaching/activity area + 26% thin right Activity Guide.
+
+LEFT / MAIN AREA:
+All actual student work: textbook questions, rewritten exercises, reading text, listening questions, vocabulary activities, games, answer controls, revealed answers, Deep Thinking, Exit Ticket and Charter activity.
+Never move questions/answers to the right panel.
+Rewrite textbook questions clearly so the lesson remains usable even if a textbook image is unavailable.
+
+RIGHT / ACTIVITY GUIDE:
+Use soft light blue/teal; do not use a large dark navy sidebar.
+Keep sticky/frozen, compact and thin.
+Contains ONLY:
+1. KEY WORDS
+2. OBJECTIVE
+3. STUDENT INSTRUCTIONS
+4. LESSON STEPS / AGENDA
+Student Instructions must clearly show textbook reference, e.g. “Page 9 · Activity 1”.
+Do not place teacher setup instructions here.
+
+5. ANSWER REVEAL
+For multi-question activities, prefer one clean sequential Reveal Next Answer control.
+Answers appear directly beside matching questions in the main area.
+Show a reveal counter where useful.
+Do not clutter the screen with unnecessary separate reveal buttons.
+
+6. TEACHER MEDIA
+Teacher Media is optional. Support textbook/activity/supporting images and audio.
+Support Browse, drag/drop, paste with Ctrl+V, and MP3/M4A/WAV.
+Teacher Media Setup must be separate from student instructions and hidden in classroom/display mode.
+Stability rules:
+- NEVER load/recreate media-thumbnail.js.
+- NEVER hide textbook/teacher pictures behind a Show Picture button.
+- Media must remain optional; activities must work without it.
+
+7. READING LESSONS
+Keep reading text readable; paragraph-by-paragraph where appropriate.
+Do not cover reading text with controls.
+Use comprehension tasks such as main idea, details, vocabulary in context, context clues and inference.
+When appropriate include one hidden, text-connected Deep Thinking Challenge in the main area.
+
+8. LISTENING LESSONS
+When audio is provided use suitable stages: Prediction/Vocabulary → Gist → Details → Follow-up.
+Audio must not autoplay.
+Provide Play, Pause, Restart, progress, current/total time, volume and playback speed when useful.
+Transcript may be hidden initially behind Reveal Transcript.
+
+9. EXIT TICKET
+Use a REAL interactive classroom activity/game, not only plain questions.
+Normally maximum about five core questions/clues.
+Reveal answers one by one.
+Include Restart Game that resets the complete game.
+
+10. CHARTER CONNECTION
+Place AFTER Exit Ticket.
+Choose the most appropriate axis:
+Identity and Belonging; Citizenship and Responsibility; Thinking and Problem Solving; Lifelong Learning; Global Mindset and Tolerance.
+Use: Think – 1 minute → Discuss – 2 minutes → Write → Share.
+Make it visually attractive even without an uploaded picture.
+
+11. LIVE ENGLISH SCHOOL LESSON PLAN
+Every lesson includes the EXACT APPROVED two-page English school lesson-plan style used in the approved reference.
+Do not simplify or redesign it. Synchronize it with the actual interactive lesson.
+Include:
+Academic Year 2026–2027; Date; Subject; Teacher; Lesson # / Title; Lesson Topic; Objectives; Success Criteria; HOT Question; Keywords; Starter; Main Activities; Differentiation H/M/L; Teacher Role; Student Role; AFL; Timing; Plenary; Learning Skills; Cross Curricular; UAE Culture / UAE Vision 2031; Print / Save PDF.
+MANDATORY: clickable OPEN INTERACTIVE LESSON link inside the lesson plan.
+
+12. WORKING ARCHITECTURE
+Use the approved reference lesson as the reusable architecture rather than rebuilding a simplified lesson.
+Preserve lesson core, activity layout, media persistence, lesson-plan link and school lesson-plan styling.
+Do NOT load media-thumbnail.js. Avoid unnecessary changes to stable working behavior.
+
+13. FINAL QUALITY CHECK
+Before finishing verify:
+- navigation and all activity cards
+- Previous / All Activities / Next
+- timers and fullscreen
+- questions remain in main area
+- sequential answer reveal and answers beside questions
+- thin clean right panel with only approved guide information
+- page/activity reference inside instructions
+- Teacher Media does not break lesson
+- lesson works without Teacher Media
+- Deep Thinking works
+- Exit Ticket works and restarts
+- Charter Connection works
+- lesson plan matches lesson and has OPEN INTERACTIVE LESSON
+- no broken textbook-image placeholders
+- media-thumbnail.js is NOT loaded
+- no hidden-picture behavior
+
+14. SIMPLE TEACHER EXPERIENCE
+Keep workflow easy. Teacher uploads textbook pages/audio and says:
+“Create my interactive lesson using our approved department format.”
+Do not require teachers to edit HTML or understand code.
+
+FOR THIS SHARED TEACHER KIT:
+- Do NOT require GitHub or publishing.
+- Deliver the complete lesson as a downloadable folder/ZIP that works locally by opening index.html.
+- Keep all needed local assets inside the lesson folder.

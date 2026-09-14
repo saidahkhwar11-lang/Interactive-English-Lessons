@@ -1,0 +1,48 @@
+Create a completely NEW interactive lesson webpage for:
+
+- Grade: [Grade and level]
+- Term: [Term]
+- Chapter/Unit: [Chapter or unit]
+- Skill: [Reading / Listening / Writing / Speaking]
+- Lesson title: [Lesson title]
+- Book pages: [Page numbers]
+- Teacher: Saidah Khwar
+
+I am attaching:
+1. Interactive-Lesson-Master-Prompt.txt
+2. Unique-Housing-Parts-1-and-2-Complete-Editable-Lesson.zip as the exact completed design example
+3. My official school lesson-plan example
+4. Textbook activity pictures in lesson order
+5. Audio tracks when it is a listening lesson
+
+Follow the Master Prompt completely and use the completed lesson as the exact reference for design, layout, activity organization and permanent classroom features. Create a new separately named webpage and backup ZIP. Never overwrite or change any previous lesson.
+
+Analyse the uploaded lesson materials yourself. Automatically create concise objectives, success criteria, vocabulary, timings, differentiation, instructions, questions, answers and the school lesson plan. Do not ask me to provide information that can be inferred from the textbook activities.
+
+Keep the exact permanent format: book-style title, Part/Day selector when needed, large classroom-readable text, compact frozen keywords/objective/instructions panel, clear numbered steps, activity type, timer, full screen, highlighting, Clear Marks, maximized book view, zoom controls, separate book parts, neat blue handwritten answers, one-by-one answer reveals and direct lesson-plan link.
+
+Use the exact two-page bilingual school lesson-plan template from the example. Never redesign or simplify it. If the topic has more than one teaching day, create a separate automatically updated lesson plan and Print / Save PDF button for every part.
+
+Use adult female-student pictures only, including backgrounds. For vocabulary picture matching, mix the picture order so it does not follow the word-bank order and reveal each match separately.
+
+For a suitable main reading or listening activity, include one hidden text-connected Deep Thinking Challenge. For reading, show three comprehension questions beside each maximized paragraph without covering it. For listening, include complete audio controls and gist/detail questions.
+
+Create a fun exit-ticket game using a maximum of five questions or clues. Place the actual game directly in the large activity area. Never use a generic blue decorative or empty panel. Include one-by-one answers, group interaction and a complete Restart Game button.
+
+LESSON ORDER:
+1. [Activity 1, page number and instructions]
+2. [Activity 2, page number and instructions]
+3. [Activity 3, page number and instructions]
+4. [Continue as needed]
+5. Exit ticket: design a suitable interactive game using this lesson.
+
+If one textbook activity has several screenshots, show them as separate labelled parts with Previous Part and Next Part controls. Rewrite unclear questions beside the picture and keep answers away from the question text.
+
+Before publishing, test navigation, timers, full screen, highlighting, maximized view, zoom, all answer reveals, audio controls when used, game restart and every lesson-plan link.
+
+After completing the lesson:
+1. Publish it as a new online webpage.
+2. Give me the direct lesson link.
+3. Give me the complete editable backup ZIP.
+4. Give me the updated Master Prompt when a permanent requirement changes.
+5. Keep every previous lesson unchanged.
