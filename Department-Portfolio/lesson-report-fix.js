@@ -1,4 +1,9 @@
 const LESSON_PLAN_TARGET = 5;
+const LESSON_PLAN_FORM_URL = 'https://forms.cloud.microsoft/r/yJSaXpZkxM';
+
+function openLessonPlanUpload(){
+  window.open(LESSON_PLAN_FORM_URL,'_blank','noopener');
+}
 
 function renderTeachers(){
   const key = weekKey();
@@ -13,7 +18,7 @@ function renderTeachers(){
       <div class="pct">${uploaded}/${LESSON_PLAN_TARGET}</div>
       <div class="work-status ${complete?'complete':'missing'}">${complete?'Complete':'Missing Work'}</div>
       <div class="teacher-row-actions">
-        <button class="btn primary upload-row" onclick="uploadPlan(${index})">＋ Upload</button>
+        <button class="btn primary upload-row" onclick="openLessonPlanUpload()">＋ Upload</button>
         <button class="btn details" onclick="openFolder(${index})">Details</button>
       </div>
     </div>`;
@@ -109,6 +114,7 @@ function buildLessonHeader(){
   document.head.appendChild(style);
   const originalClose = closeModal;
   closeModal = function(){document.getElementById('modal').classList.remove('report-mode');originalClose()};
+  uploadPlan = openLessonPlanUpload;
   renderTeachers();
   buildLessonHeader();
 })();
