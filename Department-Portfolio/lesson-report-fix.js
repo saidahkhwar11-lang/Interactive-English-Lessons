@@ -17,10 +17,15 @@ function weeklyTeacherStatus(teacherName){
   const match = Object.entries(week.teachers || {}).find(([name])=>String(name).trim().toLowerCase()===wanted);
   if(!match) return null;
   const value = match[1] || {};
+  const submissions = Array.isArray(value.submissions) ? value.submissions.filter(Boolean) : [];
+  const deadline = week.deadline ? new Date(week.deadline).getTime() : NaN;
+  const calculatedLate = Number.isFinite(deadline)
+    ? submissions.filter(date=>new Date(date).getTime()>deadline).length
+    : 0;
   return {
-    total: Math.max(0,Number(value.total)||0),
-    late: Math.max(0,Number(value.late)||0),
-    lastSubmission: value.lastSubmission || ''
+    total: submissions.length || Math.max(0,Number(value.total)||0),
+    late: submissions.length ? calculatedLate : Math.max(0,Number(value.late)||0),
+    lastSubmission: submissions.at(-1) || value.lastSubmission || ''
   };
 }
 
