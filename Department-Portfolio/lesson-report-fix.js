@@ -1,6 +1,8 @@
 const LESSON_PLAN_TARGET = 5;
 const LESSON_PLAN_FORM_URL = 'https://forms.cloud.microsoft/r/yJSaXpZkxM';
 const WEEKLY_REPORTS_URL = 'https://emiratesschoolsese-my.sharepoint.com/:f:/g/personal/saidah_khwar_moe_sch_ae/IgBQzFxSjWZMTIKG5LgC1i0pASiLwtKT3A4VO73YZU-8hGA?e=zX66O0';
+const TERM_SEQUENCE = ['Term 1','Term 2','Term 3'];
+const TERM_MAX_WEEKS = {'Term 1':18,'Term 2':14};
 
 function openLessonPlanUpload(){
   window.open(LESSON_PLAN_FORM_URL,'_blank','noopener');
@@ -8,6 +10,30 @@ function openLessonPlanUpload(){
 
 function openWeeklyReports(){
   window.open(WEEKLY_REPORTS_URL,'_blank','noopener');
+}
+
+function normalizedTermWeek(term,week){
+  let termIndex = Math.max(0,TERM_SEQUENCE.indexOf(term));
+  let next = Number.parseInt(week,10);
+  if(!Number.isFinite(next)) next = 1;
+  while(next < 1 && termIndex > 0){
+    termIndex -= 1;
+    next += TERM_MAX_WEEKS[TERM_SEQUENCE[termIndex]] || 1;
+  }
+  while(TERM_MAX_WEEKS[TERM_SEQUENCE[termIndex]] && next > TERM_MAX_WEEKS[TERM_SEQUENCE[termIndex]] && termIndex < TERM_SEQUENCE.length-1){
+    next -= TERM_MAX_WEEKS[TERM_SEQUENCE[termIndex]];
+    termIndex += 1;
+  }
+  const resolvedTerm = TERM_SEQUENCE[termIndex];
+  const maximum = TERM_MAX_WEEKS[resolvedTerm];
+  return {term:resolvedTerm,week:Math.max(1,maximum?Math.min(next,maximum):next)};
+}
+
+function changeTrackingWeek(value){
+  const resolved = normalizedTermWeek(state.term,value);
+  state.term = resolved.term;
+  state.week = resolved.week;
+  save();
 }
 
 function academicWeekInfo(weekNumber){
@@ -113,7 +139,7 @@ function buildLessonHeader(){
   </div></div>
   <div class="lesson-head-actions">
     <div class="week-control">
-      <button class="week-arrow" onclick="changeTrackingWeek(Math.max(1,state.week-1))" title="Previous week">‹</button>
+      <button class="week-arrow" onclick="changeTrackingWeek(state.week-1)" title="Previous week">‹</button>
       <div class="week-current"><span>Week</span><strong>${state.week}</strong></div>
       <button class="week-arrow" onclick="changeTrackingWeek(state.week+1)" title="Next week">›</button>
     </div>
@@ -123,6 +149,12 @@ function buildLessonHeader(){
 }
 
 (function(){
+  const corrected = normalizedTermWeek(state.term,state.week);
+  if(corrected.term!==state.term || corrected.week!==state.week){
+    state.term=corrected.term;
+    state.week=corrected.week;
+    localStorage.setItem(K,JSON.stringify(state));
+  }
   const style = document.createElement('style');
   style.textContent = `
     .teacher-list-row{grid-template-columns:minmax(190px,1.05fr) minmax(310px,2fr) auto!important}
