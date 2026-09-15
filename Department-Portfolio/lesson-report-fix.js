@@ -1,33 +1,29 @@
 const LESSON_PLAN_TARGET = 5;
 const LESSON_PLAN_FORM_URL = 'https://forms.cloud.microsoft/r/yJSaXpZkxM';
+const WEEKLY_REPORTS_URL = 'https://emiratesschoolsese-my.sharepoint.com/:f:/g/personal/saidah_khwar_moe_sch_ae/IgBQzFxSjWZMTIKG5LgC1i0pASiLwtKT3A4VO73YZU-8hGA?e=zX66O0';
 
 function openLessonPlanUpload(){
   window.open(LESSON_PLAN_FORM_URL,'_blank','noopener');
 }
 
+function openWeeklyReports(){
+  window.open(WEEKLY_REPORTS_URL,'_blank','noopener');
+}
+
 function renderTeachers(){
-  const key = weekKey();
   let output = '';
   state.teachers.forEach((teacher,index)=>{
-    const uploaded = (teacher.plans?.[key] || []).length;
-    const percent = Math.min(100, uploaded / LESSON_PLAN_TARGET * 100);
-    const complete = uploaded >= LESSON_PLAN_TARGET;
-    output += `<div class="teacher-list-row ${complete?'done':'low'}">
+    output += `<div class="teacher-list-row">
       <div class="name">📁 ${esc(teacher.name)}</div>
-      <div class="progress"><div class="bar" style="width:${percent}%"></div></div>
-      <div class="pct">${uploaded}/${LESSON_PLAN_TARGET}</div>
-      <div class="work-status ${complete?'complete':'missing'}">${complete?'Complete':'Missing Work'}</div>
+      <div class="report-record-note">Uploads and compliance are recorded in the official weekly report.</div>
       <div class="teacher-row-actions">
         <button class="btn primary upload-row" onclick="openLessonPlanUpload()">＋ Upload</button>
-        <button class="btn details" onclick="openFolder(${index})">Details</button>
+        <button class="btn details" onclick="openWeeklyReports()">Details</button>
       </div>
     </div>`;
   });
   teacherGrid.innerHTML = output || '<p>No teacher folders yet.</p>';
-  const stars = state.teachers.filter(t=>(t.plans?.[key]||[]).length>=LESSON_PLAN_TARGET).map(t=>t.name);
-  starTrack.textContent = stars.length
-    ? '⭐ Star Teachers of the Week: ' + stars.join(' ⭐ ')
-    : `⭐ Star Teachers of the Week: Teachers who upload at least ${LESSON_PLAN_TARGET} lesson plans this week will appear here automatically.`;
+  starTrack.textContent = `Weekly compliance is confirmed in the Monday report. Target: at least ${LESSON_PLAN_TARGET} lesson plans per teacher.`;
 }
 
 function uaeReportReleased(){
@@ -38,28 +34,7 @@ function uaeReportReleased(){
 }
 
 function openWeeklyReport(){
-  if(!uaeReportReleased()) return alert('This week’s report will be released Monday at 12:00 PM UAE time.');
-  const key = weekKey();
-  const rows = state.teachers.map(teacher=>{
-    const count = (teacher.plans?.[key] || []).length;
-    return {name:teacher.name,count,missing:Math.max(0,LESSON_PLAN_TARGET-count),complete:count>=LESSON_PLAN_TARGET};
-  });
-  const complete = rows.filter(row=>row.complete).length;
-  openModal(`<div class="weekly-report-print">
-    <div class="report-title"><div><h2>Weekly Lesson Plan Upload Report</h2>
-    <p>English Department · ${esc(state.term)} · Week ${state.week}</p></div>
-    <div class="report-target">Target: at least ${LESSON_PLAN_TARGET} plans per teacher</div></div>
-    <div class="report-summary">
-      <div><small>Total Teachers</small><b>${rows.length}</b></div>
-      <div><small>Complete</small><b>${complete}</b></div>
-      <div><small>Missing Work</small><b>${rows.length-complete}</b></div>
-    </div>
-    <table class="weekly-report-table"><thead><tr><th>Teacher</th><th>Uploaded</th><th>Missing</th><th>Completion</th><th>Status</th></tr></thead>
-    <tbody>${rows.length?rows.map(row=>`<tr><td><b>${esc(row.name)}</b></td><td>${row.count} of ${LESSON_PLAN_TARGET}</td><td>${row.missing}</td><td>${Math.min(100,Math.round(row.count/LESSON_PLAN_TARGET*100))}%</td><td><span class="report-status ${row.complete?'complete':'missing'}">${row.complete?'Complete':'Missing Work'}</span></td></tr>`).join(''):'<tr><td colspan="5">No teacher folders have been added.</td></tr>'}</tbody></table>
-    <div class="report-note">Report release: Monday at 12:00 PM UAE time.</div>
-  </div>
-  <div class="modal-footer report-actions"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn" onclick="closeModal()">Close</button></div>`);
-  document.getElementById('modal').classList.add('report-mode');
+  openWeeklyReports();
 }
 
 function buildLessonHeader(){
@@ -81,7 +56,7 @@ function buildLessonHeader(){
       <div class="week-current"><span>Week</span><strong>${state.week}</strong></div>
       <button class="week-arrow" onclick="changeTrackingWeek(state.week+1)" title="Next week">›</button>
     </div>
-    <button class="btn pdf-report-btn" onclick="openWeeklyReport()">📄 PDF Report</button>
+    <button class="btn pdf-report-btn" onclick="openWeeklyReport()">📂 Weekly Reports</button>
   </div>`;
   card.insertBefore(head,grid);
 }
@@ -89,7 +64,8 @@ function buildLessonHeader(){
 (function(){
   const style = document.createElement('style');
   style.textContent = `
-    .teacher-list-row{grid-template-columns:minmax(170px,1.15fr) minmax(180px,2fr) 48px 92px auto!important}
+    .teacher-list-row{grid-template-columns:minmax(190px,1.15fr) minmax(280px,2fr) auto!important}
+    .report-record-note{color:#6f7f85;font-size:12px;line-height:1.35}
     .teacher-row-actions{display:flex;gap:6px;justify-content:flex-end}
     .upload-row,.teacher-list-row .details{white-space:nowrap}
     .work-status{font-size:11px;font-weight:900;text-align:center;border-radius:999px;padding:5px 8px}
