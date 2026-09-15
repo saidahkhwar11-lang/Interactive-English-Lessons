@@ -9,5 +9,12 @@
 // A missing teacher entry is shown as "Awaiting weekly update", never as 0/5.
 window.WEEKLY_LESSON_PLAN_DATA = {
   updatedAt: '',
-  weeks: {}
+  weeks: {
+    '4': {
+      startDate: '2026-09-21',
+      endDate: '2026-09-25',
+      deadline: '2026-09-21T12:00:00+04:00',
+      teachers: {}
+    }
+  }
 };
