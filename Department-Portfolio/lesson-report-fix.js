@@ -10,12 +10,42 @@ function openWeeklyReports(){
   window.open(WEEKLY_REPORTS_URL,'_blank','noopener');
 }
 
+function weeklyTeacherStatus(teacherName){
+  const week = window.WEEKLY_LESSON_PLAN_DATA?.weeks?.[String(state.week)];
+  if(!week) return null;
+  const wanted = String(teacherName || '').trim().toLowerCase();
+  const match = Object.entries(week.teachers || {}).find(([name])=>String(name).trim().toLowerCase()===wanted);
+  if(!match) return null;
+  const value = match[1] || {};
+  return {
+    total: Math.max(0,Number(value.total)||0),
+    late: Math.max(0,Number(value.late)||0),
+    lastSubmission: value.lastSubmission || ''
+  };
+}
+
+function teacherProgressMarkup(status){
+  if(!status) return `<div class="weekly-awaiting">Awaiting weekly update</div>`;
+  const total = status.total;
+  const remaining = Math.max(0,LESSON_PLAN_TARGET-total);
+  const complete = total >= LESSON_PLAN_TARGET;
+  const percent = Math.min(100,Math.round(total/LESSON_PLAN_TARGET*100));
+  const label = total===0 ? 'No Uploads' : complete ? 'Target Complete' : `${remaining} Remaining`;
+  return `<div class="weekly-progress-wrap">
+    <div class="weekly-progress-meta"><b>${total}/${LESSON_PLAN_TARGET} — ${label}</b>${status.late?`<span class="late-badge">Late: ${status.late}</span>`:''}</div>
+    <div class="progress weekly-progress" role="progressbar" aria-label="${total} of ${LESSON_PLAN_TARGET} lesson plans" aria-valuemin="0" aria-valuemax="${LESSON_PLAN_TARGET}" aria-valuenow="${Math.min(total,LESSON_PLAN_TARGET)}"><div class="bar ${complete?'complete':''}" style="width:${percent}%"></div></div>
+  </div>`;
+}
+
 function renderTeachers(){
   let output = '';
+  const stars = [];
   state.teachers.forEach((teacher,index)=>{
+    const status = weeklyTeacherStatus(teacher.name);
+    if(status?.total >= LESSON_PLAN_TARGET) stars.push(teacher.name);
     output += `<div class="teacher-list-row">
       <div class="name">📁 ${esc(teacher.name)}</div>
-      <div class="report-record-note">Uploads and compliance are recorded in the official weekly report.</div>
+      ${teacherProgressMarkup(status)}
       <div class="teacher-row-actions">
         <button class="btn primary upload-row" onclick="openLessonPlanUpload()">＋ Upload</button>
         <button class="btn details" onclick="openWeeklyReports()">Details</button>
@@ -23,7 +53,10 @@ function renderTeachers(){
     </div>`;
   });
   teacherGrid.innerHTML = output || '<p>No teacher folders yet.</p>';
-  starTrack.textContent = `Weekly compliance is confirmed in the Monday report. Target: at least ${LESSON_PLAN_TARGET} lesson plans per teacher.`;
+  const updated = window.WEEKLY_LESSON_PLAN_DATA?.updatedAt;
+  starTrack.textContent = stars.length
+    ? `⭐ Star Teachers of Week ${state.week}: ${stars.join(' ⭐ ')}`
+    : `⭐ Star Teachers of Week ${state.week}: No teacher has reached ${LESSON_PLAN_TARGET}/${LESSON_PLAN_TARGET} in the latest update.${updated?' Updated '+updated+'.':''}`;
 }
 
 function uaeReportReleased(){
@@ -64,8 +97,16 @@ function buildLessonHeader(){
 (function(){
   const style = document.createElement('style');
   style.textContent = `
-    .teacher-list-row{grid-template-columns:minmax(190px,1.15fr) minmax(280px,2fr) auto!important}
+    .teacher-list-row{grid-template-columns:minmax(190px,1.05fr) minmax(310px,2fr) auto!important}
     .report-record-note{color:#6f7f85;font-size:12px;line-height:1.35}
+    .weekly-progress-wrap{display:grid;gap:5px;min-width:0}
+    .weekly-progress-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#536a70;font-size:11px}
+    .weekly-progress-meta b{white-space:nowrap}
+    .weekly-progress{height:7px!important;background:#e8eeec!important;border-radius:999px;overflow:hidden}
+    .weekly-progress .bar{height:100%;background:#d69b58!important;border-radius:999px;transition:width .3s ease}
+    .weekly-progress .bar.complete{background:#5e9a75!important}
+    .weekly-awaiting{font-size:11px;color:#899497;background:#f5f7f6;border:1px dashed #d8dfdc;border-radius:8px;padding:7px 9px}
+    .late-badge{font-size:10px;font-weight:900;color:#a2524c;background:#f6e5e2;border-radius:999px;padding:3px 7px;white-space:nowrap}
     .teacher-row-actions{display:flex;gap:6px;justify-content:flex-end}
     .upload-row,.teacher-list-row .details{white-space:nowrap}
     .work-status{font-size:11px;font-weight:900;text-align:center;border-radius:999px;padding:5px 8px}
@@ -84,7 +125,7 @@ function buildLessonHeader(){
     .weekly-report-table th{background:#eef3f1;color:#536a68}
     .report-status{display:inline-block;font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px}
     .report-note{margin-top:12px;color:#7d898d;font-size:12px}
-    @media(max-width:760px){.lesson-custom-head{flex-direction:column}.lesson-head-actions{width:100%;justify-content:space-between}.teacher-list-row{grid-template-columns:1fr auto!important}.teacher-list-row .progress,.work-status,.teacher-row-actions{grid-column:1/-1}.work-status{text-align:left;width:max-content}.teacher-row-actions{justify-content:flex-start}.report-title{display:block}.report-target{margin-top:10px}.report-summary{grid-template-columns:1fr}}
+    @media(max-width:760px){.lesson-custom-head{flex-direction:column}.lesson-head-actions{width:100%;justify-content:space-between}.teacher-list-row{grid-template-columns:1fr auto!important}.weekly-progress-wrap,.weekly-awaiting,.teacher-row-actions{grid-column:1/-1}.teacher-row-actions{justify-content:flex-start}.report-title{display:block}.report-target{margin-top:10px}.report-summary{grid-template-columns:1fr}}
     @media print{body *{visibility:hidden!important}.modal.report-mode,.modal.report-mode *{visibility:visible!important}.modal.report-mode{display:block!important;position:absolute!important;inset:0!important;background:#fff!important;padding:0!important}.modal.report-mode .box{width:100%!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important}.modal.report-mode .report-actions{display:none!important}}
   `;
   document.head.appendChild(style);
