@@ -10,6 +10,20 @@ function openWeeklyReports(){
   window.open(WEEKLY_REPORTS_URL,'_blank','noopener');
 }
 
+function academicWeekInfo(weekNumber){
+  const number = Math.max(1,Number(weekNumber)||1);
+  const monday = new Date(Date.UTC(2026,8,21+(number-4)*7));
+  const friday = new Date(monday.getTime()+4*86400000);
+  const iso = date=>date.toISOString().slice(0,10);
+  const label = new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  return {
+    startDate: iso(monday),
+    endDate: iso(friday),
+    deadline: `${iso(monday)}T12:00:00+04:00`,
+    label: `${label.format(monday)} – ${label.format(friday)}`
+  };
+}
+
 function weeklyTeacherStatus(teacherName){
   const week = window.WEEKLY_LESSON_PLAN_DATA?.weeks?.[String(state.week)];
   if(!week) return null;
@@ -18,7 +32,7 @@ function weeklyTeacherStatus(teacherName){
   if(!match) return null;
   const value = match[1] || {};
   const submissions = Array.isArray(value.submissions) ? value.submissions.filter(Boolean) : [];
-  const deadline = week.deadline ? new Date(week.deadline).getTime() : NaN;
+  const deadline = new Date(week.deadline || academicWeekInfo(state.week).deadline).getTime();
   const calculatedLate = Number.isFinite(deadline)
     ? submissions.filter(date=>new Date(date).getTime()>deadline).length
     : 0;
@@ -83,10 +97,11 @@ function buildLessonHeader(){
   card.classList.add('lesson-compact');
   card.querySelector('.lesson-custom-head')?.remove();
   const head = document.createElement('div');
+  const weekInfo = academicWeekInfo(state.week);
   head.className = 'lesson-custom-head';
   head.innerHTML = `<div class="lesson-title"><div class="lesson-badge">LP</div><div>
     <h3>Weekly Lesson Plan Follow-up</h3>
-    <p>${esc(state.term)} · target: at least ${LESSON_PLAN_TARGET} lesson plans per teacher</p>
+    <p>${esc(state.term)} · Week ${state.week}: ${weekInfo.label} · target: ${LESSON_PLAN_TARGET} lesson plans</p>
   </div></div>
   <div class="lesson-head-actions">
     <div class="week-control">
