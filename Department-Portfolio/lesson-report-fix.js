@@ -12,7 +12,13 @@ function openWeeklyReports(){
 
 function academicWeekInfo(weekNumber){
   const number = Math.max(1,Number(weekNumber)||1);
-  const monday = new Date(Date.UTC(2026,8,21+(number-4)*7));
+  const termStarts = {
+    'Term 1': Date.UTC(2026,7,31),
+    'Term 2': Date.UTC(2027,0,4),
+    'Term 3': Date.UTC(2027,3,12)
+  };
+  const termStart = termStarts[state.term] ?? termStarts['Term 1'];
+  const monday = new Date(termStart+(number-1)*7*86400000);
   const friday = new Date(monday.getTime()+4*86400000);
   const iso = date=>date.toISOString().slice(0,10);
   const label = new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
@@ -25,7 +31,9 @@ function academicWeekInfo(weekNumber){
 }
 
 function weeklyTeacherStatus(teacherName){
-  const week = window.WEEKLY_LESSON_PLAN_DATA?.weeks?.[String(state.week)];
+  const data = window.WEEKLY_LESSON_PLAN_DATA;
+  const week = data?.terms?.[state.term]?.weeks?.[String(state.week)]
+    || data?.weeks?.[String(state.week)];
   if(!week) return null;
   const wanted = String(teacherName || '').trim().toLowerCase();
   const match = Object.entries(week.teachers || {}).find(([name])=>String(name).trim().toLowerCase()===wanted);
