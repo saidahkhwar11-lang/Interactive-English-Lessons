@@ -80,12 +80,13 @@ function weeklyTeacherStatus(teacherName){
 function teacherProgressMarkup(status){
   if(!status) return `<div class="weekly-awaiting">Awaiting weekly update</div>`;
   const total = status.total;
+  const displayTotal = Math.min(LESSON_PLAN_TARGET,total);
   const remaining = Math.max(0,LESSON_PLAN_TARGET-total);
   const complete = total >= LESSON_PLAN_TARGET;
   const percent = Math.min(100,Math.round(total/LESSON_PLAN_TARGET*100));
   const label = total===0 ? 'No Uploads' : complete ? 'Target Complete' : `${remaining} Remaining`;
   return `<div class="weekly-progress-wrap">
-    <div class="weekly-progress-meta"><b>${total}/${LESSON_PLAN_TARGET} — ${label}</b>${status.late?`<span class="late-badge">Late: ${status.late}</span>`:''}</div>
+    <div class="weekly-progress-meta"><b>${displayTotal}/${LESSON_PLAN_TARGET} — ${label}</b>${status.late?`<span class="late-badge">Late: ${status.late}</span>`:''}</div>
     <div class="progress weekly-progress" role="progressbar" aria-label="${total} of ${LESSON_PLAN_TARGET} lesson plans" aria-valuemin="0" aria-valuemax="${LESSON_PLAN_TARGET}" aria-valuenow="${Math.min(total,LESSON_PLAN_TARGET)}"><div class="bar ${complete?'complete':''}" style="width:${percent}%"></div></div>
   </div>`;
 }
