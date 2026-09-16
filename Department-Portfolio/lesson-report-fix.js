@@ -76,7 +76,6 @@ function buildLessonHeader(){
     <div class="followup-rules"><span>Target: <b>${LESSON_PLAN_TARGET} lesson plans</b></span><span>Deadline: <b>Monday 12:00 PM</b></span></div>
   </div></div>
   <div class="lesson-head-actions">
-    <button class="btn primary hub-upload" onclick="openLessonPlanUpload()">＋ Upload Lesson Plan</button>
     <button class="btn pdf-report-btn" onclick="openWeeklyReports()">📊 Live Follow-up Report</button>
   </div>`;
   card.insertBefore(head,grid);
@@ -96,8 +95,7 @@ function buildLessonHeader(){
     .followup-rules{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
     .followup-rules span{font-size:11px;color:#61777c;background:#f1f5f3;border:1px solid #dfe7e4;border-radius:999px;padding:5px 9px}
     .lesson-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    .hub-upload,.pdf-report-btn{height:38px;padding:8px 13px!important;white-space:nowrap}
-    .pdf-report-btn{background:#789b96!important;color:#fff!important;border-color:#789b96!important}
+    .pdf-report-btn{height:38px;padding:8px 13px!important;white-space:nowrap;background:#789b96!important;color:#fff!important;border-color:#789b96!important}
     .teacher-row-actions{display:flex;gap:6px;justify-content:flex-end;margin-left:auto}
     .upload-row{white-space:nowrap}
     .followup-note{margin-top:10px!important;background:#eef4f2!important;color:#60746f!important;border:1px solid #dce7e3!important;border-radius:10px!important;padding:10px 12px!important;font-size:11px!important}
