@@ -48,7 +48,6 @@ function renderTeachers(){
   state.teachers.forEach((teacher)=>{
     output += `<div class="teacher-list-row followup-teacher-row">
       <div class="name">📁 ${esc(teacher.name)}</div>
-      <div class="teacher-purpose">Submit weekly lesson plans through the official upload form</div>
       <div class="teacher-row-actions">
         <button class="btn primary upload-row" onclick="openLessonPlanUpload()">＋ Upload Lesson Plan</button>
       </div>
@@ -56,7 +55,7 @@ function renderTeachers(){
   });
   teacherGrid.innerHTML = output || '<p>No teacher folders yet.</p>';
   if(typeof starTrack !== 'undefined' && starTrack){
-    starTrack.innerHTML = `<strong>Official follow-up:</strong> Submission status, late work and missing plans are verified in the Weekly Follow-up Report.`;
+    starTrack.innerHTML = `<strong>Official follow-up:</strong> Submission status, late work and missing plans are verified in the Live Follow-up Report.`;
     starTrack.classList.add('followup-note');
   }
 }
@@ -92,18 +91,17 @@ function buildLessonHeader(){
   }
   const style = document.createElement('style');
   style.textContent = `
-    .followup-hub .teacher-list-row{grid-template-columns:minmax(190px,1fr) minmax(260px,1.7fr) auto!important;align-items:center}
+    .followup-hub .teacher-list-row{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:18px!important;padding:11px 14px!important}
     .followup-head{align-items:center!important}
     .followup-rules{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
     .followup-rules span{font-size:11px;color:#61777c;background:#f1f5f3;border:1px solid #dfe7e4;border-radius:999px;padding:5px 9px}
     .lesson-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     .hub-upload,.pdf-report-btn{height:38px;padding:8px 13px!important;white-space:nowrap}
     .pdf-report-btn{background:#789b96!important;color:#fff!important;border-color:#789b96!important}
-    .teacher-purpose{font-size:11px;color:#7c8b8f;background:#f7f9f8;border:1px solid #e2e8e6;border-radius:8px;padding:8px 10px}
-    .teacher-row-actions{display:flex;gap:6px;justify-content:flex-end}
+    .teacher-row-actions{display:flex;gap:6px;justify-content:flex-end;margin-left:auto}
     .upload-row{white-space:nowrap}
     .followup-note{margin-top:10px!important;background:#eef4f2!important;color:#60746f!important;border:1px solid #dce7e3!important;border-radius:10px!important;padding:10px 12px!important;font-size:11px!important}
-    @media(max-width:850px){.followup-head{flex-direction:column;align-items:flex-start!important}.lesson-head-actions{width:100%;justify-content:flex-start}.followup-hub .teacher-list-row{grid-template-columns:1fr auto!important}.teacher-purpose{grid-column:1/-1}.teacher-row-actions{justify-content:flex-start;grid-column:1/-1}}
+    @media(max-width:650px){.followup-head{flex-direction:column;align-items:flex-start!important}.lesson-head-actions{width:100%;justify-content:flex-start}.followup-hub .teacher-list-row{align-items:center!important}.upload-row{font-size:12px!important;padding:7px 9px!important}}
   `;
   document.head.appendChild(style);
   uploadPlan = openLessonPlanUpload;
