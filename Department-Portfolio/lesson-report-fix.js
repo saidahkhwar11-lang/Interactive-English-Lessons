@@ -1,6 +1,6 @@
 const LESSON_PLAN_TARGET = 5;
 const LESSON_PLAN_FORM_URL = 'https://forms.cloud.microsoft/r/yJSaXpZkxM';
-const WEEKLY_REPORTS_URL = 'https://emiratesschoolsese-my.sharepoint.com/:f:/g/personal/saidah_khwar_moe_sch_ae/IgBQzFxSjWZMTIKG5LgC1i0pASiLwtKT3A4VO73YZU-8hGA?e=zX66O0';
+const WEEKLY_REPORTS_URL = 'https://emiratesschoolsese-my.sharepoint.com/:x:/g/personal/saidah_khwar_moe_sch_ae/IQDFNjvAgJnDSI9bsti8goDnAd3nVvODKMrlq1UE0yapyUw?e=whLCnT';
 const TERM_SEQUENCE = ['Term 1','Term 2','Term 3'];
 const TERM_MAX_WEEKS = {'Term 1':18,'Term 2':14};
 
@@ -101,7 +101,7 @@ function renderTeachers(){
       ${teacherProgressMarkup(status)}
       <div class="teacher-row-actions">
         <button class="btn primary upload-row" onclick="openLessonPlanUpload()">＋ Upload</button>
-        <button class="btn details" onclick="openWeeklyReports()">Details</button>
+        <button class="btn details" onclick="openWeeklyReports()">Weekly Report</button>
       </div>
     </div>`;
   });
