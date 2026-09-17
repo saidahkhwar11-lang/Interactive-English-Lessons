@@ -1,130 +1,19 @@
-/*
- * Adds extra files to existing Teacher Share & Inspire evidence folders.
- * Existing single-file uploads are preserved and migrated in place.
- */
+/* Multi-file evidence folders. New folder files use shared Supabase storage; legacy browser files stay untouched. */
 const PERMANENT_KIT_TITLE='Interactive Lesson Creation Kit – English Department';
 const PERMANENT_KIT_BASE='https://raw.githubusercontent.com/saidahkhwar11-lang/Interactive-English-Lessons/main/Lesson-Creation-Resources/Interactive-Lesson-Creation-Kit-English-Department/Interactive-Lesson-Creation-Kit-English-Department/';
-const PERMANENT_KIT_NAMES=[
-  '00-README.docx',
-  '01-START-HERE-TEACHER-INSTRUCTIONS.docx',
-  '02-MASTER-PROMPT.docx',
-  '03-TEACHER-REQUEST-TEMPLATE.docx',
-  '04-APPROVED-LESSON-STRUCTURE-AND-RULES.docx',
-  '05-EXAMPLE-TEACHER-REQUEST.docx',
-  '06-EXAMPLE-INTERACTIVE-LESSON-LINK.docx',
-  '07-APPROVED-LESSON-PLAN-EXAMPLE.pdf',
-  '08-DETAILED-REQUEST-REFERENCE.docx'
-];
-function isKitShare(s){
-  const n=String(s&&s.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-  return n==='interactivelessoncreationkitenglishdepartment';
-}
-function ensurePermanentKit(){
-  state.shares=state.shares.filter(s=>!isKitShare(s));
-  state.shares.push({
-    term:'Term 1',
-    cat:'Innovations',
-    title:PERMANENT_KIT_TITLE,
-    teacher:'Saidah Khwar',
-    grade:'All grades',
-    desc:'Complete approved department kit for creating interactive lessons with ChatGPT.',
-    static:true,
-    files:PERMANENT_KIT_NAMES.map(name=>({
-      name,
-      data:PERMANENT_KIT_BASE+encodeURIComponent(name),
-      permanent:true,
-      date:'2026-09-14'
-    }))
-  });
-}
-function shareFiles(s){
-  if(!s)return[];
-  if(!Array.isArray(s.files))s.files=[];
-  if(s.file){
-    if(!s.files.some(f=>f.name===s.file&&f.data===(s.data||''))){
-      s.files.unshift({name:s.file,data:s.data||'',date:s.date||''});
-    }
-    delete s.file;
-    delete s.data;
-  }
-  const seen=new Set();
-  s.files=s.files.filter(f=>{
-    const key=String(f.name||'')+'|'+String(f.data||'');
-    if(seen.has(key))return false;
-    seen.add(key);
-    return true;
-  });
-  return s.files;
-}
-function openShareFile(shareIndex,fileIndex){
-  const f=shareFiles(state.shares[shareIndex])[fileIndex];
-  if(!f||!f.data)return alert('This file is not available on this browser.');
-  openStoredFile(f.data,f.name);
-}
-function addFilesToShare(i){
-  const s=state.shares[i];
-  if(!s)return;
-  openModal(`<div class="folder-head"><div><h2>📁 ${esc(s.title||'Evidence')}</h2><small>Add more files without replacing existing files</small></div></div><label>Choose file(s)</label><input id="extraShareFiles" type="file" multiple><div class="notice">You can select several files at the same time.</div><div class="actions"><button class="btn primary" onclick="saveExtraShareFiles(${i})">Add Files</button><button class="btn" onclick="openShareFolder(${i})">Cancel</button></div>`);
-}
-function saveExtraShareFiles(i){
-  const input=document.getElementById('extraShareFiles');
-  const selected=[...(input&&input.files||[])];
-  if(!selected.length)return alert('Choose at least one file.');
-  const s=state.shares[i];
-  const target=shareFiles(s);
-  Promise.all(selected.map(file=>new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=()=>resolve({name:file.name,data:r.result,date:new Date().toISOString()});
-    r.onerror=reject;
-    r.readAsDataURL(file);
-  }))).then(files=>{
-    const fresh=files.filter(f=>!target.some(x=>x.name===f.name&&x.data===f.data));
-    if(!fresh.length)return alert('The selected file is already inside this folder.');
-    target.push(...fresh);
-    try{
-      localStorage.setItem(K,JSON.stringify(state));
-      renderAll();
-      openShareFolder(i);
-    }catch(e){
-      target.splice(target.length-fresh.length,fresh.length);
-      alert('These files are too large for this browser storage. Please choose smaller files.');
-    }
-  }).catch(()=>alert('One or more files could not be read.'));
-}
-function deleteShareFile(shareIndex,fileIndex){
-  const s=state.shares[shareIndex],files=shareFiles(s);
-  if(!files[fileIndex]||!confirm('Delete this file from the folder?'))return;
-  const removed=files.splice(fileIndex,1)[0];
-  if(s.file===removed.name&&s.data===removed.data){s.file='';s.data='';}
-  save();
-  openShareFolder(shareIndex);
-}
-function openShareFolder(i){
-  const s=state.shares[i];
-  if(!s)return;
-  const files=shareFiles(s);
-  const icon=s.cat==='Teaching Strategies'?'🧠':s.cat==='Assessment Samples'?'🧾':'💡';
-  let rows=files.length?files.map((f,j)=>`<div class="clean-upload"><div class="file-icon">📄</div><div class="file-info"><b>${esc(f.name||'File')}</b><small>${f.date?esc(new Date(f.date).toLocaleDateString()):'Saved file'}</small></div><div class="file-actions">${f.data?`<button class="btn open-btn" onclick="openShareFile(${i},${j})">Open</button>`:`<button class="btn open-btn" disabled>Open</button>`}${f.permanent?'':`<button class="btn delete-btn" onclick="deleteShareFile(${i},${j})">Delete</button>`}</div></div>`).join(''):'<div class="empty-state">This folder has no files yet.</div>';
-  openModal(`<div class="folder-head"><div><h2>${icon} ${esc(s.title||'Evidence')}</h2><small>${esc(s.teacher||'')}${s.grade?' · '+esc(s.grade):''} · ${files.length} file(s)</small></div><button class="btn primary add-btn" onclick="addFilesToShare(${i})">＋ Add Files</button></div>${s.desc?`<p class="folder-description">${esc(s.desc)}</p>`:''}<div class="clean-list">${rows}</div><div class="modal-footer"><button class="btn" onclick="viewShares('${String(s.cat).replace(/'/g,"\\'")}')">Back</button><button class="btn" onclick="closeModal()">Close</button></div>`);
-}
-function renderShares(){
-  shareGrid.innerHTML=cats.map(cat=>{
-    const folders=state.shares.filter(s=>s.term===state.term&&s.cat===cat[1]);
-    const fileCount=folders.reduce((total,s)=>total+shareFiles(s).length,0);
-    const summary=folders.length+' folder'+(folders.length===1?'':'s')+' · '+fileCount+' file'+(fileCount===1?'':'s');
-    return `<article class="sharecard"><div class="ico">${cat[0]}</div><h3>${cat[1]}</h3><p>${cat[2]}</p><small>${summary} in ${esc(state.term)}</small><div class="actions"><button class="btn primary" onclick="addShare('${cat[1]}')">Add Evidence</button><button class="btn" onclick="viewShares('${cat[1]}')">View Files</button></div></article>`;
-  }).join('');
-}
-function viewShares(cat){
-  const arr=state.shares.map((s,i)=>({...s,_i:i})).filter(s=>s.term===state.term&&s.cat===cat);
-  openModal(`<div class="folder-head"><div><h2>${esc(cat)}</h2><small>${esc(state.term)}</small></div><button class="btn primary add-btn" onclick="addShare('${String(cat).replace(/'/g,"\\'")}')">＋ Add</button></div>${arr.length?`<div class="clean-list">${arr.map(s=>{const count=shareFiles(state.shares[s._i]).length;return `<div class="clean-upload share-folder-row"><div class="file-icon">📁</div><div class="file-info"><b>${esc(s.title||'Evidence folder')}</b><small>${esc(s.teacher||'')}${s.grade?' · '+esc(s.grade):''} · ${count} file(s)</small></div><div class="file-actions"><button class="btn open-btn" onclick="openShareFolder(${s._i})">Open Folder</button><button class="btn" onclick="addFilesToShare(${s._i})">Add Files</button>${s.static?'':`<button class="btn delete-btn" onclick="deleteShare(${s._i})">Delete</button>`}</div></div>`}).join('')}</div>`:'<div class="empty-state">No uploads saved for this term yet.</div>'}<div class="modal-footer"><button class="btn" onclick="closeModal()">Close</button></div>`);
-}
-(function(){
-  const style=document.createElement('style');
-  style.textContent='.share-folder-row .file-actions{flex-wrap:wrap;justify-content:flex-end}.folder-description{padding:10px 12px;margin:12px 0 0;background:#f7f8f6;border-radius:10px;color:#68777d}.box{width:min(760px,96vw)}@media(max-width:700px){.share-folder-row .file-actions{grid-column:1/-1}}';
-  document.head.appendChild(style);
-  ensurePermanentKit();
-  state.shares.forEach(shareFiles);
-  try{localStorage.setItem(K,JSON.stringify(state))}catch(e){}
-  renderShares();
-})();
+const PERMANENT_KIT_NAMES=['00-README.docx','01-START-HERE-TEACHER-INSTRUCTIONS.docx','02-MASTER-PROMPT.docx','03-TEACHER-REQUEST-TEMPLATE.docx','04-APPROVED-LESSON-STRUCTURE-AND-RULES.docx','05-EXAMPLE-TEACHER-REQUEST.docx','06-EXAMPLE-INTERACTIVE-LESSON-LINK.docx','07-APPROVED-LESSON-PLAN-EXAMPLE.pdf','08-DETAILED-REQUEST-REFERENCE.docx'];
+const FOLDER_BUCKET='portfolio-files';
+const fdb=()=>parent.portfolioSupabase, fuser=()=>parent.PORTFOLIO_USER;
+function isKitShare(s){const n=String(s&&s.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return n==='interactivelessoncreationkitenglishdepartment'}
+function ensurePermanentKit(){state.shares=state.shares.filter(s=>!isKitShare(s));state.shares.push({term:'Term 1',cat:'Innovations',title:PERMANENT_KIT_TITLE,teacher:'Saidah Khwar',grade:'All grades',desc:'Complete approved department kit for creating interactive lessons with ChatGPT.',static:true,files:PERMANENT_KIT_NAMES.map(name=>({name,data:PERMANENT_KIT_BASE+encodeURIComponent(name),permanent:true,date:'2026-09-14'}))})}
+function shareFiles(s){if(!s)return[];if(!Array.isArray(s.files))s.files=[];if(s.file){if(!s.files.some(f=>f.name===s.file&&f.data===(s.data||'')))s.files.unshift({name:s.file,data:s.data||'',date:s.date||''});delete s.file;delete s.data}const seen=new Set();s.files=s.files.filter(f=>{const key=String(f.name||'')+'|'+String(f.storage_path||f.data||'');if(seen.has(key))return false;seen.add(key);return true});return s.files}
+async function folderBlob(f){if(!f?.storage_path)return null;const {data,error}=await fdb().storage.from(FOLDER_BUCKET).download(f.storage_path);if(error||!data)return null;let blob=data;const wanted=f.type||(/\.pdf$/i.test(f.name||'')?'application/pdf':data.type||'application/octet-stream');if(blob.type!==wanted)blob=new Blob([blob],{type:wanted});return blob}
+async function openShareFile(shareIndex,fileIndex){const f=shareFiles(state.shares[shareIndex])[fileIndex];if(!f)return;if(f.storage_path){const tab=window.open('about:blank','_blank'),blob=await folderBlob(f);if(!blob){if(tab)tab.close();return alert('Could not open this file.')}const url=URL.createObjectURL(blob);if(tab){tab.opener=null;tab.location.href=url}else location.href=url;setTimeout(()=>URL.revokeObjectURL(url),60000);return}if(!f.data)return alert('This older saved file is not available on this browser.');openStoredFile(f.data,f.name)}
+async function downloadShareFile(shareIndex,fileIndex){const f=shareFiles(state.shares[shareIndex])[fileIndex];if(!f)return;if(f.storage_path){const blob=await folderBlob(f);if(!blob)return alert('Could not download this file.');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=f.name||'file';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);return}if(f.data){const a=document.createElement('a');a.href=f.data;a.download=f.name||'file';a.target='_blank';document.body.appendChild(a);a.click();a.remove()}else alert('This older saved file is not available on this browser.')}
+function addFilesToShare(i){const s=state.shares[i];if(!s)return;openModal(`<div class="folder-head"><div><h2>📁 ${esc(s.title||'Evidence')}</h2><small>Add more files without replacing existing files</small></div></div><label>Choose file(s)</label><input id="extraShareFiles" type="file" multiple><div class="notice">You can select several files at the same time. Files will be stored securely in the shared Portfolio.</div><div class="actions"><button id="saveFolderFilesBtn" class="btn primary" onclick="saveExtraShareFiles(${i})">Add Files</button><button class="btn" onclick="openShareFolder(${i})">Cancel</button></div>`)}
+async function saveExtraShareFiles(i){const input=document.getElementById('extraShareFiles'),selected=[...(input&&input.files||[])];if(!selected.length)return alert('Choose at least one file.');if(!fdb()||!fuser())return alert('Please sign in to upload files.');const s=state.shares[i],target=shareFiles(s),btn=document.getElementById('saveFolderFilesBtn');if(btn){btn.disabled=true;btn.textContent='Uploading…'}for(const file of selected){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_'),path=`${fuser().id}/evidence-folders/${Date.now()}-${Math.random().toString(36).slice(2)}-${safe}`;const {error}=await fdb().storage.from(FOLDER_BUCKET).upload(path,file,{contentType:file.type||undefined});if(error){alert('Could not upload '+file.name+': '+error.message);continue}target.push({name:file.name,storage_path:path,type:file.type,size:file.size,owner_id:fuser().id,date:new Date().toISOString(),shared:true})}try{localStorage.setItem(K,JSON.stringify(state));if(typeof saveMasterNow==='function')await saveMasterNow();renderAll();openShareFolder(i)}catch(e){alert('Files uploaded, but the folder list could not be refreshed. Please reopen the Portfolio.') }}
+async function deleteShareFile(shareIndex,fileIndex){const s=state.shares[shareIndex],files=shareFiles(s),f=files[fileIndex];if(!f||!confirm('Delete this file from the folder?'))return;if(f.storage_path){if(f.owner_id&&f.owner_id!==fuser()?.id)return alert('Only the uploader can delete this file.');const {error}=await fdb().storage.from(FOLDER_BUCKET).remove([f.storage_path]);if(error)return alert('Could not delete this file.')}files.splice(fileIndex,1);save();openShareFolder(shareIndex)}
+function openShareFolder(i){const s=state.shares[i];if(!s)return;const files=shareFiles(s),icon=s.cat==='Teaching Strategies'?'🧠':s.cat==='Assessment Samples'?'🧾':'💡';let rows=files.length?files.map((f,j)=>`<div class="clean-upload"><div class="file-icon">📄</div><div class="file-info"><b>${esc(f.name||'File')}</b><small>${f.date?esc(new Date(f.date).toLocaleDateString()):'Saved file'}${f.storage_path?' · Shared':''}</small></div><div class="file-actions">${f.data||f.storage_path?`<button class="btn open-btn" onclick="openShareFile(${i},${j})">Open</button><button class="btn" onclick="downloadShareFile(${i},${j})">Download</button>`:`<button class="btn open-btn" disabled>Open</button>`}${f.permanent?'':`<button class="btn delete-btn" onclick="deleteShareFile(${i},${j})">Delete</button>`}</div></div>`).join(''):'<div class="empty-state">This folder has no files yet.</div>';openModal(`<div class="folder-head"><div><h2>${icon} ${esc(s.title||'Evidence')}</h2><small>${esc(s.teacher||'')}${s.grade?' · '+esc(s.grade):''} · ${files.length} file(s)</small></div><button class="btn primary add-btn" onclick="addFilesToShare(${i})">＋ Add Files</button></div>${s.desc?`<p class="folder-description">${esc(s.desc)}</p>`:''}<div class="clean-list">${rows}</div><div class="modal-footer"><button class="btn" onclick="viewShares('${String(s.cat).replace(/'/g,"\\'")}')">Back</button><button class="btn" onclick="closeModal()">Close</button></div>`)}
+function renderShares(){shareGrid.innerHTML=cats.map(cat=>{const folders=state.shares.filter(s=>s.term===state.term&&s.cat===cat[1]),fileCount=folders.reduce((total,s)=>total+shareFiles(s).length,0),summary=folders.length+' folder'+(folders.length===1?'':'s')+' · '+fileCount+' file'+(fileCount===1?'':'s');return `<article class="sharecard"><div class="ico">${cat[0]}</div><h3>${cat[1]}</h3><p>${cat[2]}</p><small>${summary} in ${esc(state.term)}</small><div class="actions"><button class="btn primary" onclick="addShare('${cat[1]}')">Add Evidence</button><button class="btn" onclick="viewShares('${cat[1]}')">View Files</button></div></article>`}).join('')}
+function viewShares(cat){const arr=state.shares.map((s,i)=>({...s,_i:i})).filter(s=>s.term===state.term&&s.cat===cat);openModal(`<div class="folder-head"><div><h2>${esc(cat)}</h2><small>${esc(state.term)}</small></div><button class="btn primary add-btn" onclick="addShare('${String(cat).replace(/'/g,"\\'")}')">＋ Add</button></div>${arr.length?`<div class="clean-list">${arr.map(s=>{const count=shareFiles(state.shares[s._i]).length;return `<div class="clean-upload share-folder-row"><div class="file-icon">📁</div><div class="file-info"><b>${esc(s.title||'Evidence folder')}</b><small>${esc(s.teacher||'')}${s.grade?' · '+esc(s.grade):''} · ${count} file(s)</small></div><div class="file-actions"><button class="btn open-btn" onclick="openShareFolder(${s._i})">Open Folder</button><button class="btn" onclick="addFilesToShare(${s._i})">Add Files</button>${s.static?'':`<button class="btn delete-btn" onclick="deleteShare(${s._i})">Delete</button>`}</div></div>`}).join('')}</div>`:'<div class="empty-state">No uploads saved for this term yet.</div>'}<div class="modal-footer"><button class="btn" onclick="closeModal()">Close</button></div>`)}
+(function(){const style=document.createElement('style');style.textContent='.share-folder-row .file-actions{flex-wrap:wrap;justify-content:flex-end}.folder-description{padding:10px 12px;margin:12px 0 0;background:#f7f8f6;border-radius:10px;color:#68777d}.box{width:min(760px,96vw)}@media(max-width:700px){.share-folder-row .file-actions{grid-column:1/-1}}';document.head.appendChild(style);ensurePermanentKit();state.shares.forEach(shareFiles);try{localStorage.setItem(K,JSON.stringify(state))}catch(e){}renderShares()})();
