@@ -10,6 +10,7 @@ window.PORTFOLIO_SHARED = {
 (function () {
   const MAIN_KEY = "engDeptPortfolioV2";
   const BACKUP_KEY = "engDeptPortfolioV2_before_shared_sync";
+  const PORTFOLIO_URL = "https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Department-Portfolio/";
 
   // Protect the existing Portfolio data first.
   try {
@@ -245,6 +246,7 @@ window.PORTFOLIO_SHARED = {
         email,
         password,
         options: {
+          emailRedirectTo: PORTFOLIO_URL,
           data: {
             display_name:
               email.toLowerCase() ===
