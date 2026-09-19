@@ -20,4 +20,6 @@
     box.append(info,btn);document.body.appendChild(box);
   }
   renderAccount();setTimeout(renderAccount,1200);
+  // On a fresh login the iframe may load before the parent publishes PORTFOLIO_USER. Show account controls as soon as login completes.
+  let tries=0;const loginWait=setInterval(()=>{tries++;if(parent&&parent.portfolioSupabase&&parent.PORTFOLIO_USER){clearInterval(loginWait);renderAccount()}else if(tries>=60)clearInterval(loginWait)},250);
 })();
