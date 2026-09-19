@@ -18,13 +18,22 @@ async function acknowledgeMeeting(key){
  if(error){if(btn){btn.disabled=false;btn.textContent='✓ Acknowledge Meeting Minutes'}return alert('Could not save acknowledgement. Please try again.')}
  await loadMeetingAck(key);
 }
+async function isMeetingAckAdmin(){const db=parent.portfolioSupabase,user=parent.PORTFOLIO_USER;if(!db||!user)return false;try{const {data}=await db.from('portfolio_profiles').select('role').eq('user_id',user.id).maybeSingle();return !!(data&&data.role==='admin')}catch(e){return false}}
 async function loadMeetingAck(key){
  const db=parent.portfolioSupabase,user=parent.PORTFOLIO_USER;if(!db||!user)return;
- const {data}=await db.from('meeting_acknowledgements').select('user_id,teacher_name,acknowledged_at').eq('meeting_key',key).order('acknowledged_at');
- const rows=data||[],mine=rows.find(x=>x.user_id===user.id),btn=document.getElementById('meetingAckBtn'),count=document.getElementById('meetingAckCount');
+ const {data}=await db.from('meeting_acknowledgements').select('user_id,teacher_name,teacher_email,acknowledged_at').eq('meeting_key',key).order('acknowledged_at');
+ const rows=data||[],mine=rows.find(x=>x.user_id===user.id),btn=document.getElementById('meetingAckBtn'),count=document.getElementById('meetingAckCount'),admin=await isMeetingAckAdmin(),total=(state.teachers||[]).length;
  if(btn){btn.disabled=!!mine;btn.textContent=mine?'✓ Acknowledged':'✓ Acknowledge Meeting Minutes';}
- if(count)count.textContent=rows.length+' acknowledged';
+ if(count){count.innerHTML=admin?`<button class="btn" style="padding:4px 8px;font-size:11px" onclick="viewMeetingAcknowledgements('${key}')">✓ ${rows.length}/${total} Acknowledged · View</button>`:(mine?'✓ You acknowledged these minutes':rows.length+' acknowledged');}
  window.__meetingAckRows=rows;
+}
+async function viewMeetingAcknowledgements(key){
+ if(!(await isMeetingAckAdmin()))return;
+ const db=parent.portfolioSupabase,{data}=await db.from('meeting_acknowledgements').select('teacher_name,teacher_email,acknowledged_at').eq('meeting_key',key).order('acknowledged_at'),rows=data||[],teachers=state.teachers||[];
+ const norm=s=>String(s||'').trim().toLowerCase(),doneNames=new Set(rows.map(x=>norm(x.teacher_name))),doneEmails=new Set(rows.map(x=>norm(x.teacher_email)));
+ const pending=teachers.filter(t=>!doneNames.has(norm(t.name))&&!doneEmails.has(norm(t.email)));
+ const fmt=d=>new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Dubai'}).format(new Date(d));
+ openModal(`<h2>✓ Meeting Acknowledgements</h2><div class="notice"><b>${rows.length}/${teachers.length} acknowledged</b> · ${pending.length} pending</div><h3 style="margin-top:18px">Acknowledged</h3>${rows.length?rows.map(x=>`<div class="item"><div><b>✓ ${esc(x.teacher_name)}</b><small>${esc(fmt(x.acknowledged_at))}</small></div></div>`).join(''):'<p>No acknowledgements yet.</p>'}<h3 style="margin-top:18px">Pending</h3>${pending.length?pending.map(t=>`<div class="item"><div><b>○ ${esc(t.name)}</b></div></div>`).join(''):'<p>All teachers have acknowledged.</p>'}<div class="modal-footer"><button class="btn" onclick="closeModal()">Close</button></div>`);
 }
 function meetingAckBlock(key){setTimeout(()=>loadMeetingAck(key),80);return `<div style="margin-top:20px;padding:14px 16px;border:1px solid #dce5e8;border-radius:12px;background:#f7fafb;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><b>I have read and acknowledged these meeting minutes.</b><br><small id="meetingAckCount" style="color:#71838c">Loading acknowledgements…</small></div><button id="meetingAckBtn" class="btn primary" onclick="acknowledgeMeeting('${key}')">✓ Acknowledge Meeting Minutes</button></div>`}
 function openMeetingWithAck(html,key){openModal(html+meetingAckBlock(key)+'<div class="modal-footer"><button class="btn" onclick="closeModal()">Close</button></div>')}
