@@ -80,7 +80,7 @@ body{background:linear-gradient(180deg,#fbfcfd 0%,#f5f8fa 100%);color:#34495a}
 <article class="card"><h3>📅 Department Calendar</h3><p>Open when needed to add department events and goals.</p>
 <div class="actions"><button class="btn primary" onclick="toggleCalendar()" id="calendarToggle">Open Department Calendar</button></div>
 <div id="calendarPanel" class="hidden" style="margin-top:12px">
-<div class="actions"><button class="btn primary" onclick="openEvent()">+ Add Event</button><button class="btn" onclick="changeMonth(-1)">Previous Month</button><button class="btn" onclick="changeMonth(1)">Next Month</button><b id="monthTitle" style="align-self:center;margin-left:6px"></b></div>
+<div class="actions"><button class="btn primary" onclick="openEvent()">+ Add Event</button><button class="btn" onclick="changeMonth(-1)">Previous Month</button><button class="btn" onclick="changeMonth(1)">Next Month</button><button class="btn" onclick="printTermCalendar()">🖨️ Print / Save Term PDF</button><b id="monthTitle" style="align-self:center;margin-left:6px"></b></div>
 <div class="calendar" id="calendar"></div>
 </div></article>
 </div>
@@ -124,6 +124,14 @@ function toggleCalendar(){const p=document.getElementById('calendarPanel'),b=doc
 function openEvent(date=''){openModal(`<h2>Add Department Calendar Event</h2><label>Date</label><input id="edate" type="date" value="${date}"><label>Event name</label><input id="ename" placeholder="e.g. Writing Assessment"><label>Grades / classes</label><input id="egrades" placeholder="e.g. Grades 9–10"><label>Main goal</label><textarea id="egoal" placeholder="Short description of the main purpose"></textarea><div class="actions"><button class="btn primary" onclick="saveEvent()">Add Event</button><button class="btn" onclick="closeModal()">Cancel</button></div>`) }
 function saveEvent(){let d=edate.value,n=ename.value.trim(),g=egrades.value.trim(),o=egoal.value.trim();if(!d||!n)return alert('Add date and event name.');state.events.push({term:state.term,d,n,g,o});save();closeModal()}
 function changeMonth(x){current=new Date(current.getFullYear(),current.getMonth()+x,1);renderCalendar()}
+function printTermCalendar(){
+ const ev=(state.events||[]).filter(e=>e.term===state.term).slice().sort((a,b)=>String(a.d).localeCompare(String(b.d)));
+ const rows=ev.length?ev.map(e=>'<tr><td>'+esc(e.d||'')+'</td><td>'+esc(e.n||'')+'</td><td>'+esc(e.g||'')+'</td><td>'+esc(e.o||'')+'</td></tr>').join(''):'<tr><td colspan="4" style="text-align:center">No events saved for this term.</td></tr>';
+ const w=window.open('','_blank');
+ if(!w)return alert('Please allow pop-ups to print the calendar.');
+ w.document.write('<!doctype html><html><head><title>'+esc(state.term)+' Department Calendar</title><style>@page{size:A4 landscape;margin:14mm}body{font-family:Arial,sans-serif;color:#263238;margin:0}h1{text-align:center;color:#405f70;margin:0 0 4px;font-size:22px}.sub{text-align:center;color:#687e89;margin:0 0 20px}table{width:100%;border-collapse:collapse;font-size:12px}th{background:#405f70;color:#fff;text-align:left;padding:10px}td{border:1px solid #d6e0e4;padding:10px;vertical-align:top}tr:nth-child(even) td{background:#f6f9fa}.foot{text-align:center;color:#78909b;font-size:10px;margin-top:18px}@media print{button{display:none}}</style></head><body><h1>Al Reyadah School – English Department</h1><p class="sub">Department Calendar · '+esc(state.term)+' · Academic Year 2026–2027</p><table><thead><tr><th>Date</th><th>Event / Meeting</th><th>Grade / Group</th><th>Details / Objectives</th></tr></thead><tbody>'+rows+'</tbody></table><p class="foot">English Department Portfolio</p><script>window.onload=function(){window.print()}<\/script></body></html>');
+ w.document.close();
+}
 function renderCalendar(){
 let y=current.getFullYear(),m=current.getMonth();document.getElementById('monthTitle').textContent=current.toLocaleString('en',{month:'long',year:'numeric'});
 let days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let out=days.map(d=>`<div class="dow">${d}</div>`).join('');
