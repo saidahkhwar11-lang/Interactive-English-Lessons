@@ -12,9 +12,11 @@ const sdk=document.createElement("script");sdk.src="https://cdn.jsdelivr.net/npm
 function hasSignedInHint(){try{return localStorage.getItem(SESSION_HINT)==="1"}catch(e){return false}}
 function setSignedInHint(on){try{if(on)localStorage.setItem(SESSION_HINT,"1");else localStorage.removeItem(SESSION_HINT)}catch(e){}}
 async function startPortfolioAuth(){
+ const forcedSignOut=new URLSearchParams(window.location.search).get("signedout")==="1";
+ if(forcedSignOut){setSignedInHint(false);window.__portfolioExplicitSignOut=true;}
  const client=window.supabase.createClient(window.PORTFOLIO_SHARED.url,window.PORTFOLIO_SHARED.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
  window.portfolioSupabase=client;
- try{const {data,error}=await client.auth.getSession();if(error)throw error;if(data&&data.session)showSignedIn(data.session.user);else if(!hasSignedInHint())showLogin()}catch(e){console.warn("Initial session check delayed/failed",e);if(!hasSignedInHint())showLogin()}
+ try{const {data,error}=await client.auth.getSession();if(error)throw error;if(forcedSignOut){if(data&&data.session)await client.auth.signOut();window.PORTFOLIO_USER=null;showLogin();history.replaceState(null,"",PORTFOLIO_URL);return}if(data&&data.session)showSignedIn(data.session.user);else showLogin()}catch(e){console.warn("Initial session check delayed/failed",e);if(!hasSignedInHint())showLogin()}
  client.auth.onAuthStateChange((event,session)=>{
    if(session){showSignedIn(session.user);return}
    // Only a confirmed sign-out should put a signed-in user back on the login page.
