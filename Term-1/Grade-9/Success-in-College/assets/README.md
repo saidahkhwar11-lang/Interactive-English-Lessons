@@ -1,1 +1,0 @@
-Original textbook screenshots for this lesson are stored in this assets folder and displayed directly in the interactive stations.
