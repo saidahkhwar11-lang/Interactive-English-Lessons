@@ -16,7 +16,7 @@
     info.append(strong,document.createElement('br'),small);
     const btn=document.createElement('button');btn.textContent='Sign Out';
     btn.style.cssText='border:1px solid #d7dfdd;background:#f3f6f5;color:#536971;border-radius:8px;padding:7px 10px;cursor:pointer;font-weight:700';
-    btn.onclick=async function(){btn.disabled=true;btn.textContent='Signing out...';const result=await client.auth.signOut();if(result.error){btn.disabled=false;btn.textContent='Sign Out';alert('Could not sign out. Please try again.');return;}parent.location.reload();};
+    btn.onclick=async function(){btn.disabled=true;btn.textContent='Signing out...';parent.__portfolioExplicitSignOut=true;try{parent.localStorage.removeItem('portfolioSignedInHint');}catch(e){}const result=await client.auth.signOut();if(result.error){parent.__portfolioExplicitSignOut=false;btn.disabled=false;btn.textContent='Sign Out';alert('Could not sign out. Please try again.');return;}parent.location.href='https://saidahkhwar11-lang.github.io/Interactive-English-Lessons/Department-Portfolio/';};
     box.append(info,btn);document.body.appendChild(box);
   }
   renderAccount();setTimeout(renderAccount,1200);
