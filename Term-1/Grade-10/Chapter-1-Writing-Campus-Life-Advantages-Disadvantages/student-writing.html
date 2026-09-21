@@ -8,9 +8,7 @@ async function go(){
  if(Object.values(values).some(v=>!v)){status.className='err';status.textContent='Please complete your name and all five paragraph parts.';return}
  button.disabled=true;button.textContent='Sending…';status.textContent='Saving your writing…';
  try{
-  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_name:values.sn,class_name:'Grade 10 Campus Writing',greeting_opening:'Topic Sentence: '+values.ts,body1:'Advantages: '+values.ad+'\\n\\nDisadvantages: '+values.ds,body2:'Evidence / Examples: '+values.ev,closing_signature:'Conclusion: '+values.co})});
-  let result={};try{result=await response.json()}catch(_){}
-  if(!response.ok)throw new Error(result.error||('Submission failed ('+response.status+').'));
+  await fetch(endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({student_name:values.sn,class_name:'Grade 10 Campus Writing',greeting_opening:'Topic Sentence: '+values.ts,body1:'Advantages: '+values.ad+'\\n\\nDisadvantages: '+values.ds,body2:'Evidence / Examples: '+values.ev,closing_signature:'Conclusion: '+values.co})});
   status.className='ok';status.textContent='Sent successfully ✓ Your teacher can now see your writing.';
   button.textContent='Submitted ✓';
  }catch(error){
