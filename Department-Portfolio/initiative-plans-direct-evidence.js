@@ -1,0 +1,146 @@
+/* Shared initiative plans displayed in the English Department Portfolio. */
+(function () {
+  const list = document.getElementById('initiativePlanList');
+  if (!list) return;
+  const names = [
+    'Reading Enrichment Activities', 'Creative Storytelling', 'Online Reading Practice',
+    'Vocabulary Development', 'Quick Writing Activities', 'Write to Lead Program',
+    '16-Square Spelling Test', 'Paragraph Expert Groups',
+    'Weekly Differentiated Reading Comprehension Lessons', 'Station-Based Reading Activities',
+    'Vocabulary and Spelling Tests', 'Essay Writing Tasks',
+    'Educational Videos and Differentiated Worksheets', 'Kutubi Reading Platform',
+    'Weekly Differentiated Writing Tasks', 'Daily Independent Reading',
+    'Reading Summaries', 'Wayground Reading and Language Practice', 'ALEF Program'
+  ];
+  const safe = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+  let loading = false;
+  let evidenceFiles = [];
+  let planRows = [];
+  const currentUserId = () => parent.PORTFOLIO_USER && parent.PORTFOLIO_USER.id;
+  list.addEventListener('click', async event => {
+    const editPlan = event.target.closest('[data-edit-initiative-plan]');
+    if (editPlan) { window.open('initiatives-poll.html', '_blank', 'noopener'); return; }
+    const deletePlan = event.target.closest('[data-delete-initiative-plan]');
+    if (deletePlan) {
+      if (!confirm('Delete this initiative plan? This cannot be undone.')) return;
+      deletePlan.disabled = true;
+      const client = parent.portfolioSupabase;
+      const result = await client.from('english_initiative_polls').delete().eq('id', deletePlan.dataset.deleteInitiativePlan).eq('user_id', currentUserId());
+      if (result.error) { deletePlan.disabled = false; alert('Could not delete this initiative plan. Please try again.'); return; }
+      await refresh(); return;
+    }
+    const add = event.target.closest('[data-add-plan-evidence]');
+    if (add) {
+      const row = planRows.find(item => String(item.id) === String(add.dataset.addPlanEvidence));
+      if (!row) return alert('Could not identify this initiative plan.');
+      const picker = document.createElement('input');
+      picker.type = 'file';
+      picker.onchange = async () => {
+        const file = picker.files && picker.files[0];
+        if (!file) return;
+        const title = prompt('Evidence title:', file.name) || file.name;
+        const uid = currentUserId();
+        const client = parent.portfolioSupabase;
+        const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const storagePath = uid + '/initiative-' + row.id + '/' + Date.now() + '-' + cleanName;
+        const uploaded = await client.storage.from('portfolio-files').upload(storagePath, file);
+        if (uploaded.error) return alert('Could not upload this evidence file.');
+        const saved = await client.from('portfolio_uploads').insert({
+          owner_id: uid, teacher_name: row.teacher_name, category: 'Initiative Plan',
+          title: title, file_name: file.name, storage_path: storagePath,
+          metadata: { initiative_id: row.initiative_id, initiative_plan_id: row.id }
+        });
+        if (saved.error) {
+          await client.storage.from('portfolio-files').remove([storagePath]);
+          return alert('Could not save this evidence file.');
+        }
+        await refresh();
+      };
+      picker.click();
+      return;
+    }
+    const del = event.target.closest('[data-delete-initiative-evidence]');
+    if (del) {
+      const file = evidenceFiles.find(item => String(item.id) === del.dataset.deleteInitiativeEvidence);
+      if (!file) return;
+      if (String(file.owner_id) !== String(currentUserId() || '')) return alert('Only the owner of this evidence can delete it.');
+      if (!confirm('Delete this evidence file permanently?')) return;
+      del.disabled = true;
+      try {
+        const client = parent.portfolioSupabase;
+        const removed = await client.storage.from('portfolio-files').remove([file.storage_path]);
+        if (removed.error) throw removed.error;
+        const deleted = await client.from('portfolio_uploads').delete().eq('id', file.id).eq('owner_id', currentUserId());
+        if (deleted.error) throw deleted.error;
+        await refresh();
+      } catch (error) {
+        del.disabled = false;
+        alert('Could not delete this evidence file. Please try again.');
+        console.error('Initiative evidence delete failed:', error);
+      }
+      return;
+    }
+    const button = event.target.closest('[data-initiative-evidence]');
+    if (!button) return;
+    const file = evidenceFiles.find(item => String(item.id) === button.dataset.initiativeEvidence);
+    if (!file) return;
+    const { data, error } = await parent.portfolioSupabase.storage.from('portfolio-files').createSignedUrl(file.storage_path, 300);
+    if (error) return alert('Could not open this evidence file.');
+    window.open(data.signedUrl, '_blank', 'noopener');
+  });
+  async function refresh() {
+    if (loading) return;
+    const client = parent.portfolioSupabase;
+    if (!client || !parent.PORTFOLIO_USER) {
+      list.textContent = 'Sign in to view the department initiative plans.';
+      setTimeout(refresh, 700);
+      return;
+    }
+    loading = true;
+    list.textContent = 'Loading plans…';
+    try {
+      const verified = await client.auth.getUser();
+      if (verified.error || !verified.data.user) {
+        list.textContent = 'Sign in to view the department initiative plans.';
+        return;
+      }
+      const { data, error } = await client.from('english_initiative_polls')
+        .select('id,user_id,teacher_name,initiative_id,description,timeline,target_students,actions,measure,updated_at')
+        .order('updated_at', { ascending: false });
+      if (error) throw error;
+      const uploads = await client.from('portfolio_uploads')
+        .select('id,owner_id,title,file_name,storage_path,metadata')
+        .eq('category', 'Initiative Plan').order('created_at', { ascending: false });
+      if (uploads.error) throw uploads.error;
+      evidenceFiles = uploads.data || [];
+      const rows = data || [];
+      planRows = rows;
+      if (!rows.length) {
+        list.innerHTML = '<p style="margin:0;color:#687e89">No initiative plans have been submitted yet.</p>';
+        return;
+      }
+      list.innerHTML = '<p style="color:#687e89;font-size:13px;margin:0 0 12px">' + rows.length + ' plan' + (rows.length === 1 ? '' : 's') + ' shared · Select a plan to read its details.</p>' +
+        '<div style="display:grid;gap:10px">' + rows.map(row => {
+          const title = names[row.initiative_id - 1] || 'Initiative';
+          const date = row.updated_at ? new Date(row.updated_at).toLocaleDateString('en-GB') : '';
+          const files = evidenceFiles.filter(item => item.owner_id === row.user_id && (!item.metadata?.initiative_id || String(item.metadata.initiative_id) === String(row.initiative_id)));
+          return '<details style="border:1px solid #d8e3e8;border-radius:12px;background:#fbfdfd;padding:13px 15px">' +
+            '<summary style="cursor:pointer;line-height:1.5;color:#17324d"><b>' + safe(title) + '</b><span style="display:block;color:#687e89;font-size:13px">' + safe(row.teacher_name) + (date ? ' · Updated ' + safe(date) : '') + '</span></summary>' +
+            '<div style="margin-top:13px;border-top:1px solid #e2e9ec;padding-top:11px;display:grid;gap:10px;line-height:1.55;font-size:14px">' +
+            [['Description', row.description], ['Timeline', row.timeline], ['Target students', row.target_students], ['Actions and responsibilities', row.actions], ['How impact will be measured', row.measure]]
+              .map(([label, value]) => '<div><b>' + label + '</b><div style="white-space:pre-wrap;color:#425b6c">' + safe(value) + '</div></div>').join('') +
+            (String(row.user_id) === String(currentUserId() || '') ? '<div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn" data-edit-initiative-plan="' + safe(row.id) + '">✏️ Edit Plan</button><button type="button" class="btn danger" data-delete-initiative-plan="' + safe(row.id) + '">🗑 Delete Plan</button></div>' : '') +
+            '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="' + safe(row.id) + '">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<span style="display:inline-flex;gap:5px;align-items:center"><button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>' + (String(file.owner_id) === String(currentUserId() || '') ? '<button type="button" class="btn danger" data-delete-initiative-evidence="' + safe(file.id) + '" title="Delete evidence">🗑 Delete</button>' : '') + '</span>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
+            '</div></details>';
+        }).join('') + '</div>';
+    } catch (error) {
+      list.textContent = 'Could not load the plans. Please try Refresh plans.';
+      console.error('Initiative plan loading failed:', error);
+    } finally {
+      loading = false;
+    }
+  }
+  window.refreshInitiativePlans = refresh;
+  window.addEventListener('focus', refresh);
+  refresh();
+})();
