@@ -15,6 +15,7 @@
   const safe = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   let loading = false;
   let evidenceFiles = [];
+  let planRows = [];
   const currentUserId = () => parent.PORTFOLIO_USER && parent.PORTFOLIO_USER.id;
   list.addEventListener('click', async event => {
     const editPlan = event.target.closest('[data-edit-initiative-plan]');
@@ -29,7 +30,35 @@
       await refresh(); return;
     }
     const add = event.target.closest('[data-add-plan-evidence]');
-    if (add) { window.open('initiatives-poll.html#evidence', '_blank', 'noopener'); return; }
+    if (add) {
+      const row = planRows.find(item => String(item.id) === String(add.dataset.addPlanEvidence));
+      if (!row) return alert('Could not identify this initiative plan.');
+      const picker = document.createElement('input');
+      picker.type = 'file';
+      picker.onchange = async () => {
+        const file = picker.files && picker.files[0];
+        if (!file) return;
+        const title = prompt('Evidence title:', file.name) || file.name;
+        const uid = currentUserId();
+        const client = parent.portfolioSupabase;
+        const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const storagePath = uid + '/initiative-' + row.id + '/' + Date.now() + '-' + cleanName;
+        const uploaded = await client.storage.from('portfolio-files').upload(storagePath, file);
+        if (uploaded.error) return alert('Could not upload this evidence file.');
+        const saved = await client.from('portfolio_uploads').insert({
+          owner_id: uid, teacher_name: row.teacher_name, category: 'Initiative Plan',
+          title: title, file_name: file.name, storage_path: storagePath,
+          metadata: { initiative_id: row.initiative_id, initiative_plan_id: row.id }
+        });
+        if (saved.error) {
+          await client.storage.from('portfolio-files').remove([storagePath]);
+          return alert('Could not save this evidence file.');
+        }
+        await refresh();
+      };
+      picker.click();
+      return;
+    }
     const del = event.target.closest('[data-delete-initiative-evidence]');
     if (del) {
       const file = evidenceFiles.find(item => String(item.id) === del.dataset.deleteInitiativeEvidence);
@@ -85,6 +114,7 @@
       if (uploads.error) throw uploads.error;
       evidenceFiles = uploads.data || [];
       const rows = data || [];
+      planRows = rows;
       if (!rows.length) {
         list.innerHTML = '<p style="margin:0;color:#687e89">No initiative plans have been submitted yet.</p>';
         return;
@@ -100,7 +130,7 @@
             [['Description', row.description], ['Timeline', row.timeline], ['Target students', row.target_students], ['Actions and responsibilities', row.actions], ['How impact will be measured', row.measure]]
               .map(([label, value]) => '<div><b>' + label + '</b><div style="white-space:pre-wrap;color:#425b6c">' + safe(value) + '</div></div>').join('') +
             (String(row.user_id) === String(currentUserId() || '') ? '<div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn" data-edit-initiative-plan="' + safe(row.id) + '">✏️ Edit Plan</button><button type="button" class="btn danger" data-delete-initiative-plan="' + safe(row.id) + '">🗑 Delete Plan</button></div>' : '') +
-            '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="1">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<span style="display:inline-flex;gap:5px;align-items:center"><button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>' + (String(file.owner_id) === String(currentUserId() || '') ? '<button type="button" class="btn danger" data-delete-initiative-evidence="' + safe(file.id) + '" title="Delete evidence">🗑 Delete</button>' : '') + '</span>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
+            '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="' + safe(row.id) + '">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<span style="display:inline-flex;gap:5px;align-items:center"><button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>' + (String(file.owner_id) === String(currentUserId() || '') ? '<button type="button" class="btn danger" data-delete-initiative-evidence="' + safe(file.id) + '" title="Delete evidence">🗑 Delete</button>' : '') + '</span>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
             '</div></details>';
         }).join('') + '</div>';
     } catch (error) {
