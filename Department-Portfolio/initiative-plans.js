@@ -18,7 +18,7 @@
   const currentUserId = () => parent.PORTFOLIO_USER && parent.PORTFOLIO_USER.id;
   list.addEventListener('click', async event => {
     const editPlan = event.target.closest('[data-edit-initiative-plan]');
-    if (editPlan) { window.open('initiatives-poll.html?edit=' + encodeURIComponent(editPlan.dataset.editInitiativePlan), '_blank', 'noopener'); return; }
+    if (editPlan) { window.open('initiatives-poll.html', '_blank', 'noopener'); return; }
     const deletePlan = event.target.closest('[data-delete-initiative-plan]');
     if (deletePlan) {
       if (!confirm('Delete this initiative plan? This cannot be undone.')) return;
