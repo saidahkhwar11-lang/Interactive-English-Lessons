@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Department | Reading & Writing Initiatives</title>
+<style>
+:root{font-family:Segoe UI,Arial,sans-serif;color:#17324d;background:#f1f5f7}
+*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(115deg,#17324d,#236b73);color:white;padding:32px max(22px,calc((100vw - 1120px)/2));border-bottom:4px solid #b08b45}
+header small{font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#d5e8e8}h1{margin:9px 0;font-size:clamp(26px,4vw,38px)}header p{max-width:760px;line-height:1.5;color:#e4f0f1}
+.back{color:white;font-size:14px;font-weight:700;text-decoration:none}.wrap{max-width:1164px;padding:24px 22px 70px;margin:auto}
+.top{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:18px}.top p{margin:0;color:#627888}.count{padding:9px 13px;border-radius:999px;background:#e1eeee;color:#215c64;font-weight:800;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.9fr);gap:18px;align-items:start}
+.panel{background:white;border:1px solid #d9e3e9;border-radius:18px;box-shadow:0 8px 24px #17324d0b;padding:20px}.panel h2{font-size:20px;margin:0 0 5px}.hint{font-size:14px;color:#637989;margin:0 0 17px;line-height:1.5}
+.choices{display:grid;gap:10px;max-height:670px;overflow-y:auto;padding:2px 5px 2px 1px;align-content:start}
+.choice{width:100%;text-align:left;border:1px solid #d9e2e8;background:#fff;padding:15px 16px;border-radius:12px;cursor:pointer;color:#244357}
+.choice:hover,.choice:focus-visible{border-color:#27818a;background:#f4faf9;outline:0}.choice.active{border-color:#236b73;background:#eff8f7;box-shadow:0 0 0 2px #d5ebe9}
+.choice b{display:block;font-size:16px}.choice span{display:block;color:#607687;font-size:13px;line-height:1.5;margin-top:6px}
+.form-panel{position:sticky;top:16px}.selected{background:#eef6f5;color:#195961;padding:12px 14px;border-radius:10px;font-weight:800;margin-bottom:15px}
+.placeholder{background:#f5f8fa;border:1px dashed #c8d7df;border-radius:12px;padding:28px;text-align:center;color:#6b7e89;line-height:1.5}
+label{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}textarea,input{font:inherit;width:100%;border:1px solid #cddbe1;border-radius:10px;padding:11px 12px;color:#17324d;background:white}
+textarea{min-height:75px;resize:vertical}textarea:focus,input:focus{outline:2px solid #b7e3de;border-color:#236b73}
+button.save{width:100%;background:#236b73;color:#fff;font:inherit;font-weight:800;border:0;border-radius:10px;padding:13px;margin-top:18px;cursor:pointer}
+button.save:disabled{opacity:.55;cursor:wait}#status{min-height:23px;font-size:14px;margin-top:12px;color:#24695d}#status.error{color:#a84242}
+.results{margin-top:18px}.result{border:1px solid #d9e3e9;padding:15px;border-radius:12px;margin:10px 0;background:#fff}.result b,.result small{display:block}.result small{color:#687e89;margin-top:4px}.result p{margin:9px 0 0;font-size:14px;white-space:pre-wrap;line-height:1.45}
+@media(max-width:830px){.layout{grid-template-columns:1fr}.form-panel{position:static}.choices{max-height:430px}}@media(max-width:500px){.wrap{padding:16px 12px 40px}.panel{padding:15px}.top{align-items:start;flex-direction:column}header{padding:25px 17px}}
+</style>
+</head>
+<body>
+<header><a class="back" href="./">← English Department Portfolio</a><small style="display:block;margin-top:18px">Al Reyadah School · 2026–2027</small><h1>Reading &amp; Writing Initiatives</h1><p>Choose one initiative and outline how you will put it into practice and measure its impact on your students.</p></header>
+<main class="wrap">
+<div class="top"><p>Select one initiative. You can return to update your plan later.</p><span class="count" id="count">19 initiatives</span></div>
+<div class="layout">
+<section class="panel"><h2>Choose an initiative</h2><p class="hint">Options are based on the English Department’s Reading and Writing Initiatives document.</p><div class="choices" id="choices"></div></section>
+<section class="panel form-panel"><h2>Your implementation plan</h2><p class="hint" id="identity">Checking your department sign-in…</p><div id="placeholder" class="placeholder">Choose an initiative to complete the plan.</div>
+<form id="plan" hidden><div class="selected" id="selected"></div><label for="description">Description</label><textarea id="description" required maxlength="3000" placeholder="What will you do, and why?"></textarea>
+<label for="timeline">Timeline</label><textarea id="timeline" required maxlength="1200" placeholder="When will it begin, how often, and when will you review progress?"></textarea>
+<label for="target_students">Target students</label><textarea id="target_students" required maxlength="1200" placeholder="Grades, classes, groups, or students who will benefit"></textarea>
+<label for="actions">Actions and responsibilities</label><textarea id="actions" required maxlength="3000" placeholder="What steps will you take? Who will do each part?"></textarea>
+<label for="measure">How will you measure impact?</label><textarea id="measure" required maxlength="2000" placeholder="Baseline, success target, student work, assessment or progress evidence"></textarea>
+<button class="save" id="save" type="submit">Save my choice and plan</button><div id="status" role="status" aria-live="polite"></div></form></section>
+</div><section class="panel results" id="results" hidden><h2>Department responses</h2><p class="hint">Visible to the department coordinator.</p><div id="resultList"></div></section>
+</main>
+<script src="shared-sync.js"></script>
+<script>
+const initiatives=[
+["Reading Enrichment Activities","Short reading selections, discussions and comprehension questions to develop fluency, understanding and analytical thinking."],
+["Creative Storytelling","Students write and share original short stories to develop creativity, expression and communication."],
+["Online Reading Practice","Structured nonfiction reading, skimming and scanning, including level-appropriate books on Kutubi."],
+["Vocabulary Development","Weekly target words practiced through interactive activities, sentences, discussion and quizzes."],
+["Quick Writing Activities","Short reflective or prompt-based writing at the start or end of lessons."],
+["Write to Lead Program","A 10-minute writing activity at the start of each lesson to build fluency and confidence."],
+["16-Square Spelling Test","A 16-part vocabulary grid featuring spelling, synonyms, sketches and original sentences."],
+["Paragraph Expert Groups","Small groups analyse parts of a text, then explain their findings to classmates."],
+["Weekly Differentiated Reading Comprehension Lessons","Weekly reading tasks and questions adjusted for different abilities and needs."],
+["Station-Based Reading Activities","Reading stations that build comprehension, vocabulary, collaboration and critical thinking."],
+["Vocabulary and Spelling Tests","Regular assessments connected to lesson vocabulary and spelling objectives."],
+["Essay Writing Tasks","One to three essay tasks at the end of each chapter to build academic writing."],
+["Educational Videos and Differentiated Worksheets","Videos and worksheets adapted for general education and SEN students."],
+["Kutubi Reading Platform","Level-based books and stories to encourage independent reading and comprehension."],
+["Weekly Differentiated Writing Tasks","Guided sentence starters for students needing support and independent extended responses for higher achievers."],
+["Daily Independent Reading","A few pages of a self-selected book or story at the beginning of lessons."],
+["Reading Summaries","Short written summaries of reading to practise comprehension and paraphrasing."],
+["Wayground Reading and Language Practice","Weekly self-guided activities with progress reports to target learning gaps."],
+["ALEF Program","Interactive lessons aligned to objectives, supported by progress reports and reassessment."]
+];
+const choices=document.getElementById('choices'),form=document.getElementById('plan'),status=document.getElementById('status');
+let chosen=0,existing=null,client=null,user=null,teacherName='',isAdmin=false;
+const fields=['description','timeline','target_students','actions','measure'];
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderChoices(){choices.innerHTML=initiatives.map(([title,summary],i)=>`<button type="button" class="choice ${chosen===i+1?'active':''}" aria-pressed="${chosen===i+1}" data-id="${i+1}"><b>${i+1}. ${escapeHtml(title)}</b><span>${escapeHtml(summary)}</span></button>`).join('')}
+choices.addEventListener('click',e=>{const btn=e.target.closest('[data-id]');if(btn)selectInitiative(Number(btn.dataset.id))});
+function selectInitiative(id){chosen=id;document.getElementById('selected').textContent=initiatives[id-1][0];document.getElementById('placeholder').hidden=true;form.hidden=false;status.textContent='';status.className='';renderChoices()}
+function populate(row){if(!row)return;selectInitiative(row.initiative_id);for(const key of fields)document.getElementById(key).value=row[key]||'';document.getElementById('save').textContent='Update my choice and plan';status.textContent='Your saved plan is ready to edit.'}
+function showResults(rows){const section=document.getElementById('results');section.hidden=false;document.getElementById('resultList').innerHTML=rows.length?rows.map(r=>`<div class="result"><b>${escapeHtml(r.teacher_name)} · ${escapeHtml(initiatives[r.initiative_id-1]?.[0]||'Initiative')}</b><small>Updated ${escapeHtml(new Date(r.updated_at).toLocaleDateString('en-GB'))}</small><p><strong>Description:</strong> ${escapeHtml(r.description)}</p><p><strong>Timeline:</strong> ${escapeHtml(r.timeline)}</p><p><strong>Target students:</strong> ${escapeHtml(r.target_students)}</p><p><strong>Actions:</strong> ${escapeHtml(r.actions)}</p><p><strong>Measure:</strong> ${escapeHtml(r.measure)}</p></div>`).join(''):'<p>No responses submitted yet.</p>'}
+async function loadData(){
+  if(!window.portfolioSupabase || !window.PORTFOLIO_USER){setTimeout(loadData,300);return}
+  client=window.portfolioSupabase;
+  const verified=await client.auth.getUser();
+  if(verified.error||!verified.data.user){document.getElementById('identity').textContent='Please sign in with your department account.';return}
+  user=verified.data.user;
+  const profile=await client.from('portfolio_profiles').select('role,display_name').eq('user_id',user.id).maybeSingle();
+  if(profile.error||!profile.data){document.getElementById('identity').textContent='Your department profile could not be found.';return}
+  teacherName=profile.data.display_name||user.email||'Teacher';isAdmin=profile.data.role==='admin';
+  document.getElementById('identity').textContent='Signed in as '+teacherName+'. Your selection can be edited later.';
+  const own=await client.from('english_initiative_polls').select('*').eq('user_id',user.id).maybeSingle();
+  if(own.error){status.textContent='Could not load your saved choice. Please refresh and try again.';status.className='error';return}
+  existing=own.data;populate(existing);
+  if(isAdmin){const all=await client.from('english_initiative_polls').select('*').order('updated_at',{ascending:false});if(!all.error)showResults(all.data||[])}
+}
+form.addEventListener('submit',async e=>{
+  e.preventDefault();if(!user||!client){status.textContent='Please sign in first.';status.className='error';return}
+  const payload={user_id:user.id,teacher_name:teacherName,initiative_id:chosen,updated_at:new Date().toISOString()};
+  for(const key of fields)payload[key]=document.getElementById(key).value.trim();
+  if(!chosen||fields.some(key=>!payload[key])){status.textContent='Complete all fields before saving.';status.className='error';return}
+  const button=document.getElementById('save');button.disabled=true;status.className='';status.textContent='Saving your plan…';
+  const {error}=await client.from('english_initiative_polls').upsert(payload,{onConflict:'user_id'});
+  button.disabled=false;
+  if(error){status.className='error';status.textContent='Could not save your plan: '+error.message;return}
+  existing=payload;button.textContent='Update my choice and plan';status.textContent='Your initiative and plan have been saved.';
+  if(isAdmin){const all=await client.from('english_initiative_polls').select('*').order('updated_at',{ascending:false});if(!all.error)showResults(all.data||[])}
+});
+renderChoices();loadData();
+</script>
+</body>
+</html>
