@@ -86,6 +86,8 @@ async function loadData(){
   existing=null;chosen=0;renderChoices();document.getElementById('placeholder').hidden=false;form.hidden=true;
   document.getElementById('identity').textContent='Signed in as '+teacherName+'. Choose an initiative to create a new plan or edit a saved one.';
 }
+renderChoices();
+loadData();
 form.addEventListener('submit',async e=>{
   e.preventDefault();if(!user||!client){status.textContent='Please sign in first.';status.className='error';return}
   const payload={user_id:user.id,teacher_name:document.getElementById('teacher_name').value.trim(),initiative_id:chosen,updated_at:new Date().toISOString()};
