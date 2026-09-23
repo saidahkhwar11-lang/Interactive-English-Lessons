@@ -65,7 +65,7 @@
         return;
       }
       const { data, error } = await client.from('english_initiative_polls')
-        .select('user_id,teacher_name,initiative_id,description,timeline,target_students,actions,measure,updated_at')
+        .select('id,user_id,teacher_name,initiative_id,description,timeline,target_students,actions,measure,updated_at')
         .order('updated_at', { ascending: false });
       if (error) throw error;
       const uploads = await client.from('portfolio_uploads')
@@ -82,7 +82,7 @@
         '<div style="display:grid;gap:10px">' + rows.map(row => {
           const title = names[row.initiative_id - 1] || 'Initiative';
           const date = row.updated_at ? new Date(row.updated_at).toLocaleDateString('en-GB') : '';
-          const files = evidenceFiles.filter(item => item.owner_id === row.user_id);
+          const files = evidenceFiles.filter(item => item.owner_id === row.user_id && (!item.metadata?.initiative_id || String(item.metadata.initiative_id) === String(row.initiative_id)));
           return '<details style="border:1px solid #d8e3e8;border-radius:12px;background:#fbfdfd;padding:13px 15px">' +
             '<summary style="cursor:pointer;line-height:1.5;color:#17324d"><b>' + safe(title) + '</b><span style="display:block;color:#687e89;font-size:13px">' + safe(row.teacher_name) + (date ? ' · Updated ' + safe(date) : '') + '</span></summary>' +
             '<div style="margin-top:13px;border-top:1px solid #e2e9ec;padding-top:11px;display:grid;gap:10px;line-height:1.55;font-size:14px">' +
