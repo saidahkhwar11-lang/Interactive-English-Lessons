@@ -28,16 +28,6 @@
       if (result.error) { deletePlan.disabled = false; alert('Could not delete this initiative plan. Please try again.'); return; }
       await refresh(); return;
     }
-    const editPlan = event.target.closest('[data-edit-initiative-plan]');
-    if (editPlan) { window.open('initiatives-poll.html?edit=' + encodeURIComponent(editPlan.dataset.editInitiativePlan), '_blank', 'noopener'); return; }
-    const deletePlan = event.target.closest('[data-delete-initiative-plan]');
-    if (deletePlan) {
-      if (!confirm('Delete this initiative plan? This cannot be undone.')) return;
-      deletePlan.disabled = true;
-      const result = await parent.portfolioSupabase.from('english_initiative_polls').delete().eq('id', deletePlan.dataset.deleteInitiativePlan).eq('user_id', currentUserId());
-      if (result.error) { deletePlan.disabled = false; alert('Could not delete this initiative plan.'); return; }
-      await refresh(); return;
-    }
     const add = event.target.closest('[data-add-plan-evidence]');
     if (add) { window.open('initiatives-poll.html#evidence', '_blank', 'noopener'); return; }
     const del = event.target.closest('[data-delete-initiative-evidence]');
@@ -109,7 +99,6 @@
             '<div style="margin-top:13px;border-top:1px solid #e2e9ec;padding-top:11px;display:grid;gap:10px;line-height:1.55;font-size:14px">' +
             [['Description', row.description], ['Timeline', row.timeline], ['Target students', row.target_students], ['Actions and responsibilities', row.actions], ['How impact will be measured', row.measure]]
               .map(([label, value]) => '<div><b>' + label + '</b><div style="white-space:pre-wrap;color:#425b6c">' + safe(value) + '</div></div>').join('') +
-            (String(row.user_id) === String(currentUserId() || '') ? '<div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn" data-edit-initiative-plan="' + safe(row.id) + '">✏️ Edit Plan</button><button type="button" class="btn danger" data-delete-initiative-plan="' + safe(row.id) + '">🗑 Delete Plan</button></div>' : '') +
             (String(row.user_id) === String(currentUserId() || '') ? '<div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn" data-edit-initiative-plan="' + safe(row.id) + '">✏️ Edit Plan</button><button type="button" class="btn danger" data-delete-initiative-plan="' + safe(row.id) + '">🗑 Delete Plan</button></div>' : '') +
             '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="1">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<span style="display:inline-flex;gap:5px;align-items:center"><button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>' + (String(file.owner_id) === String(currentUserId() || '') ? '<button type="button" class="btn danger" data-delete-initiative-evidence="' + safe(file.id) + '" title="Delete evidence">🗑 Delete</button>' : '') + '</span>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
             '</div></details>';
