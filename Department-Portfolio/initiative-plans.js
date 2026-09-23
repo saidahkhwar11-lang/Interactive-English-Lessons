@@ -19,6 +19,27 @@
   list.addEventListener('click', async event => {
     const add = event.target.closest('[data-add-plan-evidence]');
     if (add) { window.open('initiatives-poll.html#evidence', '_blank', 'noopener'); return; }
+    const del = event.target.closest('[data-delete-initiative-evidence]');
+    if (del) {
+      const file = evidenceFiles.find(item => String(item.id) === del.dataset.deleteInitiativeEvidence);
+      if (!file) return;
+      if (String(file.owner_id) !== String(currentUserId() || '')) return alert('Only the owner of this evidence can delete it.');
+      if (!confirm('Delete this evidence file permanently?')) return;
+      del.disabled = true;
+      try {
+        const client = parent.portfolioSupabase;
+        const removed = await client.storage.from('portfolio-files').remove([file.storage_path]);
+        if (removed.error) throw removed.error;
+        const deleted = await client.from('portfolio_uploads').delete().eq('id', file.id).eq('owner_id', currentUserId());
+        if (deleted.error) throw deleted.error;
+        await refresh();
+      } catch (error) {
+        del.disabled = false;
+        alert('Could not delete this evidence file. Please try again.');
+        console.error('Initiative evidence delete failed:', error);
+      }
+      return;
+    }
     const button = event.target.closest('[data-initiative-evidence]');
     if (!button) return;
     const file = evidenceFiles.find(item => String(item.id) === button.dataset.initiativeEvidence);
@@ -67,7 +88,7 @@
             '<div style="margin-top:13px;border-top:1px solid #e2e9ec;padding-top:11px;display:grid;gap:10px;line-height:1.55;font-size:14px">' +
             [['Description', row.description], ['Timeline', row.timeline], ['Target students', row.target_students], ['Actions and responsibilities', row.actions], ['How impact will be measured', row.measure]]
               .map(([label, value]) => '<div><b>' + label + '</b><div style="white-space:pre-wrap;color:#425b6c">' + safe(value) + '</div></div>').join('') +
-            '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="1">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
+            '<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Evidence</b>' + (String(row.user_id) === String(currentUserId() || '') ? '<button type="button" class="btn primary" data-add-plan-evidence="1">＋ Add Evidence</button>' : '') + '</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' + (files.length ? files.map(file => '<span style="display:inline-flex;gap:5px;align-items:center"><button type="button" class="btn" data-initiative-evidence="' + safe(file.id) + '">📎 ' + safe(file.title || file.file_name || 'Evidence file') + '</button>' + (String(file.owner_id) === String(currentUserId() || '') ? '<button type="button" class="btn danger" data-delete-initiative-evidence="' + safe(file.id) + '" title="Delete evidence">🗑 Delete</button>' : '') + '</span>').join('') : '<span style="color:#687e89">No files uploaded yet.</span>') + '</div></div>' +
             '</div></details>';
         }).join('') + '</div>';
     } catch (error) {
