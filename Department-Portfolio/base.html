@@ -99,6 +99,13 @@ body{background:linear-gradient(180deg,#fbfcfd 0%,#f5f8fa 100%);color:#34495a}
     <a class="btn primary" target="_blank" rel="noopener" href="initiatives-poll.html" style="padding:13px 20px;font-size:15px">Open Initiatives Poll →</a>
   </div>
 </section>
+<section class="card" id="initiativePlans" style="margin-top:16px;padding:22px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div><h3 style="margin:0 0 5px;font-size:22px">Initiative Plan</h3><p style="margin:0">Plans shared by English Department teachers.</p></div>
+    <div class="actions"><a class="btn primary" target="_blank" rel="noopener" href="initiatives-poll.html">Add evidence to my plan</a><button class="btn" type="button" onclick="refreshInitiativePlans()">Refresh plans</button></div>
+  </div>
+  <div id="initiativePlanList" style="margin-top:14px" aria-live="polite">Loading plans…</div>
+</section>
 <details style="margin:16px 0 0"><summary style="cursor:pointer;color:#425b6c;font-size:13px;font-weight:700">Previous shared teaching resources</summary><section class="sharegrid" id="shareGrid" style="margin-top:12px"></section></details>
 
 </main>
