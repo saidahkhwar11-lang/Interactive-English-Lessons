@@ -39,7 +39,7 @@ button.save:disabled{opacity:.55;cursor:wait}#status{min-height:23px;font-size:1
 <label for="actions">Actions and responsibilities</label><textarea id="actions" required maxlength="3000" placeholder="What steps will you take? Who will do each part?"></textarea>
 <label for="measure">How will you measure impact?</label><textarea id="measure" required maxlength="2000" placeholder="Baseline, success target, student work, assessment or progress evidence"></textarea>
 <button class="save" id="save" type="submit">Save my choice and plan</button><div id="status" role="status" aria-live="polite"></div></form></section>
-</div><section class="panel" id="evidencePanel" hidden style="margin-top:18px"><h2>Evidence for your initiative</h2><p class="hint">After saving your plan, you can return here and add evidence files whenever you need.</p><label for="evidenceTitle">Evidence title</label><input id="evidenceTitle" maxlength="160" placeholder="e.g. Student writing samples"><label for="evidenceFile">Select a file</label><input id="evidenceFile" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.xlsx,.pptx"><button id="uploadEvidence" class="save" type="button">Upload evidence</button><div id="evidenceStatus" role="status" aria-live="polite"></div><div id="evidenceList" style="margin-top:14px"></div></section><p style="margin:18px 2px;color:#627888;font-size:14px">Submitted plans are displayed in the <a href="./" style="color:#236b73;font-weight:800">Initiative Plan section of the English Department Portfolio</a>.</p>
+</div><p style="margin:18px 2px;color:#627888;font-size:14px">Submitted plans are displayed in the <a href="./" style="color:#236b73;font-weight:800">Initiative Plan section of the English Department Portfolio</a>.</p>
 </main>
 <script src="shared-sync.js"></script>
 <script>
@@ -69,8 +69,8 @@ let chosen=0,existing=null,client=null,user=null,teacherName='';
 const fields=['description','timeline','target_students','actions','measure'];
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderChoices(){choices.innerHTML=initiatives.map(([title,summary],i)=>`<button type="button" class="choice ${chosen===i+1?'active':''}" aria-pressed="${chosen===i+1}" data-id="${i+1}"><b>${i+1}. ${escapeHtml(title)}</b><span>${escapeHtml(summary)}</span></button>`).join('')}
-choices.addEventListener('click',async e=>{const btn=e.target.closest('[data-id]');if(!btn)return;const id=Number(btn.dataset.id);selectInitiative(id);if(!client||!user)return;const saved=await client.from('english_initiative_polls').select('*').eq('user_id',user.id).eq('initiative_id',id).maybeSingle();if(saved.data){existing=saved.data;populate(existing)}else{existing=null;for(const key of fields)document.getElementById(key).value='';document.getElementById('teacher_name').value=teacherName;document.getElementById('save').textContent='Save my choice and plan';status.textContent='New initiative — complete the plan below.';document.getElementById('evidencePanel').hidden=true;}});
-function clearPlanFields(){for(const key of fields)document.getElementById(key).value='';document.getElementById('teacher_name').value=teacherName||'';document.getElementById('save').textContent='Save my choice and plan';status.textContent='';status.className='';document.getElementById('evidencePanel').hidden=true}
+choices.addEventListener('click',async e=>{const btn=e.target.closest('[data-id]');if(!btn)return;const id=Number(btn.dataset.id);selectInitiative(id);if(!client||!user)return;const saved=await client.from('english_initiative_polls').select('*').eq('user_id',user.id).eq('initiative_id',id).maybeSingle();if(saved.data){existing=saved.data;populate(existing)}else{existing=null;for(const key of fields)document.getElementById(key).value='';document.getElementById('teacher_name').value=teacherName;document.getElementById('save').textContent='Save my choice and plan';status.textContent='New initiative — complete the plan below.';}});
+function clearPlanFields(){for(const key of fields)document.getElementById(key).value='';document.getElementById('teacher_name').value=teacherName||'';document.getElementById('save').textContent='Save my choice and plan';status.textContent='';status.className='';}
 function selectInitiative(id){chosen=id;clearPlanFields();document.getElementById('selected').textContent=initiatives[id-1][0];document.getElementById('placeholder').hidden=true;form.hidden=false;renderChoices()}
 function populate(row){if(!row)return;selectInitiative(row.initiative_id);document.getElementById('teacher_name').value=row.teacher_name||teacherName;for(const key of fields)document.getElementById(key).value=row[key]||'';document.getElementById('save').textContent='Update my choice and plan';status.textContent='Your saved plan is ready to edit.'}
 async function loadData(){
@@ -83,7 +83,7 @@ async function loadData(){
   if(profile.error||!profile.data){document.getElementById('identity').textContent='Your department profile could not be found.';return}
   teacherName=profile.data.display_name||user.email||'Teacher';document.getElementById('teacher_name').value=teacherName;
   document.getElementById('identity').textContent='Signed in as '+teacherName+'. Your selection can be edited later.';
-  existing=null;chosen=0;renderChoices();document.getElementById('placeholder').hidden=false;form.hidden=true;document.getElementById('evidencePanel').hidden=true;
+  existing=null;chosen=0;renderChoices();document.getElementById('placeholder').hidden=false;form.hidden=true;
   document.getElementById('identity').textContent='Signed in as '+teacherName+'. Choose an initiative to create a new plan or edit a saved one.';
 }
 form.addEventListener('submit',async e=>{
@@ -95,32 +95,9 @@ form.addEventListener('submit',async e=>{
   const {error}=await client.from('english_initiative_polls').upsert(payload,{onConflict:'user_id,initiative_id'});
   button.disabled=false;
   if(error){status.className='error';status.textContent='Could not save your plan: '+error.message;return}
-  existing={...payload};teacherName=payload.teacher_name;button.textContent='Update this initiative plan';status.textContent='Your initiative and plan have been saved.';await loadEvidence();
+  existing={...payload};teacherName=payload.teacher_name;button.textContent='Update this initiative plan';status.textContent='Your initiative and plan have been saved.';
 });
 
-async function loadEvidence(){
-  if(!existing||!user)return;
-  document.getElementById('evidencePanel').hidden=false;
-  const {data,error}=await client.from('portfolio_uploads').select('id,file_name,title,storage_path,metadata,created_at').eq('owner_id',user.id).eq('category','Initiative Plan').order('created_at',{ascending:false});
-  const list=document.getElementById('evidenceList');
-  if(error){list.textContent='Evidence files could not be loaded.';return}
-  list.innerHTML=data.length?data.map(file=>`<div style="padding:10px;border:1px solid #d9e3e9;border-radius:10px;margin-top:8px"><b>${escapeHtml(file.title||file.file_name)}</b> <small>${escapeHtml(file.file_name||'')}</small><button type="button" data-evidence-id="${file.id}" style="margin-left:10px;padding:5px 10px;border:1px solid #cddbe1;border-radius:7px;background:#fff;cursor:pointer">Open</button></div>`).join(''):'<p class="hint">No evidence uploaded yet.</p>';
-  list.onclick=async e=>{const button=e.target.closest('[data-evidence-id]');if(!button)return;const file=data.find(f=>String(f.id)===button.dataset.evidenceId);if(!file)return;const result=await client.storage.from('portfolio-files').createSignedUrl(file.storage_path,300);if(result.error)return alert('Could not open the file.');window.open(result.data.signedUrl,'_blank','noopener')};
-}
-document.getElementById('uploadEvidence').addEventListener('click',async()=>{
-  const notice=document.getElementById('evidenceStatus'),file=document.getElementById('evidenceFile').files[0],title=document.getElementById('evidenceTitle').value.trim(),button=document.getElementById('uploadEvidence');
-  if(!existing||!user){notice.textContent='Save your initiative plan first.';return}
-  if(chosen!==existing.initiative_id){notice.textContent='Save your changed initiative choice before uploading evidence.';return}
-  if(!file){notice.textContent='Select a file to upload.';return}
-  button.disabled=true;notice.textContent='Uploading evidence…';
-  const path=user.id+'/initiative-'+Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-  const uploaded=await client.storage.from('portfolio-files').upload(path,file);
-  if(uploaded.error){notice.textContent='Upload failed: '+uploaded.error.message;button.disabled=false;return}
-  const saved=await client.from('portfolio_uploads').insert({owner_id:user.id,teacher_name:existing.teacher_name,category:'Initiative Plan',title:title||file.name,file_name:file.name,storage_path:path,metadata:{size:file.size,type:file.type,initiative_id:existing.initiative_id}});
-  if(saved.error){await client.storage.from('portfolio-files').remove([path]);notice.textContent='Could not save evidence: '+saved.error.message;button.disabled=false;return}
-  document.getElementById('evidenceFile').value='';document.getElementById('evidenceTitle').value='';notice.textContent='Evidence uploaded successfully.';button.disabled=false;await loadEvidence();
-});
-renderChoices();loadData();
 </script>
 </body>
 </html>
