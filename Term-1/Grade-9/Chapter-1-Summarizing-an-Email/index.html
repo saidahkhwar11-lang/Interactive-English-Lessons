@@ -1,0 +1,275 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summarizing an Email</title>
+<style>
+:root{--navy:#17365d;--blue:#2f75b5;--pale:#eef5fb;--ink:#18324b;--cream:#fffdf3;--line:#d7e3ef}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6f9;color:var(--ink);overflow:hidden}
+header{height:78px;background:#fff;border-bottom:3px solid var(--navy);display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+h1{margin:0;color:var(--navy);font-size:27px}.meta{font-size:12px;margin-top:4px}.timer{font-size:26px;font-weight:800;color:var(--navy)}
+.shell{height:calc(100vh - 78px);display:grid;grid-template-columns:225px 1fr 245px;gap:10px;padding:10px}
+.side{background:white;border-radius:14px;padding:13px;box-shadow:0 2px 10px #0001;overflow:auto}
+.side h3{font-size:18px;color:var(--blue);margin:8px 0}.side p,.side li{font-size:16px;line-height:1.45}.side ul{padding-left:18px}
+.stage{background:#fff;border-radius:16px;box-shadow:0 2px 10px #0001;overflow:auto;padding:18px}
+.part{display:none}.part.active{display:block}.part h2{font-size:25px;color:var(--navy);margin:4px 0 8px}.badge{display:inline-block;background:var(--pale);padding:5px 9px;border-radius:18px;font-size:12px;font-weight:700}
+.instructions{border-left:7px solid var(--blue);background:#f8fbfe;border-radius:12px;padding:18px 20px;margin:14px 0;font-size:24px;line-height:1.45;font-weight:600}
+.email{border:2px solid var(--line);border-radius:13px;padding:18px 22px;font-size:21px;line-height:1.5;max-width:900px;margin:auto;background:white}
+.email p{margin:9px 0}.question{font-size:22px;font-weight:800;text-align:center;background:var(--pale);padding:18px;border-radius:13px;margin:16px 0}
+.note{background:var(--cream);border:2px solid #5b9bd5;border-radius:12px;padding:16px;margin:10px 0;font-size:21px;line-height:1.45;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1f4e79;box-shadow:2px 3px 8px #0002}
+.hidden{display:none}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{border:0;border-radius:9px;padding:9px 12px;background:var(--navy);color:white;font-weight:700;cursor:pointer}
+button.alt{background:var(--blue)}button.light{background:#e8eef5;color:var(--navy)}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.nav button{font-size:15px;padding:10px 8px}
+.nav button.current{outline:3px solid #9ec5e8}
+.task{padding:15px 17px;border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fbfdff;font-size:21px;line-height:1.45}
+.board{background:#f8fbfe;border:2px dashed #8ab4d8;border-radius:12px;padding:18px;margin:12px 0;font-size:22px;line-height:1.5}
+body.presentation .shell{grid-template-columns:225px 1fr 245px!important;padding:10px!important}body.presentation .side{display:block!important}body.presentation .stage{border-radius:12px;padding:26px 34px}body.presentation .instructions{font-size:30px;padding:22px 26px}body.presentation .task{font-size:26px;padding:18px 20px}body.presentation .email{font-size:24px}body.presentation .question{font-size:30px}body.presentation .note{font-size:25px} @media(max-width:900px){body{overflow:auto}.shell{height:auto;grid-template-columns:1fr}.stage,.side{overflow:visible}}
+
+/* polished classroom presentation */
+.stage{background:linear-gradient(145deg,#ffffff 0%,#f8fbff 100%)}
+.part.active{animation:fadeSlide .28s ease}
+@keyframes fadeSlide{from{opacity:.2;transform:translateY(8px)}to{opacity:1;transform:none}}
+.part h2{font-size:30px;letter-spacing:-.4px}
+.badge{background:linear-gradient(90deg,#e7f1fb,#f4f8fc);border:1px solid #c7daec;color:#17365d;font-size:14px;padding:7px 12px}
+.instructions{background:linear-gradient(135deg,#eef7ff,#f8fbff);box-shadow:0 4px 12px #17365d12}
+.email{box-shadow:0 7px 22px #17365d14;border-color:#b9cfe3}
+.task{box-shadow:0 3px 10px #17365d0d;border-left:5px solid #2f75b5}
+.presnav{display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;background:rgba(255,255,255,.97);
+border:1px solid #c9dbea;border-radius:22px;padding:9px 12px;box-shadow:0 8px 28px #17365d33;gap:9px;align-items:center}
+body.presentation .presnav{display:flex}
+.presnav button{font-size:18px;padding:11px 20px;border-radius:14px}
+.presnav .count{font-size:17px;font-weight:800;color:#17365d;min-width:78px;text-align:center}
+body.presentation .stage{padding:32px 52px 105px!important;max-width:1500px;margin:auto;width:100%}
+body.presentation .part h2{font-size:38px}
+body.presentation .badge{font-size:17px}
+body.presentation .instructions{font-size:31px;line-height:1.4;padding:24px 28px}
+body.presentation .email{font-size:25px;line-height:1.55;max-width:1100px}
+body.presentation .task{font-size:27px;line-height:1.4;padding:19px 23px}
+body.presentation .question{font-size:32px;padding:26px}
+body.presentation .note{font-size:27px;line-height:1.45;padding:20px}
+
+.compact-side{padding:14px!important}
+.compact-side h3{font-size:17px!important;margin:5px 0 10px!important}
+.sidehint{font-size:12px!important;color:#667!important;margin:0 0 8px!important}
+.activity-list{display:flex;flex-direction:column;gap:6px}
+.activity-list button{width:100%;text-align:left;background:#f4f8fc;color:#17365d;border:1px solid #d5e2ee;
+font-size:13px;padding:9px 10px;border-radius:9px}
+.activity-list button:hover{background:#e7f1fb}
+.mini-rule{background:#eef5fb;border-radius:10px;padding:11px;font-weight:800;font-size:14px;line-height:1.55}
+.activity-label{display:inline-block;background:#17365d;color:white;border-radius:8px;padding:7px 12px;
+font-size:15px;font-weight:800;letter-spacing:.4px;margin-bottom:8px}
+body.presentation .activity-label{font-size:19px;padding:9px 15px}
+
+.activity-list .activity-btn.active-activity{
+ background:linear-gradient(90deg,#17365d,#2f75b5)!important;
+ color:#fff!important;border-color:#17365d!important;
+ box-shadow:0 4px 12px #17365d33;
+ transform:translateX(3px);
+}
+.current-card{background:linear-gradient(145deg,#eef6ff,#fffaf0);border:1px solid #cbddec;border-radius:12px;padding:13px;box-shadow:0 3px 10px #17365d12}
+.current-title{font-size:16px;font-weight:800;color:#17365d;margin-bottom:8px}
+.current-task{font-size:14px;line-height:1.45;color:#29465f}
+body.presentation .current-title{font-size:17px}
+body.presentation .current-task{font-size:15px}
+</style>
+<style>
+/* Full-screen behavior only: side activity menu stays visible, no bottom previous/next bar,
+   and the lesson content can scroll vertically. */
+body.presentation .presnav{display:none !important;}
+body.presentation{overflow:auto !important;}
+body.presentation .shell{
+  height:calc(100vh - 78px) !important;
+  overflow:visible !important;
+}
+body.presentation .stage{
+  height:calc(100vh - 98px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-bottom:32px !important;
+  scrollbar-gutter:stable;
+}
+body.presentation .side{
+  height:calc(100vh - 98px) !important;
+  overflow-y:auto !important;
+}
+
+.activity-list .activity-btn.active-activity{
+ background:linear-gradient(90deg,#17365d,#2f75b5)!important;
+ color:#fff!important;border-color:#17365d!important;
+ box-shadow:0 4px 12px #17365d33;
+ transform:translateX(3px);
+}
+.current-card{background:linear-gradient(145deg,#eef6ff,#fffaf0);border:1px solid #cbddec;border-radius:12px;padding:13px;box-shadow:0 3px 10px #17365d12}
+.current-title{font-size:16px;font-weight:800;color:#17365d;margin-bottom:8px}
+.current-task{font-size:14px;line-height:1.45;color:#29465f}
+body.presentation .current-title{font-size:17px}
+body.presentation .current-task{font-size:15px}
+</style>
+</head><body>
+<header><div><h1>Summarizing an Email</h1><div class="meta">Grade 9 General · 45 min · Ms. Saidah Khwar · Reading & Writing</div></div>
+<div><div class="timer" id="timer">45:00</div><button onclick="startTimer()">Start</button> <button class="light" onclick="stopTimer()">Stop</button> <button class="alt" onclick="fullScreen()">⛶ Full Screen</button></div></header>
+
+<div class="shell">
+<aside class="side compact-side">
+<h3>Lesson Activities</h3>
+<p class="sidehint">Select an activity.</p>
+<div class="activity-list">
+<button class="activity-btn" data-part="1" onclick="showPart(1)">1. Starter</button>
+<button class="activity-btn" data-part="2" onclick="showPart(2)">2. Identify Email Parts</button>
+<button class="activity-btn" data-part="3" onclick="showPart(3)">3. Find Main Topic</button>
+<button class="activity-btn" data-part="4" onclick="showPart(4)">4. Select Key Details</button>
+<button class="activity-btn" data-part="5" onclick="showPart(5)">5. Write a Summary</button>
+<button class="activity-btn" data-part="6" onclick="showPart(6)">6. Vocabulary Detective</button>
+<button class="activity-btn" data-part="7" onclick="showPart(7)">7. Email Detectives</button>
+<button class="activity-btn" data-part="8" onclick="showPart(8)">8. Group Share</button>
+<button class="activity-btn" data-part="9" onclick="showPart(9)">9. Exit Ticket</button>
+</div>
+</aside>
+
+<main class="stage">
+<section class="part active" id="p1"><div class="activity-label">ACTIVITY 1 · Starter</div><span class="badge">1 · Starter · 5 min · Pair</span><h2>What Makes a Good Summary?</h2>
+<div class="instructions"><b>Student instruction:</b> Discuss with your partner. Decide what information should stay in a summary and what information can be removed.</div>
+<div class="question">Do we need to include every sentence from an email in a summary?</div>
+<div class="controls"><button onclick="toggle('s1')">Reveal Answer</button></div><div id="s1" class="note hidden">✎ No. Keep the important message and key details. Leave out greetings, repetition and unnecessary details.</div></section>
+
+<section class="part" id="p2"><div class="activity-label">ACTIVITY 2 · Identify Email Parts</div><span class="badge">2 · Model · 3 min · Whole Class</span><h2>Step 1 — Identify the Email Parts</h2>
+<div class="instructions"><b>Student instruction:</b> Read the short email. Identify: <b>recipient, subject, greeting, opening, body, closing and sender.</b></div>
+<div class="email"><p><b>To:</b> Sara<br><b>Subject:</b> My New School</p><p><b>Dear Sara,</b></p><p>How are you? I hope you and your family are well.</p><p>My new school is much bigger than my old school. It has a modern library, science labs and a large sports hall. I really enjoy using the library during break time.</p><p>I am also making new friends. We often work together in class, and group activities have helped me feel more confident when I share my ideas.</p><p>I hope to see you soon. Write back when you have time.</p><p><b>Best wishes,<br>Hessa</b></p></div>
+<div class="controls"><button onclick="toggle('s2')">Reveal</button></div><div id="s2" class="note hidden">✎ To = recipient · Subject = topic · Dear Sara = greeting · “How are you?” = social opening · middle paragraphs = body · Best wishes = closing · Hessa = sender</div></section>
+
+<section class="part" id="p3"><div class="activity-label">ACTIVITY 3 · Find Main Topic</div><span class="badge">3 · Model · 3 min · Whole Class</span><h2>Step 2 — Find the Main Topic</h2>
+<div class="instructions"><b>Student instruction:</b> Read Body Paragraph 1. Ask: <b>What is this paragraph mainly about?</b></div>
+<div class="email"><p>My new school is much bigger than my old school. It has a modern library, science labs and a large sports hall. I really enjoy using the library during break time.</p></div>
+<div class="controls"><button onclick="toggle('s3')">Reveal Main Topic</button></div><div id="s3" class="note hidden">✎ <b>Main topic:</b> The new school's size and facilities.</div></section>
+
+<section class="part" id="p4"><div class="activity-label">ACTIVITY 4 · Select Key Details</div><span class="badge">4 · Model · 2 min · Whole Class</span><h2>Step 3 — Select Important Details</h2>
+<div class="instructions"><b>Student instruction:</b> Which details explain or support the main topic? Do not copy everything.</div>
+<div class="board">My new school is <b>much bigger</b> than my old school. It has a <b>modern library, science labs and a large sports hall</b>. I really enjoy using the library during break time.</div>
+<div class="controls"><button onclick="toggle('s4')">Reveal Details</button></div><div id="s4" class="note hidden">✎ Important details: bigger school · modern library · science labs · sports hall.<br>Small personal detail that can be reduced: enjoying the library during break.</div></section>
+
+<section class="part" id="p5"><div class="activity-label">ACTIVITY 5 · Write a Summary</div><span class="badge">5 · Model · 2 min · Whole Class</span><h2>Step 4 — Write the Summary</h2>
+<div class="instructions"><b>Student instruction:</b> Combine the main topic and the most important details into a <b>short summary in your own words.</b> Your summary can be more than one sentence.</div>
+<div class="question">Main topic + key details → a short, clear summary</div><div class="board"><b>Useful summarizing phrases:</b><br>
+<b>Overall, ...</b> &nbsp; • &nbsp; <b>The paragraph mainly explains ...</b> &nbsp; • &nbsp;
+<b>In particular, ...</b> &nbsp; • &nbsp; <b>The key point is ...</b> &nbsp; • &nbsp;
+<b>In short, ...</b></div>
+<div class="controls"><button onclick="toggle('s5')">Reveal Model Summary</button></div><div id="s5" class="note hidden">✎ <b>Example summary:</b><br><br><b>Overall,</b> Hessa describes her new school as larger and better equipped than her old one. <b>In particular,</b> she mentions useful facilities such as the modern library, science labs and sports hall. <b>In short,</b> these facilities are an important part of her positive experience at the new school.</div></section>
+
+<section class="part" id="p6"><div class="activity-label">ACTIVITY 6 · Vocabulary Detective</div><span class="badge">6 · Vocabulary · 3 min · Pair</span><h2>Vocabulary Detective</h2>
+<div class="instructions"><b>Student instruction:</b> Highlight an unfamiliar word. Read the sentence before and after it. Use the surrounding information to predict its meaning.</div>
+<div class="board"><b>Example:</b> “The residence can become <u>noisy</u> in the evening, so I go to the library when I need a quiet place.”</div>
+<div class="controls"><button onclick="toggle('s6')">Reveal Thinking</button></div><div id="s6" class="note hidden">✎ Context clue: “quiet place” gives us a contrast. <b>Noisy</b> probably means a place with a lot of sound.</div></section>
+
+<section class="part" id="p7"><div class="activity-label">ACTIVITY 7 · Email Detectives</div><span class="badge">7 · Main Activity · 19 min · Group + Individual</span><h2>Email Detectives — 5 Students, 5 Different Emails</h2>
+<div class="instructions"><b>Student instruction:</b> Work independently on your assigned email first. Complete your analysis in your <b>notebook</b>. You will share your findings with your group afterward.</div>
+<div class="task"><b>1.</b> Identify the email parts.</div>
+<div class="task"><b>2.</b> Highlight new words and infer meaning from context.</div>
+<div class="task"><b>3.</b> In your notebook, for each body paragraph write:<br><b>Main Topic → Important Details → Short Summary</b></div>
+<div class="task"><b>4.</b> Share your email’s main message with your group.</div>
+<div class="controls"><button class="alt" onclick="toggle('deep')">Deep Thinking</button></div><div id="deep" class="question hidden">How do you decide which details are important enough to keep and which should be left out?</div></section>
+
+<section class="part" id="p8"><div class="activity-label">ACTIVITY 8 · Group Share</div><span class="badge">8 · Group Share · 5 min · Group</span><h2>Teach Your Group</h2>
+<div class="instructions"><b>Student instruction:</b> Each student has a different email. Take turns. Everyone must contribute.</div>
+<div class="board"><b>Use this speaking frame:</b><br><br>“My email is about __________.”<br>“The main points are __________.”<br>“One unfamiliar word was __________. From the context, I think it means __________.”</div></section>
+
+<section class="part" id="p9"><div class="activity-label">ACTIVITY 9 · Exit Ticket</div><span class="badge">9 · Exit Ticket · 8 min · Individual</span><h2>Independent Summary Challenge</h2>
+<div class="instructions"><b>Student instruction:</b> Read the paragraph. In your notebook write: <b>main topic → two important details → a short summary in your own words.</b></div>
+<div class="email"><p>Since moving to the city, I have discovered many new opportunities. I can use public transport to reach libraries, courses and sports centres easily. Although the streets are sometimes crowded, I enjoy having so many useful places nearby.</p></div>
+<div class="controls"><button onclick="toggle('s9')">Reveal Model</button></div><div id="s9" class="note hidden">✎ <b>Main topic:</b> Opportunities and convenience of city life.<br><b>Details:</b> public transport; easy access to useful places.<br><b>Summary:</b> <b>Overall,</b> moving to the city has given the writer more opportunities and easier access to useful services. <b>In particular,</b> public transport makes it easier to reach libraries, courses and sports centres, despite the crowded streets.</div></section>
+</main>
+
+<aside class="side compact-side">
+<h3>Current Activity</h3>
+<div class="current-card">
+<div id="currentActivityTitle" class="current-title">1. Starter</div>
+<div id="currentActivityTask" class="current-task">Discuss what information should stay in a summary and what can be removed.</div>
+</div>
+<h3>Task Routine</h3>
+<div id="currentRoutine" class="mini-rule">Discuss → Decide → Share</div>
+</aside>
+</div>
+<script>
+
+const activityInfo={
+1:{title:"1. Starter",task:"Discuss what information should stay in a summary and what can be removed.",routine:"Discuss → Decide → Share"},
+2:{title:"2. Identify Email Parts",task:"Read the model email and identify the recipient, subject, greeting, opening, body, closing and sender.",routine:"Read → Identify → Check"},
+3:{title:"3. Find Main Topic",task:"Read the body paragraph and decide what it is mainly about.",routine:"Read → Think → Identify"},
+4:{title:"4. Select Key Details",task:"Choose only the details that explain or support the main topic.",routine:"Read → Select → Explain"},
+5:{title:"5. Write a Summary",task:"Combine the main topic and important details into a short summary in your own words.",routine:"Main Topic → Key Details → Summarize"},
+6:{title:"6. Vocabulary Detective",task:"Use the surrounding text to predict the meaning of an unfamiliar word.",routine:"Highlight → Context → Predict"},
+7:{title:"7. Email Detectives",task:"Analyze your assigned email in your notebook, then prepare to share its main message.",routine:"Identify → Vocabulary → Summarize → Share"},
+8:{title:"8. Group Share",task:"Take turns sharing the main message and important information from your different emails.",routine:"Listen → Explain → Share"},
+9:{title:"9. Exit Ticket",task:"Independently identify the main topic and key details, then write a short summary.",routine:"Read → Select → Summarize"}
+};
+function updateActivityUI(n){
+ const info=activityInfo[n]; if(!info)return;
+ document.getElementById("currentActivityTitle").textContent=info.title;
+ document.getElementById("currentActivityTask").textContent=info.task;
+ document.getElementById("currentRoutine").textContent=info.routine;
+ document.querySelectorAll(".activity-btn").forEach(btn=>btn.classList.toggle("active-activity",Number(btn.dataset.part)===n));
+}
+
+let seconds=2700,timerId=null;
+function paint(){let m=Math.floor(seconds/60),s=seconds%60;timer.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function startTimer(){if(timerId)return;timerId=setInterval(()=>{if(seconds>0){seconds--;paint()}else stopTimer()},1000)}
+function stopTimer(){clearInterval(timerId);timerId=null}
+function toggle(id){document.getElementById(id).classList.toggle('hidden')}
+let currentPart=1;
+function fullScreen(){
+ const entering=!document.body.classList.contains('presentation');
+ document.body.classList.toggle('presentation',entering);
+ if(entering&&!document.fullscreenElement)document.documentElement.requestFullscreen?.();
+ else if(!entering&&document.fullscreenElement)document.exitFullscreen?.();
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.body.classList.remove('presentation')});
+function showPart(n){
+ currentPart=Math.max(1,Math.min(9,n));
+ document.querySelectorAll('.part').forEach(x=>x.classList.remove('active'));
+ document.getElementById('p'+currentPart).classList.add('active');
+ document.querySelectorAll('.nav button').forEach((x,i)=>x.classList.toggle('current',i===currentPart-1));
+ document.getElementById('partCount').textContent=currentPart+' / 9';
+ updateActivityUI(currentPart);
+ document.querySelector('.stage').scrollTop=0;
+}
+function nextPart(){showPart(currentPart+1)}
+function prevPart(){showPart(currentPart-1)}
+document.addEventListener('keydown',e=>{
+ if(document.body.classList.contains('presentation')){
+  if(e.key==='ArrowRight'||e.key==='PageDown')nextPart();
+  if(e.key==='ArrowLeft'||e.key==='PageUp')prevPart();
+ }
+});
+function go(n,b){showPart(n)}
+paint();updateActivityUI(1);
+</script><div class="presnav">
+<button onclick="prevPart()">← Previous</button>
+<span class="count" id="partCount">1 / 9</span>
+<button class="alt" onclick="nextPart()">Next →</button>
+<button class="light" onclick="fullScreen()">✕ Exit</button>
+</div></body></html>
+<style>
+.stage{
+ background:
+  radial-gradient(circle at 10% 8%,rgba(47,117,181,.15),transparent 24%),
+  radial-gradient(circle at 92% 14%,rgba(255,192,0,.13),transparent 22%),
+  radial-gradient(circle at 88% 90%,rgba(112,173,71,.12),transparent 24%),
+  linear-gradient(145deg,#ffffff 0%,#f3f9ff 48%,#fff9ed 100%) !important;
+}
+body.presentation .stage{
+ background:
+  radial-gradient(circle at 10% 8%,rgba(47,117,181,.17),transparent 24%),
+  radial-gradient(circle at 92% 14%,rgba(255,192,0,.15),transparent 22%),
+  radial-gradient(circle at 88% 90%,rgba(112,173,71,.14),transparent 24%),
+  linear-gradient(145deg,#ffffff 0%,#f1f8ff 48%,#fff7e8 100%) !important;
+}
+
+.activity-list .activity-btn.active-activity{
+ background:linear-gradient(90deg,#17365d,#2f75b5)!important;
+ color:#fff!important;border-color:#17365d!important;
+ box-shadow:0 4px 12px #17365d33;
+ transform:translateX(3px);
+}
+.current-card{background:linear-gradient(145deg,#eef6ff,#fffaf0);border:1px solid #cbddec;border-radius:12px;padding:13px;box-shadow:0 3px 10px #17365d12}
+.current-title{font-size:16px;font-weight:800;color:#17365d;margin-bottom:8px}
+.current-task{font-size:14px;line-height:1.45;color:#29465f}
+body.presentation .current-title{font-size:17px}
+body.presentation .current-task{font-size:15px}
+</style>
