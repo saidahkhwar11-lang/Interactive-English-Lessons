@@ -69,7 +69,7 @@ let chosen=0,existing=null,client=null,user=null,teacherName='';
 const fields=['description','timeline','target_students','actions','measure'];
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderChoices(){choices.innerHTML=initiatives.map(([title,summary],i)=>`<button type="button" class="choice ${chosen===i+1?'active':''}" aria-pressed="${chosen===i+1}" data-id="${i+1}"><b>${i+1}. ${escapeHtml(title)}</b><span>${escapeHtml(summary)}</span></button>`).join('')}
-choices.addEventListener('click',e=>{const btn=e.target.closest('[data-id]');if(btn)selectInitiative(Number(btn.dataset.id))});
+choices.addEventListener('click',async e=>{const btn=e.target.closest('[data-id]');if(!btn)return;const id=Number(btn.dataset.id);selectInitiative(id);if(!client||!user)return;const saved=await client.from('english_initiative_polls').select('*').eq('user_id',user.id).eq('initiative_id',id).maybeSingle();if(saved.data){existing=saved.data;populate(existing)}else{existing=null;for(const key of fields)document.getElementById(key).value='';document.getElementById('teacher_name').value=teacherName;document.getElementById('save').textContent='Save my choice and plan';status.textContent='New initiative — complete the plan below.';document.getElementById('evidencePanel').hidden=true;}});
 function selectInitiative(id){chosen=id;document.getElementById('selected').textContent=initiatives[id-1][0];document.getElementById('placeholder').hidden=true;form.hidden=false;status.textContent='';status.className='';renderChoices()}
 function populate(row){if(!row)return;selectInitiative(row.initiative_id);document.getElementById('teacher_name').value=row.teacher_name||teacherName;for(const key of fields)document.getElementById(key).value=row[key]||'';document.getElementById('save').textContent='Update my choice and plan';status.textContent='Your saved plan is ready to edit.'}
 async function loadData(){
@@ -82,9 +82,8 @@ async function loadData(){
   if(profile.error||!profile.data){document.getElementById('identity').textContent='Your department profile could not be found.';return}
   teacherName=profile.data.display_name||user.email||'Teacher';document.getElementById('teacher_name').value=teacherName;
   document.getElementById('identity').textContent='Signed in as '+teacherName+'. Your selection can be edited later.';
-  const own=await client.from('english_initiative_polls').select('*').eq('user_id',user.id).maybeSingle();
-  if(own.error){status.textContent='Could not load your saved choice. Please refresh and try again.';status.className='error';return}
-  existing=own.data;populate(existing);if(existing)await loadEvidence();
+  existing=null;chosen=0;renderChoices();document.getElementById('placeholder').hidden=false;form.hidden=true;document.getElementById('evidencePanel').hidden=true;
+  document.getElementById('identity').textContent='Signed in as '+teacherName+'. Choose an initiative to create a new plan or edit a saved one.';
 }
 form.addEventListener('submit',async e=>{
   e.preventDefault();if(!user||!client){status.textContent='Please sign in first.';status.className='error';return}
@@ -92,10 +91,10 @@ form.addEventListener('submit',async e=>{
   for(const key of fields)payload[key]=document.getElementById(key).value.trim();
   if(!chosen||!payload.teacher_name||fields.some(key=>!payload[key])){status.textContent='Complete all fields before saving.';status.className='error';return}
   const button=document.getElementById('save');button.disabled=true;status.className='';status.textContent='Saving your plan…';
-  const {error}=await client.from('english_initiative_polls').upsert(payload,{onConflict:'user_id'});
+  const {error}=await client.from('english_initiative_polls').upsert(payload,{onConflict:'user_id,initiative_id'});
   button.disabled=false;
   if(error){status.className='error';status.textContent='Could not save your plan: '+error.message;return}
-  existing=payload;teacherName=payload.teacher_name;button.textContent='Update my choice and plan';status.textContent='Your initiative and plan have been saved.';await loadEvidence();
+  existing={...payload};teacherName=payload.teacher_name;button.textContent='Update this initiative plan';status.textContent='Your initiative and plan have been saved.';await loadEvidence();
 });
 
 async function loadEvidence(){
