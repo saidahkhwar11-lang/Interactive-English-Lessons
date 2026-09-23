@@ -167,33 +167,6 @@ function renderShares(){shareGrid.innerHTML=cats.map(c=>{let n=state.shares.filt
 function renderAll(){termLabel.textContent=state.term;renderMeetings();renderTeachers();renderShares();if(!calendarPanel.classList.contains('hidden'))renderCalendar()}
 renderAll();
 </script>
-<style id="main-section-collapse-published">
-.sectionhead.portfolio-collapse-head{cursor:pointer;user-select:none;align-items:center!important}
-.sectionhead.portfolio-collapse-head>div:first-child{position:relative;padding-left:22px}
-.sectionhead.portfolio-collapse-head>div:first-child:before{content:'▼';position:absolute;left:0;top:3px;font-size:14px;color:#425b6c}
-.sectionhead.portfolio-collapse-head.is-collapsed>div:first-child:before{content:'▶'}
-.sectionhead.portfolio-collapse-head:hover h2{color:#236b73!important}
-</style>
-<script id="main-section-collapse-published-script">
-(function(){
- function init(){
-  const heads=[...document.querySelectorAll('main.wrap > .sectionhead')];
-  heads.forEach((head,index)=>{
-   if(head.dataset.collapseReady==='1')return;
-   head.dataset.collapseReady='1';head.classList.add('portfolio-collapse-head');
-   const members=[];let n=head.nextElementSibling;
-   while(n&&!n.classList.contains('sectionhead')){
-    if(index===heads.length-1&&n.tagName==='DETAILS')break;
-    members.push(n);n=n.nextElementSibling;
-   }
-   const key='engPortfolioSectionCollapsed_'+index;
-   function apply(x){head.classList.toggle('is-collapsed',x);members.forEach(el=>el.style.display=x?'none':'');head.setAttribute('aria-expanded',String(!x))}
-   let x=false;try{x=localStorage.getItem(key)==='1'}catch(e){}apply(x);
-   head.addEventListener('click',e=>{if(e.target.closest('button,a,input,select,textarea'))return;const next=!head.classList.contains('is-collapsed');apply(next);try{localStorage.setItem(key,next?'1':'0')}catch(e){}})
-  })
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-</script>
+
 </body>
 </html>
