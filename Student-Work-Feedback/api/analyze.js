@@ -30,7 +30,8 @@ Return ONLY valid JSON with keys: mark (number), www (string), ebi (string), cor
     });
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json({ error: data?.error?.message || "AI marking failed." });
-    const text = data.output_text || (data.output || []).flatMap(x=>x.content||[]).find(x=>x.type==="output_text")?.text || "";\n    if (!text) return res.status(502).json({ error: "The AI returned no feedback text." });
+    const text = data.output_text || (data.output || []).flatMap(x=>x.content||[]).find(x=>x.type==="output_text")?.text || "";
+    if (!text) return res.status(502).json({ error: "The AI returned no feedback text." });
     const clean = text.replace(/^\`\`\`json\s*/i,"").replace(/\`\`\`\s*$/,"").trim();
     const result = JSON.parse(clean);
     result.mark = Math.max(0, Math.min(max, Number(result.mark) || 0));
