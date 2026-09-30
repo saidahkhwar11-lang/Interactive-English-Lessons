@@ -51,7 +51,7 @@ async function analyzeWork(){
   try{
     const image=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)});
     const response=await fetch("./api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image,grade:grade.value,task:task.value,style:style.value,outOf:outof.value})});
-    const data=await response.json(); if(!response.ok) throw new Error(data.error||"Analysis failed");
+    const raw=await response.text(); let data={}; try{data=raw?JSON.parse(raw):{}}catch(_){throw new Error("Server "+response.status+": "+raw.slice(0,220))} if(!response.ok) throw new Error(data.error||("Server "+response.status+" error"));
     mark.value=data.mark??"";www.value=data.www||"";ebi.value=data.ebi||"";corrections.value=data.corrections||"";final.value=data.finalComment||"";
     status.textContent="Feedback generated from this student's work. Please review/edit before copying or printing.";
   }catch(e){status.textContent="Could not analyze the work: "+e.message}
