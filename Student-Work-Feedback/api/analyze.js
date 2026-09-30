@@ -1,8 +1,8 @@
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
+export const config = { runtime: 'edge' };\n\nexport default async function handler(req) {
+  if (req.method !== "POST") return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers: { "content-type": "application/json" } });
   try {
-    const { image, grade, task, style, outOf } = req.body || {};
-    if (!image || !String(image).startsWith("data:image/")) return res.status(400).json({ error: "Please upload a clear image." });
+    const { image, grade, task, style, outOf } = await req.json();
+    if (!image || !String(image).startsWith("data:image/")) return new Response(JSON.stringify({ error: "Please upload a clear image." }), { status: 400, headers: { "content-type": "application/json" } });
     const max = Number(outOf) || 20;
     const prompt = `You are an experienced English teacher at a UAE girls' school marking one student's actual work.
 Grade: ${grade}. Task: ${task}. Requested style: ${style}. Mark is out of ${max}.
@@ -29,15 +29,15 @@ Return ONLY valid JSON with keys: mark (number), www (string), ebi (string), cor
       })
     });
     const data = await response.json();
-    if (!response.ok) return res.status(response.status).json({ error: data?.error?.message || "AI marking failed." });
+    if (!response.ok) return new Response(JSON.stringify({ error: data?.error?.message || "AI marking failed." }), { status: response.status, headers: { "content-type": "application/json" } });
     const text = data.output_text || (data.output || []).flatMap(x=>x.content||[]).find(x=>x.type==="output_text")?.text || "";
-    if (!text) return res.status(502).json({ error: "The AI returned no feedback text." });
+    if (!text) return new Response(JSON.stringify({ error: "The AI returned no feedback text." }), { status: 502, headers: { "content-type": "application/json" } });
     const clean = text.replace(/^\`\`\`json\s*/i,"").replace(/\`\`\`\s*$/,"").trim();
     const result = JSON.parse(clean);
     result.mark = Math.max(0, Math.min(max, Number(result.mark) || 0));
     res.setHeader("Cache-Control","no-store");
     return res.status(200).json(result);
   } catch (e) {
-    return res.status(500).json({ error: "Could not analyze this work. Please try a clearer photo." });
+    return new Response(JSON.stringify({ error: "Could not analyze this work: " + (e?.message || String(e)) }), { status: 500, headers: { "content-type": "application/json" } });
   }
 }
