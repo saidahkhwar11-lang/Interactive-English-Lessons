@@ -1,4 +1,6 @@
-export const config = { runtime: 'edge' };\n\nexport default async function handler(req) {
+export const config = { runtime: 'edge' };
+
+export default async function handler(req) {
   if (req.method !== "POST") return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers: { "content-type": "application/json" } });
   try {
     const { image, grade, task, style, outOf } = await req.json();
@@ -35,8 +37,7 @@ Return ONLY valid JSON with keys: mark (number), www (string), ebi (string), cor
     const clean = text.replace(/^\`\`\`json\s*/i,"").replace(/\`\`\`\s*$/,"").trim();
     const result = JSON.parse(clean);
     result.mark = Math.max(0, Math.min(max, Number(result.mark) || 0));
-    res.setHeader("Cache-Control","no-store");
-    return res.status(200).json(result);
+    return new Response(JSON.stringify(result), { status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: "Could not analyze this work: " + (e?.message || String(e)) }), { status: 500, headers: { "content-type": "application/json" } });
   }
