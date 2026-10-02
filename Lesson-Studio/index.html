@@ -86,6 +86,9 @@
 .presentTools{min-width:0!important;position:static!important}
 .presentVisual{overflow:hidden!important}
 @media(max-width:850px){.presentReading{grid-template-columns:1fr!important}.presentPoster{min-height:auto!important}}
+
+.presentAttendanceForm{display:grid;gap:8px}.presentAttendanceForm label{font-size:11px;font-weight:900;color:#59768a}.presentAttendanceForm input,.presentAttendanceForm textarea{width:100%;border:1px solid #cfdee5;border-radius:9px;padding:8px;margin-top:4px}.presentAttendanceForm textarea{min-height:90px;resize:vertical}.presentAttendanceSave{border:0;border-radius:10px;background:#1689c4;color:#fff;padding:9px;font-weight:900;cursor:pointer}
+#presentQR img,#presentQR canvas{display:block!important;width:58px!important;height:58px!important}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -127,7 +130,7 @@
 </div></div></div></div>
 <div class="presentation" id="presentation">
 <aside class="presentNav"><div class="presentBrand">✨ Lesson Presentation</div><div class="presentNavList" id="presentNavList"></div></aside>
-<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
+<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" style="display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div><small style="font-weight:900;color:#123e66">Scan<br>Lesson Plan</small></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
 </div>
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
@@ -332,10 +335,11 @@ $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModa
 
 
 let presentIndex=0,presentTimerId=null,presentRemaining=300;
+function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;el.innerHTML='';let link=lessonPlanLink();if(window.QRCode)new QRCode(el,{text:link,width:58,height:58,colorDark:'#123e66',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});else el.innerHTML='<small>QR</small>'}
 function openPresentation(){presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
 function closePresentation(){document.getElementById('presentation').classList.remove('open');if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}}
 function renderPresentation(){
- const sl=slides[presentIndex];if(!sl)return;
+ const sl=slides[presentIndex];if(!sl)return;buildPresentQR();
  document.getElementById('presentLessonTitle').textContent=sl.lesson||'Lesson';document.getElementById('presentSub').textContent=sl.sub||'';
  const nav=document.getElementById('presentNavList');nav.innerHTML='';
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>';b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
@@ -351,16 +355,17 @@ function renderPresentation(){
 function renderPresentReading(sl,host){
  if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;
  const poster=sl.img?'<img id="presentReadingImg" alt="Reading poster">':'<div class="presentEmpty"><b>Reading Routine</b>Upload the reading poster in Design Mode.</div>';
- host.innerHTML='<div class="presentSlide" style="grid-template-columns:1fr"><div class="presentVisual"><div class="presentReading"><div class="presentPoster">'+poster+'</div><div class="presentTools"><div class="presentTimer"><b>📚 Reading Time</b><div class="presentClock" id="presentClock"></div><div class="presentTimerBtns"><button id="pStart" style="background:#1689c4;color:#fff">▶ Start</button><button id="pPause" style="background:#fff0bd">Ⅱ Pause</button><button id="pReset">↻ Reset</button></div></div><button class="presentToggle" id="pAttendance">👩‍🎓 Absent Record · '+((sl.attendance?.names||'').split('\\n').filter(x=>x.trim()).length)+' absent</button><div class="presentPanel" id="pAttendancePanel"><b>Class:</b> '+esc2(sl.attendance?.className||'—')+'<br><b>Absent:</b><div style="margin-top:6px">'+esc2(sl.attendance?.names||'None').replace(/\\n/g,'<br>')+'</div></div><button class="presentToggle" id="pGroups">⭐ Reading Groups · '+(sl.readingGroups||[]).filter(Boolean).length+' / 6</button><div class="presentPanel" id="pGroupsPanel"><div class="presentStars" id="pStars"></div></div></div></div></div></div>';
+ host.innerHTML='<div class="presentSlide" style="grid-template-columns:1fr"><div class="presentVisual"><div class="presentReading"><div class="presentPoster">'+poster+'</div><div class="presentTools"><div class="presentTimer"><b>📚 Reading Time</b><div class="presentClock" id="presentClock"></div><div class="presentTimerBtns"><button id="pStart" style="background:#1689c4;color:#fff">▶ Start</button><button id="pPause" style="background:#fff0bd">Ⅱ Pause</button><button id="pReset">↻ Reset</button></div></div><button class="presentToggle" id="pAttendance">👩‍🎓 Absent Record · <span id="pAbsentCount">'+((sl.attendance?.names||'').split('\\n').filter(x=>x.trim()).length)+'</span> absent</button><div class="presentPanel" id="pAttendancePanel"><div class="presentAttendanceForm"><label>Class / Section<input id="pClass" value="'+esc2(sl.attendance?.className||'')+'" placeholder="e.g. 9/1"></label><label>Absent student names<textarea id="pAbsentNames" placeholder="One name per line">'+esc2(sl.attendance?.names||'')+'</textarea></label><button type="button" class="presentAttendanceSave" id="pSaveAttendance">Save Attendance</button></div></div><button class="presentToggle" id="pGroups">⭐ Reading Groups · '+(sl.readingGroups||[]).filter(Boolean).length+' / 6</button><div class="presentPanel" id="pGroupsPanel"><div class="presentStars" id="pStars"></div></div></div></div></div></div>';
  if(sl.img){let im=document.getElementById('presentReadingImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
  const paint=()=>{let c=document.getElementById('presentClock');if(c)c.textContent=String(Math.floor(presentRemaining/60)).padStart(2,'0')+':'+String(presentRemaining%60).padStart(2,'0')};paint();
  document.getElementById('pStart').onclick=()=>{if(presentTimerId)return;presentTimerId=setInterval(()=>{if(presentRemaining>0){presentRemaining--;paint()}else{clearInterval(presentTimerId);presentTimerId=null}},1000)};
  document.getElementById('pPause').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}};
  document.getElementById('pReset').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;paint()};
  document.getElementById('pAttendance').onclick=()=>document.getElementById('pAttendancePanel').classList.toggle('open');
+ document.getElementById('pSaveAttendance').onclick=()=>{sl.attendance={className:document.getElementById('pClass').value.trim(),names:document.getElementById('pAbsentNames').value};let n=sl.attendance.names.split('\\n').filter(x=>x.trim()).length;document.getElementById('pAbsentCount').textContent=n;if(typeof toast==='function')toast('Attendance saved ✓')};
  document.getElementById('pGroups').onclick=()=>document.getElementById('pGroupsPanel').classList.toggle('open');
  let stars=document.getElementById('pStars');sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
- sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];renderPresentReading(sl,host)};stars.appendChild(b)});
+ sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
 }
 document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
