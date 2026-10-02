@@ -354,7 +354,7 @@ function visitorPlanData(){
  });
  return {school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
 }
-function visitorPlanToken(){try{return btoa(unescape(encodeURIComponent(JSON.stringify(visitorPlanData())))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')}catch(e){return''}}
+function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let token=visitorPlanToken();if(!token)return'';let root=location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html';return root+'#'+token}
 
 async function loadLessonFromUrl(){
