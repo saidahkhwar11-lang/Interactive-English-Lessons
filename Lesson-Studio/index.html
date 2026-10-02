@@ -130,7 +130,7 @@
 </div></div></div></div>
 <div class="presentation" id="presentation">
 <aside class="presentNav"><div class="presentBrand">✨ Lesson Presentation</div><div class="presentNavList" id="presentNavList"></div></aside>
-<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" style="display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div><small style="font-weight:900;color:#123e66">Scan<br>Lesson Plan</small></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
+<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" title="Scan or click to open Lesson Plan" style="cursor:pointer;"display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div><small style="font-weight:900;color:#123e66">Scan<br>Lesson Plan</small></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
 </div>
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
@@ -274,9 +274,22 @@ cur=0;render()}};render();
 
 const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'];
 
+
+function renderQRInto(el,link,size){
+ if(!el)return;el.innerHTML='';
+ if(window.QRCode){new QRCode(el,{text:link,width:size,height:size,colorDark:'#123e66',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});return}
+ // Reliable built-in fallback: generate a scannable QR image using the public Google Chart-compatible QuickChart endpoint.
+ const img=document.createElement('img');
+ img.alt='Lesson Plan QR code';img.width=size;img.height=size;
+ img.src='https://quickchart.io/qr?size='+size+'&text='+encodeURIComponent(link);
+ img.style.display='block';img.style.width=size+'px';img.style.height=size+'px';
+ img.onerror=()=>{el.innerHTML='<button type="button" style="border:0;background:#fff;color:#123e66;font-weight:900;cursor:pointer">Open Plan</button>';el.firstChild.onclick=()=>window.open(link,'_blank')};
+ el.appendChild(img);
+}
+
 function buildQR(){
  let link=lessonPlanLink();$('lpLink').value=link;
- ['miniQR','bigQR'].forEach(id=>{let el=$(id);if(!el)return;el.innerHTML='';if(window.QRCode)new QRCode(el,{text:link,width:id==='miniQR'?64:120,height:id==='miniQR'?64:120,colorDark:'#123e66',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});else el.innerHTML='<small>QR loads when online.</small>'});
+ ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
 }
 function autoLessonPlan(){
  let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
@@ -335,7 +348,7 @@ $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModa
 
 
 let presentIndex=0,presentTimerId=null,presentRemaining=300;
-function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;el.innerHTML='';let link=lessonPlanLink();if(window.QRCode)new QRCode(el,{text:link,width:58,height:58,colorDark:'#123e66',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});else el.innerHTML='<small>QR</small>'}
+function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,lessonPlanLink(),58)}
 function openPresentation(){presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
 function closePresentation(){document.getElementById('presentation').classList.remove('open');if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}}
 function renderPresentation(){
@@ -367,6 +380,6 @@ function renderPresentReading(sl,host){
  let stars=document.getElementById('pStars');sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
  sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
 }
-document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
+document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
 </script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
