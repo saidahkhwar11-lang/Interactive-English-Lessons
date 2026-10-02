@@ -68,6 +68,24 @@
 .presentStar{border:1px solid #dbe7ec;border-radius:13px;background:#f8fbfd;padding:10px;cursor:pointer;font-weight:900}.presentStar.on{background:linear-gradient(145deg,#fff7c8,#ffe78d);border-color:#e9c34f;color:#6b5114}
 .presentEmpty{text-align:center;color:#6f8999}.presentEmpty b{display:block;font-size:22px;color:#45687c;margin-bottom:6px}
 @media(max-width:900px){.presentation.open{grid-template-columns:190px 1fr}.presentSlide{grid-template-columns:1fr}.presentReading{grid-template-columns:1fr}.presentPoster{min-height:auto}}
+
+/* Reading poster visibility fix */
+.canvas{min-width:0;overflow:hidden}
+.reading-routine-final{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+.reading-poster-final{width:100%!important;min-width:0!important;min-height:420px!important;position:relative!important;z-index:2!important;background:#fff!important}
+.reading-poster-final img{display:block!important;width:100%!important;height:auto!important;max-width:100%!important;max-height:520px!important;object-fit:contain!important;position:relative!important;z-index:3!important}
+.reading-tools-final{width:100%!important;display:grid!important;grid-template-columns:220px minmax(180px,1fr) minmax(180px,1fr)!important;gap:10px!important;align-items:start!important;position:relative!important;z-index:1!important}
+.reading-tools-final .rtimer{grid-row:1 / span 2!important}
+.reading-tools-final .routine-toggle{min-height:52px!important}
+.reading-tools-final .routine-panel{grid-column:auto!important}
+@media(max-width:1050px){.reading-tools-final{grid-template-columns:1fr 1fr!important}.reading-tools-final .rtimer{grid-column:1/-1!important;grid-row:auto!important}}
+/* Presentation: image and controls must never overlap */
+.presentReading{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) 245px!important;gap:20px!important;align-items:start!important}
+.presentPoster{min-width:0!important;width:100%!important;min-height:60vh!important;background:#fff!important;border-radius:20px!important;overflow:hidden!important}
+.presentPoster img{display:block!important;width:100%!important;height:auto!important;max-width:100%!important;max-height:72vh!important;object-fit:contain!important;position:static!important}
+.presentTools{min-width:0!important;position:static!important}
+.presentVisual{overflow:hidden!important}
+@media(max-width:850px){.presentReading{grid-template-columns:1fr!important}.presentPoster{min-height:auto!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -245,7 +263,7 @@ $('gradeSelect').onchange=()=>{
  render();
 };$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson;n.sub=slides[0].sub;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render()};$('types').appendChild(b)});
 [['eTitle','title'],['eLesson','lesson'],['eSub','sub'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render()});
-function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;render()};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
+function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
 slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
 slides[0].mission='Upload the reading routine poster for this lesson.';
 slides[0].obj='Build reading fluency.';
@@ -323,7 +341,7 @@ function renderPresentation(){
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>';b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
- let visual=sl.img?'<img id="presentImg" alt="Activity">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>Activity visual will appear here.</div>';
+ let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
  host.innerHTML='<div class="presentSlide"><div class="presentVisual">'+visual+'</div><aside class="presentDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2><div class="presentMission">'+mission+'</div><div class="presentBadges"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2(sl.obj||'Objective')+'</span></div>'+audio+'</aside></div>';
