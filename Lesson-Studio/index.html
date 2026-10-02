@@ -43,11 +43,36 @@
 .routine-panel label{display:block;font-size:11px;font-weight:900;color:#59768a;margin-bottom:9px}.routine-panel input,.routine-panel textarea{width:100%;margin-top:4px;border:1px solid #cfdee5;border-radius:9px;padding:8px}.routine-panel textarea{min-height:80px;resize:vertical}.mini-save{border:0;border-radius:10px;background:#1689c4;color:#fff;padding:8px 10px;font-weight:900;cursor:pointer}
 .group-stars{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.group-star{border:1px solid #dbe7ec;border-radius:14px;background:#f8fbfd;padding:10px 7px;cursor:pointer;font-weight:900;color:#527084}.group-star .star{font-size:25px;display:block;color:#cbd7dc}.group-star.on{background:linear-gradient(145deg,#fff7c8,#ffe78d);border-color:#e9c34f;color:#6b5114;box-shadow:0 5px 12px rgba(181,137,24,.14)}.group-star.on .star{color:#f2b90b;transform:scale(1.12)}
 @media(max-width:850px){.reading-routine-final{grid-template-columns:1fr}.reading-tools-final{grid-template-columns:1fr 1fr}.rtimer{grid-column:1/-1}}
+
+.presentation{position:fixed;inset:0;z-index:100;background:#f7fbfd;display:none;color:#123e66}
+.presentation.open{display:grid;grid-template-columns:245px minmax(0,1fr)}
+.presentNav{background:#f7fbfe;border-right:1px solid #dbe9ef;padding:18px;overflow:auto}
+.presentBrand{font-size:22px;font-weight:950;margin-bottom:16px}.presentNavList{display:grid;gap:8px}
+.presentNavItem{border:1px solid #d9e8ef;border-radius:15px;background:#fff;padding:12px;text-align:left;color:#123e66;cursor:pointer;font-weight:850}
+.presentNavItem small{display:block;margin-top:4px;color:#688297}.presentNavItem.active{background:#eaf9f0;border-color:#9fd7b4;box-shadow:inset 5px 0 #4fbd82}
+.presentMain{min-width:0;display:flex;flex-direction:column;overflow:auto;background:#f4f9fb}
+.presentTop{padding:13px 20px;background:linear-gradient(105deg,#eaf9ef,#e5f7ff 58%,#fff4cc);display:flex;align-items:center;gap:14px;border-bottom:1px solid #dbe9ef}
+.presentTop h1{margin:0;font-size:27px;color:#3b2a20}.presentTop p{margin:3px 0 0;color:#59768e}.presentActions{margin-left:auto;display:flex;gap:8px}
+.presentActions button{border:0;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer}.presentClose{background:#173f67;color:#fff}
+.presentSlide{padding:22px;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:stretch;min-height:calc(100vh - 78px)}
+.presentVisual{background:#fff;border-radius:25px;padding:18px;display:flex;align-items:center;justify-content:center;min-width:0;box-shadow:0 8px 24px rgba(25,68,91,.07)}
+.presentVisual img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:18px;cursor:zoom-in}
+.presentDetails{border:1px solid #efd78a;border-radius:25px;padding:22px;background:linear-gradient(160deg,#fff7d8,#fffdf7);align-self:stretch}
+.presentDetails h2{font-size:29px;color:#a55216;margin:16px 0 12px}.presentMission{font-size:19px;line-height:1.5;font-weight:750}.presentBadges{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.presentBadge{background:#fff;border:1px solid #dce8ed;border-radius:12px;padding:8px 10px;font-weight:850}
+.presentAudio{margin-top:18px;padding:14px;border-radius:17px;background:linear-gradient(135deg,#fde5f0,#eee8fb)}.presentAudio audio{width:100%}
+.presentReading{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}.presentPoster{min-height:65vh;display:flex;align-items:center;justify-content:center}.presentPoster img{max-height:70vh}
+.presentTools{display:grid;gap:11px}.presentTimer{padding:18px;border-radius:22px;text-align:center;background:linear-gradient(145deg,#e8f8ff,#fff4d1);border:1px solid #d5e8ef}.presentClock{font-size:55px;font-weight:950;margin:9px 0}
+.presentTimerBtns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}.presentTimerBtns button{border:0;border-radius:11px;padding:9px 11px;font-weight:900;cursor:pointer}
+.presentToggle{border:0;border-radius:16px;padding:13px;background:linear-gradient(135deg,#e8f7ff,#f5edff);font-weight:900;color:#173f67;cursor:pointer;text-align:left}
+.presentPanel{display:none;background:#fff;border:1px solid #d8e7ed;border-radius:16px;padding:12px}.presentPanel.open{display:block}.presentStars{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.presentStar{border:1px solid #dbe7ec;border-radius:13px;background:#f8fbfd;padding:10px;cursor:pointer;font-weight:900}.presentStar.on{background:linear-gradient(145deg,#fff7c8,#ffe78d);border-color:#e9c34f;color:#6b5114}
+.presentEmpty{text-align:center;color:#6f8999}.presentEmpty b{display:block;font-size:22px;color:#45687c;margin-bottom:6px}
+@media(max-width:900px){.presentation.open{grid-template-columns:190px 1fr}.presentSlide{grid-template-columns:1fr}.presentReading{grid-template-columns:1fr}.presentPoster{min-height:auto}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
 <option value="6">Grade 6 · Teacher Upload</option>
-</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
+</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
 <main class="stageWrap"><div class="stage"><div class="banner"><div class="ico" id="ico">✨</div><div><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Scan / open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
@@ -82,6 +107,10 @@
 <div class="lpField lpWide"><label>Assessment & Follow-up</label><textarea id="lpAssess">Use questioning, observation, activity responses and the final task to check progress against the lesson objectives.</textarea></div>
 <div class="lpSection"><h3>Lesson Plan QR Link</h3><div class="lpQRBox"><div id="bigQR"></div><div><b>Scan to view this lesson plan</b><p style="margin:5px 0;color:#648095;font-size:12px">When this Lesson Studio is hosted on GitHub Pages, this QR opens the lesson-plan view for the current lesson.</p><input id="lpLink" style="width:100%;padding:8px;border:1px solid #d4e3e9;border-radius:9px" readonly></div></div></div>
 </div></div></div></div>
+<div class="presentation" id="presentation">
+<aside class="presentNav"><div class="presentBrand">✨ Lesson Presentation</div><div class="presentNavList" id="presentNavList"></div></aside>
+<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
+</div>
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
 const objectiveBank={
@@ -283,5 +312,38 @@ async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.
 function lessonPlanLink(){let base=location.href.split('#')[0].split('?')[0];return base+'?lesson='+(activeLessonId||'unsaved')+'#lesson-plan'}
 $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrary()};$('libraryClose').onclick=()=>$('libraryModal').classList.remove('open');$('exportLesson').onclick=exportCurrent;$('importLesson').onchange=e=>{let f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
 
+
+let presentIndex=0,presentTimerId=null,presentRemaining=300;
+function openPresentation(){presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
+function closePresentation(){document.getElementById('presentation').classList.remove('open');if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}}
+function renderPresentation(){
+ const sl=slides[presentIndex];if(!sl)return;
+ document.getElementById('presentLessonTitle').textContent=sl.lesson||'Lesson';document.getElementById('presentSub').textContent=sl.sub||'';
+ const nav=document.getElementById('presentNavList');nav.innerHTML='';
+ slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>';b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
+ const host=document.getElementById('presentSlide');
+ if(sl.type==='Reading'){renderPresentReading(sl,host);return}
+ let visual=sl.img?'<img id="presentImg" alt="Activity">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>Activity visual will appear here.</div>';
+ let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
+ let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
+ host.innerHTML='<div class="presentSlide"><div class="presentVisual">'+visual+'</div><aside class="presentDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2><div class="presentMission">'+mission+'</div><div class="presentBadges"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2(sl.obj||'Objective')+'</span></div>'+audio+'</aside></div>';
+ if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
+ if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
+}
+function renderPresentReading(sl,host){
+ if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;
+ const poster=sl.img?'<img id="presentReadingImg" alt="Reading poster">':'<div class="presentEmpty"><b>Reading Routine</b>Upload the reading poster in Design Mode.</div>';
+ host.innerHTML='<div class="presentSlide" style="grid-template-columns:1fr"><div class="presentVisual"><div class="presentReading"><div class="presentPoster">'+poster+'</div><div class="presentTools"><div class="presentTimer"><b>📚 Reading Time</b><div class="presentClock" id="presentClock"></div><div class="presentTimerBtns"><button id="pStart" style="background:#1689c4;color:#fff">▶ Start</button><button id="pPause" style="background:#fff0bd">Ⅱ Pause</button><button id="pReset">↻ Reset</button></div></div><button class="presentToggle" id="pAttendance">👩‍🎓 Absent Record · '+((sl.attendance?.names||'').split('\\n').filter(x=>x.trim()).length)+' absent</button><div class="presentPanel" id="pAttendancePanel"><b>Class:</b> '+esc2(sl.attendance?.className||'—')+'<br><b>Absent:</b><div style="margin-top:6px">'+esc2(sl.attendance?.names||'None').replace(/\\n/g,'<br>')+'</div></div><button class="presentToggle" id="pGroups">⭐ Reading Groups · '+(sl.readingGroups||[]).filter(Boolean).length+' / 6</button><div class="presentPanel" id="pGroupsPanel"><div class="presentStars" id="pStars"></div></div></div></div></div></div>';
+ if(sl.img){let im=document.getElementById('presentReadingImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
+ const paint=()=>{let c=document.getElementById('presentClock');if(c)c.textContent=String(Math.floor(presentRemaining/60)).padStart(2,'0')+':'+String(presentRemaining%60).padStart(2,'0')};paint();
+ document.getElementById('pStart').onclick=()=>{if(presentTimerId)return;presentTimerId=setInterval(()=>{if(presentRemaining>0){presentRemaining--;paint()}else{clearInterval(presentTimerId);presentTimerId=null}},1000)};
+ document.getElementById('pPause').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}};
+ document.getElementById('pReset').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;paint()};
+ document.getElementById('pAttendance').onclick=()=>document.getElementById('pAttendancePanel').classList.toggle('open');
+ document.getElementById('pGroups').onclick=()=>document.getElementById('pGroupsPanel').classList.toggle('open');
+ let stars=document.getElementById('pStars');sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
+ sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];renderPresentReading(sl,host)};stars.appendChild(b)});
+}
+document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
 </script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
