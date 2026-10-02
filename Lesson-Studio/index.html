@@ -1,1 +1,287 @@
-PLACEHOLDER
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lesson Studio</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#eef5f8;color:#123e66}button,input,textarea{font:inherit}.top{padding:15px 20px;background:linear-gradient(105deg,#eaf9ef,#e4f6ff 55%,#fff5d2);display:flex;align-items:center;gap:12px}.top h1{margin:0}.top small{color:#648095}.top button{margin-left:auto}.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;background:#123e66;color:white}.layout{display:grid;grid-template-columns:270px 1fr 320px;min-height:calc(100vh - 76px)}.left,.right{padding:16px;background:#f9fcfe;border-right:1px solid #dbe9ef}.right{border-right:0;border-left:1px solid #dbe9ef}.add{width:100%;background:#1689c4}.list{display:grid;gap:7px;margin-top:12px}.item{background:white;border:1px solid #dbe9ef;border-radius:14px;padding:11px;cursor:pointer}.item.active{background:#eaf9f0;border-color:#9fd7b4;box-shadow:inset 4px 0 #4fbd82}.item small{display:block;color:#648095}.stageWrap{padding:20px}.stage{background:white;border-radius:25px;overflow:hidden;min-height:650px}.banner{padding:17px 23px;background:linear-gradient(105deg,#eaf9ef,#e5f7ff 58%,#fff4cc);display:flex;gap:14px;align-items:center}.banner .ico{font-size:38px}.banner h2{margin:0;font-size:29px;color:#3b2a20}.banner p{margin:4px 0;color:#59768e}.body{padding:20px;display:grid;grid-template-columns:1fr 300px;gap:17px}.canvas{min-height:500px;border:2px dashed #cfe0e8;border-radius:20px;display:flex;align-items:center;justify-content:center;background:#fbfdfe;padding:15px}.canvas img{max-width:100%;max-height:520px;object-fit:contain;border-radius:14px;cursor:zoom-in}.empty{text-align:center;color:#7890a1}.empty b{display:block;color:#49687d;font-size:19px;margin-bottom:5px}.details{border:1px solid #efd78a;border-radius:24px;padding:20px;background:linear-gradient(160deg,#fff7d8,#fffdf7)}.kicker{display:inline-block;background:#ffe58a;padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900;color:#934c19}.details h3{font-size:25px;color:#a55216}.mission{font-size:17px;font-weight:700;line-height:1.45}.badges{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}.badge{background:#fff;border:1px solid #dce8ed;border-radius:11px;padding:7px 9px;font-size:12px;font-weight:800}.audio{margin-top:18px;padding:12px;border-radius:16px;background:linear-gradient(135deg,#fde5f0,#eee8fb)}.audio strong{display:block;margin-bottom:8px}.audio audio{width:100%}.editor{display:grid;gap:10px}.field label{display:block;font-size:11px;font-weight:900;color:#567287;margin-bottom:4px;text-transform:uppercase}.field input,.field textarea{width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px}.field textarea{min-height:72px}.upload{display:block;text-align:center;padding:10px;border:1px dashed #9fc3d4;border-radius:11px;background:#eef8fc;cursor:pointer;font-weight:800}.upload input{display:none}.modal,.zoom{position:fixed;inset:0;background:#092131bb;display:none;align-items:center;justify-content:center;z-index:20;padding:25px}.modal.open,.zoom.open{display:flex}.modalCard{width:min(580px,94vw);background:white;border-radius:22px;padding:20px}.types{display:grid;grid-template-columns:1fr 1fr;gap:8px}.type{padding:13px;text-align:left;border:1px solid #dbe9ef;border-radius:13px;background:#f8fbfd;cursor:pointer}.zoomBox{width:min(950px,86vw);max-height:82vh;overflow:auto;background:white;padding:12px;border-radius:20px}.zoomBox img{width:100%;height:auto}.close{position:absolute;right:5vw;top:4vh;border:0;border-radius:50%;width:44px;height:44px;font-size:24px}@media(max-width:1000px){.layout{grid-template-columns:220px 1fr}.right{grid-column:1/-1}.body{grid-template-columns:1fr}}
+
+.reading-fixed{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:center}
+.reading-fixed img{width:100%;max-height:500px;object-fit:contain;border-radius:18px}
+.rtimer{background:linear-gradient(145deg,#e8f8ff,#fff4d1);border:1px solid #d5e8ef;border-radius:22px;padding:18px;text-align:center}
+.rtimer .clock{font-size:48px;font-weight:950;color:#123e66;letter-spacing:.03em;margin:8px 0 14px}
+.rtimer h3{margin:0;color:#123e66}.timer-actions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.timer-actions button{border:0;border-radius:11px;padding:8px 10px;font-weight:850;cursor:pointer}.timer-start{background:#1689c4;color:#fff}.timer-pause{background:#fff0bd;color:#624a12}.timer-reset{background:#eef4f7;color:#34586d}
+.fixed-note{margin-top:10px;font-size:11px;color:#648095;font-weight:700}
+@media(max-width:800px){.reading-fixed{grid-template-columns:1fr}.rtimer{max-width:320px;margin:auto;width:100%}}
+
+.grade6-reading{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:center}
+.grade6-upload{min-height:410px;border:2px dashed #a9cddd;border-radius:20px;background:linear-gradient(145deg,#f7fcff,#fff9e6);display:flex;align-items:center;justify-content:center;padding:18px;text-align:center}
+.grade6-upload img{max-width:100%;max-height:470px;object-fit:contain;border-radius:16px;cursor:zoom-in}
+.grade6-upload label{cursor:pointer;color:#49687d;font-weight:800}.grade6-upload input{display:none}
+@media(max-width:800px){.grade6-reading{grid-template-columns:1fr}}
+
+.lpModal{position:fixed;inset:0;background:rgba(8,31,47,.72);display:none;z-index:50;padding:24px;overflow:auto}.lpModal.open{display:block}
+.lpShell{width:min(1120px,96vw);margin:auto;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.lpHead{padding:18px 22px;background:linear-gradient(105deg,#eaf9ef,#e5f7ff 55%,#fff4cf);display:flex;align-items:center;gap:12px}
+.lpHead h2{margin:0;color:#123e66}.lpHead .lpActions{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}
+.lpContent{padding:22px}.lpGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.lpField label{display:block;font-size:11px;font-weight:900;color:#58758a;text-transform:uppercase;margin-bottom:5px}
+.lpField input,.lpField textarea{width:100%;border:1px solid #cedfe7;border-radius:11px;padding:10px}.lpField textarea{min-height:90px;resize:vertical}
+.lpWide{grid-column:1/-1}.lpSection{grid-column:1/-1;border:1px solid #dbe8ee;border-radius:18px;padding:15px;background:#fbfdfe}.lpSection h3{margin:0 0 10px;color:#174d70}
+.lpFlow{width:100%;border-collapse:collapse;font-size:13px}.lpFlow th,.lpFlow td{border:1px solid #d6e4ea;padding:8px;vertical-align:top}.lpFlow th{background:#eef7fa;color:#174d70}.lpFlow textarea{width:100%;min-height:75px;border:0;background:transparent;resize:vertical}
+.lpQRBox{display:flex;gap:15px;align-items:center;padding:13px;border-radius:16px;background:#fff8dc;border:1px solid #ecd78e}.lpQRBox #bigQR{width:130px;height:130px;background:white;padding:5px}
+.lpPreview{display:none}.lpPreview.show{display:block}.lpEdit.hide{display:none}
+@media(max-width:760px){.lpGrid{grid-template-columns:1fr}.lpWide,.lpSection{grid-column:auto}.lpFlow{font-size:11px}}
+@media print{body>*:not(.lpModal){display:none!important}.lpModal{position:static!important;display:block!important;background:white!important;padding:0!important}.lpShell{width:100%!important;box-shadow:none!important}.lpActions{display:none!important}}
+
+.libraryCard{border:1px solid #d8e7ed;border-radius:18px;padding:15px;background:linear-gradient(150deg,#fff,#f5fbfd)}
+.libraryCard h3{margin:0 0 5px;color:#123e66}.libraryCard p{margin:4px 0;color:#648095;font-size:12px}.libraryCard .libActions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.libraryCard button{border:0;border-radius:10px;padding:7px 9px;font-weight:800;cursor:pointer}.libOpen{background:#1689c4;color:#fff}.libCopy{background:#e9f6ee;color:#276647}.libDelete{background:#fde9ef;color:#8d3f5e}
+.saveToast{position:fixed;right:20px;bottom:20px;background:#173f67;color:#fff;padding:11px 15px;border-radius:12px;z-index:80;display:none}
+
+.reading-routine-final{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:16px;align-items:start}
+.reading-poster-final{min-height:440px;border:2px dashed #a8cfdc;border-radius:22px;background:linear-gradient(145deg,#f7fcff,#fff9e4);display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden}
+.reading-poster-final img{width:100%;max-height:500px;object-fit:contain;border-radius:16px;cursor:zoom-in}
+.reading-upload-label{text-align:center;color:#53768a;display:grid;gap:8px;cursor:pointer;font-size:36px}.reading-upload-label b{font-size:18px;color:#315c73}.reading-upload-label span{font-size:12px}
+.reading-tools-final{display:grid;gap:10px}.routine-toggle{border:0;border-radius:16px;padding:13px 14px;background:linear-gradient(135deg,#e8f7ff,#f5edff);color:#173f67;font-weight:900;text-align:left;cursor:pointer;display:flex;justify-content:space-between}
+.routine-toggle span{background:#fff;border-radius:999px;padding:3px 8px}.routine-panel{display:none;border:1px solid #d8e7ed;border-radius:16px;padding:12px;background:#fff}.routine-panel.open{display:block}
+.routine-panel label{display:block;font-size:11px;font-weight:900;color:#59768a;margin-bottom:9px}.routine-panel input,.routine-panel textarea{width:100%;margin-top:4px;border:1px solid #cfdee5;border-radius:9px;padding:8px}.routine-panel textarea{min-height:80px;resize:vertical}.mini-save{border:0;border-radius:10px;background:#1689c4;color:#fff;padding:8px 10px;font-weight:900;cursor:pointer}
+.group-stars{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.group-star{border:1px solid #dbe7ec;border-radius:14px;background:#f8fbfd;padding:10px 7px;cursor:pointer;font-weight:900;color:#527084}.group-star .star{font-size:25px;display:block;color:#cbd7dc}.group-star.on{background:linear-gradient(145deg,#fff7c8,#ffe78d);border-color:#e9c34f;color:#6b5114;box-shadow:0 5px 12px rgba(181,137,24,.14)}.group-star.on .star{color:#f2b90b;transform:scale(1.12)}
+@media(max-width:850px){.reading-routine-final{grid-template-columns:1fr}.reading-tools-final{grid-template-columns:1fr 1fr}.rtimer{grid-column:1/-1}}
+</style></head><body>
+<div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
+<option value="9" selected>Grade 9 · Alef Pathway</option>
+<option value="6">Grade 6 · Teacher Upload</option>
+</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
+<div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
+<main class="stageWrap"><div class="stage"><div class="banner"><div class="ico" id="ico">✨</div><div><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Scan / open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
+<div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
+<aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
+<aside class="right"><h3>Edit Current Slide</h3><div class="editor">
+<div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title</label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson</label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea></div>
+<div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
+  <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
+</div>
+<label class="upload">🖼 Upload Activity Picture<input id="imgIn" type="file" accept="image/*"></label><label class="upload">🎧 Upload Audio<input id="audIn" type="file" accept="audio/*"></label></div></aside></div>
+<div class="modal" id="modal"><div class="modalCard"><h2>Add Slide</h2><div class="types" id="types"></div><p><button class="btn" id="cancel">Cancel</button></p></div></div>
+
+
+<div class="lpModal" id="libraryModal"><div class="lpShell">
+<div class="lpHead"><div style="font-size:34px">📚</div><div><h2>My Lesson Library</h2><small>Saved on this browser. Use Backup to move lessons to another computer.</small></div><div class="lpActions"><button class="btn" id="libraryClose">× Close</button></div></div>
+<div class="lpContent"><div id="libraryStatus" style="margin-bottom:12px;color:#648095"></div><div id="libraryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px"></div></div>
+</div></div>
+<div class="lpModal" id="lpModal"><div class="lpShell">
+<div class="lpHead"><div style="font-size:34px">📋</div><div><h2>Al Reyadah School · Lesson Plan</h2><small>Linked directly to this interactive lesson</small></div>
+<div class="lpActions"><button class="btn" id="lpAuto">✨ Fill from Lesson</button><button class="btn" id="lpDownload">⬇ Download</button><button class="btn" id="lpPrint">🖨 Print / PDF</button><button class="btn" id="lpClose">× Close</button></div></div>
+<div class="lpContent lpEdit" id="lpEdit"><div class="lpGrid">
+<div class="lpField"><label>Teacher</label><input id="lpTeacher" value="Ms. Saidah Suhail Khwar"></div>
+<div class="lpField"><label>Grade / Section</label><input id="lpGrade"></div>
+<div class="lpField"><label>Date / Day</label><input id="lpDate"></div>
+<div class="lpField"><label>Lesson Title</label><input id="lpTitle"></div>
+<div class="lpField lpWide"><label>Learning Objectives</label><textarea id="lpObjectives"></textarea></div>
+<div class="lpField lpWide"><label>Success Criteria</label><textarea id="lpSuccess"></textarea></div>
+<div class="lpField"><label>Key Vocabulary / Language</label><textarea id="lpVocab"></textarea></div>
+<div class="lpField"><label>Resources</label><textarea id="lpResources">Interactive Lesson Studio; textbook/activity images; audio; Alef/Pathway; timer.</textarea></div>
+<div class="lpSection"><h3>Lesson Flow</h3><table class="lpFlow"><thead><tr><th>Stage</th><th>Teacher</th><th>Students</th><th>Assessment</th><th>Support & Challenge</th></tr></thead><tbody id="lpFlowBody"></tbody></table></div>
+<div class="lpField lpWide"><label>Differentiation</label><textarea id="lpDiff">Support: visuals, modelling, sentence frames and guided practice. Challenge: extension questions, independent application and deeper responses.</textarea></div>
+<div class="lpField lpWide"><label>Assessment & Follow-up</label><textarea id="lpAssess">Use questioning, observation, activity responses and the final task to check progress against the lesson objectives.</textarea></div>
+<div class="lpSection"><h3>Lesson Plan QR Link</h3><div class="lpQRBox"><div id="bigQR"></div><div><b>Scan to view this lesson plan</b><p style="margin:5px 0;color:#648095;font-size:12px">When this Lesson Studio is hosted on GitHub Pages, this QR opens the lesson-plan view for the current lesson.</p><input id="lpLink" style="width:100%;padding:8px;border:1px solid #d4e3e9;border-radius:9px" readonly></div></div></div>
+</div></div></div></div>
+<div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
+<script>
+const objectiveBank={
+Reading:['Identify the main idea.','Find specific information.','Understand key details.','Make a simple prediction.','Use context to understand meaning.'],
+Listening:['Identify specific information.','Follow simple spoken instructions.','Understand the main idea.','Listen for key words and details.','Respond to information heard.'],
+Speaking:['Ask and answer simple questions.','Give clear directions.','Describe people, places or things.','Express an opinion with a reason.','Use target language in a conversation.'],
+Writing:['Write clear sentences.','Organise ideas in a short paragraph.','Use correct capitalisation and punctuation.','Use linking words to connect ideas.','Write for a clear purpose.'],
+Vocabulary:['Understand key lesson vocabulary.','Use new words in context.','Match words with meanings or pictures.','Use topic vocabulary accurately.'],
+Grammar:['Use the target grammar accurately.','Identify the target language structure.','Form correct sentences using the target structure.','Apply the grammar rule in context.']
+};
+const T=[['📚','Reading Routine','Reading'],['🎯','Lesson Focus','Focus'],['⚡','Starter','Starter'],['📝','Main Activity','Activity'],['🎧','Listening Activity','Listening'],['✍️','Writing Activity','Writing'],['💡','Custom Activity','Custom'],['🏆','Alef Game','Alef']];
+function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',aud:''}}
+let slides=[mk('Reading Routine','Reading')],cur=0;
+const $=x=>document.getElementById(x),icons={Reading:'📚',Focus:'🎯',Starter:'⚡',Activity:'🦒',Listening:'🎧',Writing:'✍️',Custom:'💡',Alef:'🏆'};
+let readingTimerId=null,readingRemaining=300;
+function setupReadingTimer(seconds){if(readingTimerId){clearInterval(readingTimerId);readingTimerId=null}readingRemaining=seconds;paintReadingClock();let st=$('timerStart'),pa=$('timerPause'),rs=$('timerReset');if(st)st.onclick=()=>{if(readingTimerId)return;readingTimerId=setInterval(()=>{if(readingRemaining>0){readingRemaining--;paintReadingClock()}else{clearInterval(readingTimerId);readingTimerId=null}},1000)};if(pa)pa.onclick=()=>{if(readingTimerId){clearInterval(readingTimerId);readingTimerId=null}};if(rs)rs.onclick=()=>{if(readingTimerId){clearInterval(readingTimerId);readingTimerId=null}readingRemaining=seconds;paintReadingClock()}}
+function paintReadingClock(){let c=$('readingClock');if(!c)return;let m=Math.floor(readingRemaining/60),sec=readingRemaining%60;c.textContent=String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+
+function inferActivity(instruction,title,type){
+ const text=((instruction||"")+" "+(title||"")).toLowerCase();
+ if(type==="Reading") return {skill:"Reading",objective:"Build reading fluency."};
+ if(type==="Alef") return {skill:"Practice",objective:"Practise today’s learning."};
+ if(/\blisten|audio|hear\b/.test(text)) {
+   if(/direction|route|map|path/.test(text)) return {skill:"Listening",objective:"Follow spoken directions on a map."};
+   if(/detail|specific|information/.test(text)) return {skill:"Listening",objective:"Identify specific information while listening."};
+   return {skill:"Listening",objective:"Understand key information while listening."};
+ }
+ if(/\bread|text|story|paragraph|passage/.test(text)){
+   if(/main idea|gist/.test(text)) return {skill:"Reading",objective:"Identify the main idea of a text."};
+   if(/detail|question|answer|information/.test(text)) return {skill:"Reading",objective:"Find key details in a text."};
+   return {skill:"Reading",objective:"Understand key information in a text."};
+ }
+ if(/\bwrite|sentence|paragraph|email|notebook/.test(text)){
+   if(/direction/.test(text)) return {skill:"Writing",objective:"Write clear directions using target phrases."};
+   if(/paragraph/.test(text)) return {skill:"Writing",objective:"Write a short organised paragraph."};
+   return {skill:"Writing",objective:"Write clear sentences for the task."};
+ }
+ if(/\bspeak|talk|partner|discuss|tell|ask|give directions|describe/.test(text)){
+   if(/direction|route|map|zoo/.test(text)) return {skill:"Speaking",objective:"Give clear directions using target phrases."};
+   if(/describe/.test(text)) return {skill:"Speaking",objective:"Describe the topic using key vocabulary."};
+   return {skill:"Speaking",objective:"Use target language in a short conversation."};
+ }
+ if(/\bmatch|word|vocabulary|meaning|label|name/.test(text)) return {skill:"Vocabulary",objective:"Use key lesson vocabulary accurately."};
+ if(/\bgrammar|imperative|verb|tense|sentence structure/.test(text)) return {skill:"Grammar",objective:"Use the target language structure accurately."};
+ if(/\bdesign|create|draw|make/.test(text)){
+   if(/direction|map|zoo/.test(text)) return {skill:"Speaking",objective:"Apply direction language in a creative task."};
+   return {skill:"Application",objective:"Apply lesson learning in a creative task."};
+ }
+ return {skill:type||"Activity",objective:"Practise the main lesson skill."};
+}
+function updateAutoObjective(){
+ let sl=slides[cur]; if(!sl || sl.type==="Reading") return;
+ let g=inferActivity(sl.mission,sl.title,sl.type);
+ sl.skill=g.skill; sl.obj=g.objective;
+ let n=$('autoObjectiveNote'); if(n)n.textContent=g.skill+" · "+g.objective;
+}
+function overallLessonObjectives(){
+ let candidates=[];
+ slides.forEach(sl=>{
+   if(sl.type==="Reading"||sl.type==="Alef")return;
+   let g=inferActivity(sl.mission,sl.title,sl.type);
+   if(g.objective&&!candidates.includes(g.objective))candidates.push(g.objective);
+ });
+ // Keep maximum 3 and favor distinct skills.
+ let result=[],skills=new Set();
+ for(let sl of slides){
+   if(sl.type==="Reading"||sl.type==="Alef")continue;
+   let g=inferActivity(sl.mission,sl.title,sl.type);
+   if(!skills.has(g.skill)&&!result.includes(g.objective)){result.push(g.objective);skills.add(g.skill)}
+   if(result.length===3)break;
+ }
+ for(let c of candidates){if(result.length<3&&!result.includes(c))result.push(c)}
+ return result.slice(0,3);
+}
+
+function setupRoutineExtras(sl){
+ sl.attendance=sl.attendance||{className:'',names:''}; sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
+ let ac=$('attendanceClass'),an=$('absentNames'); if(ac)ac.value=sl.attendance.className||'';if(an)an.value=sl.attendance.names||'';
+ function countAbs(){let n=(sl.attendance.names||'').split('\n').filter(x=>x.trim()).length;let c=$('absentCount');if(c)c.textContent=n}
+ countAbs();
+ let at=document.querySelector('.attendance-toggle'),gt=document.querySelector('.groups-toggle');if(at)at.onclick=()=>{$('attendancePanel').classList.toggle('open')};if(gt)gt.onclick=()=>{$('groupPanel').classList.toggle('open')};
+ let save=$('saveAttendance');if(save)save.onclick=()=>{sl.attendance={className:$('attendanceClass').value.trim(),names:$('absentNames').value};countAbs();if(typeof toast==='function')toast('Attendance saved ✓')};
+ let gs=$('groupStars');if(gs){gs.innerHTML='';for(let i=0;i<6;i++){let b=document.createElement('button');b.type='button';b.className='group-star'+(sl.readingGroups[i]?' on':'');b.innerHTML='<span class="star">'+(sl.readingGroups[i]?'★':'☆')+'</span>Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];setupRoutineExtras(sl)};gs.appendChild(b)}}
+ let score=$('groupScore');if(score)score.textContent=sl.readingGroups.filter(Boolean).length+' / 6';
+}
+function render(){let s=slides[cur];$('list').innerHTML='';slides.forEach((x,i)=>{let d=document.createElement('div');d.className='item'+(i===cur?' active':'');d.innerHTML='<b>'+(i+1)+'. '+x.title+'</b><small>'+x.time+' min</small>';d.onclick=()=>{cur=i;render()};$('list').appendChild(d)});$('ico').textContent=icons[s.type]||'✨';$('lessonTitle').textContent=s.lesson;$('sub').textContent=s.sub;$('type').textContent=s.type.toUpperCase();$('title').textContent=s.title;$('mission').textContent=s.mission;$('page').textContent='📖 Page '+s.page;$('time').textContent='⏱ '+s.time+' min';if(s.type==='Focus'){
+ let overall=overallLessonObjectives();
+ $('mission').innerHTML=overall.length?'<b>Lesson Objectives</b><ol style="padding-left:20px;line-height:1.55">'+overall.map(x=>'<li>'+esc2(x)+'</li>').join('')+'</ol>':'Add activities to generate lesson objectives.';
+ $('obj').textContent='🎯 '+(overall[0]||'Lesson objectives');
+} else {
+ $('obj').textContent='🎯 '+(s.obj||'Activity objective');
+}
+let an=$('autoObjectiveNote');if(an){let g=inferActivity(s.mission,s.title,s.type);an.textContent=g.skill+' · '+g.objective;}
+$('eTitle').value=s.title;$('eLesson').value=s.lesson;$('eSub').value=s.sub;$('eTime').value=s.time;$('ePage').value=s.page;$('eSkill').value=s.skill||'Reading';fillObjectives();renderSelectedObjectives();$('eMission').value=s.mission;
+if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
+ $('canvas').innerHTML=`<div class="reading-routine-final">
+   <div class="reading-poster-final" id="readingPosterArea"></div>
+   <div class="reading-tools-final">
+    <div class="rtimer"><h3>📚 Reading Time</h3><div class="clock" id="readingClock">05:00</div><div class="timer-actions"><button class="timer-start" id="timerStart">▶ Start</button><button class="timer-pause" id="timerPause">Ⅱ Pause</button><button class="timer-reset" id="timerReset">↻ Reset</button></div></div>
+    <button type="button" class="routine-toggle attendance-toggle">👩‍🎓 Absent Record <span id="absentCount">0</span></button>
+    <div class="routine-panel" id="attendancePanel">
+      <label>Class / Section<input id="attendanceClass" placeholder="e.g. 9/1"></label>
+      <label>Absent student names<textarea id="absentNames" placeholder="One name per line"></textarea></label>
+      <button type="button" class="mini-save" id="saveAttendance">Save Attendance</button>
+    </div>
+    <button type="button" class="routine-toggle groups-toggle">⭐ Reading Group Tracker <span id="groupScore">0 / 6</span></button>
+    <div class="routine-panel group-panel" id="groupPanel"><div class="group-stars" id="groupStars"></div></div>
+   </div>
+ </div>`;
+ let area=$('readingPosterArea');
+ if(s.img){area.innerHTML='<img id="readingPosterUser" alt="Reading routine poster">';$('readingPosterUser').src=s.img;$('readingPosterUser').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
+ else area.innerHTML='<label class="reading-upload-label">🖼<b>Upload Reading Poster</b><span>Use “Upload Activity Picture” on the right.</span></label>';
+ setupReadingTimer(5*60); setupRoutineExtras(s);
+} else {
+ $('canvas').innerHTML=s.img?'<img id="sheet">':'<div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div>';
+ if(s.img){$('sheet').src=s.img;$('sheet').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
+}
+$('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
+function fillObjectives(){let sk=$('eSkill').value,sel=$('eObjective');sel.innerHTML='';(objectiveBank[sk]||[]).forEach(o=>{let op=document.createElement('option');op.textContent=o;op.value=o;sel.appendChild(op)});let op=document.createElement('option');op.textContent='Other / custom objective…';op.value='__custom';sel.appendChild(op)}
+function renderSelectedObjectives(){let box=$('selectedObjectives');box.innerHTML='';let arr=slides[cur].objectives||[];if(!arr.length){box.innerHTML='<small style="color:#648095">No objective selected yet.</small>';return}arr.forEach((o,i)=>{let d=document.createElement('div');d.style.cssText='background:#eef8fc;border:1px solid #d5e7ef;border-radius:10px;padding:7px;font-size:12px';d.innerHTML=esc2(o)+' <button type="button" data-oi="'+i+'" style="float:right;border:0;background:transparent;cursor:pointer">×</button>';box.appendChild(d)});box.querySelectorAll('button').forEach(b=>b.onclick=()=>{slides[cur].objectives.splice(+b.dataset.oi,1);render()})}
+function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+$('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives()};
+$('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(v==='__custom')v=prompt('Type your objective:')||'';if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);render()}};
+$('gradeSelect').onchange=()=>{
+ let g=$('gradeSelect').value;
+ if(slides[0] && slides[0].type==='Reading'){
+   slides[0].title=g==='9'?'Alef Pathway Reading':'Reading Routine';
+   slides[0].mission='Upload the reading routine poster for this lesson.';
+   slides[0].obj='Build reading fluency.';
+   
+ }
+ render();
+};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson;n.sub=slides[0].sub;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render()};$('types').appendChild(b)});
+[['eTitle','title'],['eLesson','lesson'],['eSub','sub'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render()});
+function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;render()};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
+slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
+slides[0].mission='Upload the reading routine poster for this lesson.';
+slides[0].obj='Build reading fluency.';
+cur=0;render()}};render();
+
+const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'];
+
+function buildQR(){
+ let link=lessonPlanLink();$('lpLink').value=link;
+ ['miniQR','bigQR'].forEach(id=>{let el=$(id);if(!el)return;el.innerHTML='';if(window.QRCode)new QRCode(el,{text:link,width:id==='miniQR'?64:120,height:id==='miniQR'?64:120,colorDark:'#123e66',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});else el.innerHTML='<small>QR loads when online.</small>'});
+}
+function autoLessonPlan(){
+ let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
+ $('lpGrade').value='Grade '+$('gradeSelect').value;
+ $('lpTitle').value=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'';
+ $('lpObjectives').value=overall.map((x,i)=>(i+1)+'. '+x).join('\n');
+ $('lpSuccess').value=overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\n');
+ let skills=[...new Set(slides.filter(x=>!['Reading','Alef'].includes(x.type)).map(x=>inferActivity(x.mission,x.title,x.type).skill))];
+ $('lpVocab').value='Skills: '+skills.join(', ')+'\\nAdd lesson key vocabulary here.';
+ let body=$('lpFlowBody');body.innerHTML='';
+ slides.forEach((sl,i)=>{
+   let tr=document.createElement('tr');
+   let g=inferActivity(sl.mission,sl.title,sl.type);
+   tr.innerHTML='<td><b>'+esc2(sl.title)+'</b><br><small>'+sl.time+' min'+(sl.page&&sl.page!=='—'?' · p. '+esc2(sl.page):'')+'</small></td>'+
+   '<td><textarea>Introduce/model '+esc2(sl.title.toLowerCase())+'.</textarea></td>'+
+   '<td><textarea>'+esc2(sl.mission||'Complete the activity.')+'</textarea></td>'+
+   '<td><textarea>Check: '+esc2(g.objective)+'</textarea></td>'+
+   '<td><textarea>Support with modelling/visuals. Challenge with extension.</textarea></td>';
+   body.appendChild(tr);
+ });
+ buildQR();
+}
+function downloadLessonPlan(){
+ autoLessonPlan();
+ const vals={};lpIds.forEach(id=>vals[id]=$(id).value);
+ let rows=[...$('lpFlowBody').querySelectorAll('tr')].map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc2(td.querySelector('textarea')?.value||td.innerText).replace(/\n/g,'<br>')+'</td>').join('')+'</tr>').join('');
+ let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>body{font-family:Arial;margin:32px;color:#173f67}h1{color:#123e66}section{margin:18px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #bbb;padding:7px;vertical-align:top}th{background:#eef7fa}.box{white-space:pre-wrap;border:1px solid #d7e5eb;border-radius:10px;padding:10px}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><p><b>Teacher:</b> '+esc2(vals.lpTeacher)+' &nbsp; <b>Grade:</b> '+esc2(vals.lpGrade)+' &nbsp; <b>Date:</b> '+esc2(vals.lpDate)+'</p><h2>'+esc2(vals.lpTitle)+'</h2><section><h3>Learning Objectives</h3><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><h3>Success Criteria</h3><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h3>Key Vocabulary / Language</h3><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><h3>Resources</h3><div class="box">'+esc2(vals.lpResources)+'</div></section><section><h3>Lesson Flow</h3><table><tr><th>Stage</th><th>Teacher</th><th>Students</th><th>Assessment</th><th>Support & Challenge</th></tr>'+rows+'</table></section><section><h3>Differentiation</h3><div class="box">'+esc2(vals.lpDiff)+'</div></section><section><h3>Assessment & Follow-up</h3><div class="box">'+esc2(vals.lpAssess)+'</div></section><p><b>Lesson Plan Link:</b> '+esc2(lessonPlanLink())+'</p><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>';
+ let blob=new Blob([doc],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(vals.lpTitle||'lesson-plan').replace(/[^a-z0-9]+/gi,'-')+'.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+$('openLP').onclick=()=>{$('lpModal').classList.add('open');autoLessonPlan()};
+$('lpClose').onclick=()=>$('lpModal').classList.remove('open');
+$('lpAuto').onclick=autoLessonPlan;
+$('lpDownload').onclick=downloadLessonPlan;
+$('lpPrint').onclick=()=>{autoLessonPlan();window.print()};
+$('qrSlideBtn').onclick=()=>{$('lpModal').classList.add('open');autoLessonPlan()};
+window.addEventListener('hashchange',()=>{if(location.hash==='#lesson-plan'){$('lpModal').classList.add('open');autoLessonPlan()}});
+if(location.hash==='#lesson-plan')setTimeout(()=>{$('lpModal').classList.add('open');autoLessonPlan()},500);
+setTimeout(buildQR,700);
+
+let activeLessonId=null;
+const DB_NAME='LessonStudioDB',STORE='lessons';
+function dbOpen(){return new Promise((res,rej)=>{let q=indexedDB.open(DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains(STORE))q.result.createObjectStore(STORE,{keyPath:'id'})};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function dbPut(v){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(v);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+async function dbAll(){let db=await dbOpen();return new Promise((res,rej)=>{let q=db.transaction(STORE).objectStore(STORE).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
+async function dbDelete(id){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function collectLP(){let o={};['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'].forEach(id=>o[id]=$(id)?.value||'');return o}
+function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
+function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';return{id:id||activeLessonId||('lesson-'+Date.now()),title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP()}}
+function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
+async function saveCurrent(){let snap=snapshot();activeLessonId=snap.id;await dbPut(snap);toast('Lesson saved ✓');buildQR()}
+async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now();y.title=x.title+' Copy';y.updatedAt=Date.now();if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
+function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
+function lessonPlanLink(){let base=location.href.split('#')[0].split('?')[0];return base+'?lesson='+(activeLessonId||'unsaved')+'#lesson-plan'}
+$('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrary()};$('libraryClose').onclick=()=>$('libraryModal').classList.remove('open');$('exportLesson').onclick=exportCurrent;$('importLesson').onchange=e=>{let f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
+
+
+</script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
