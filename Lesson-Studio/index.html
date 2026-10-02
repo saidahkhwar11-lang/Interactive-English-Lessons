@@ -276,10 +276,14 @@ const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess'
 
 
 function renderQRInto(el,link,size){
- if(!el)return;
- el.innerHTML='<div style="width:'+size+'px;min-height:'+size+'px;display:grid;place-items:center;text-align:center;font-size:10px;line-height:1.25;font-weight:900;color:#647d8d;background:#f3f7f9;border-radius:10px;padding:5px">Public QR<br>not published</div>';
+ if(!el)return;el.innerHTML='';
+ if(!link){el.innerHTML='<div style="font-size:10px;font-weight:900;color:#647d8d">Save lesson<br>for QR</div>';return}
+ const img=document.createElement('img');img.alt='Lesson Plan QR';img.width=size;img.height=size;
+ img.src='https://quickchart.io/qr?size='+Math.max(220,size*4)+'&margin=2&text='+encodeURIComponent(link);
+ img.style.cssText='display:block;width:'+size+'px;height:'+size+'px;background:#fff';
+ img.onerror=()=>{el.innerHTML='<a href="'+link+'" target="_blank" style="font-size:10px;font-weight:900;color:#123e66">Open Plan</a>'};
+ el.appendChild(img);
 }
-
 function buildQR(){
  let link=lessonPlanLink(activeLessonId||'lesson');
  if($('lpLink'))$('lpLink').value=link;
@@ -326,6 +330,8 @@ setTimeout(buildQR,700);
 
 let activeLessonId=null;
 const DB_NAME='LessonStudioDB',STORE='lessons';
+const PLAN_API='https://hobfifobduqslvnagwlb.supabase.co';
+const PLAN_KEY='sb_publishable_fbK9aPfpg1rgqy32fPR59A_uxp-kygF';
 function dbOpen(){return new Promise((res,rej)=>{let q=indexedDB.open(DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains(STORE))q.result.createObjectStore(STORE,{keyPath:'id'})};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 async function dbPut(v){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(v);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
 async function dbAll(){let db=await dbOpen();return new Promise((res,rej)=>{let q=db.transaction(STORE).objectStore(STORE).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
@@ -334,7 +340,25 @@ function collectLP(){let o={};['lpTeacher','lpGrade','lpDate','lpTitle','lpObjec
 function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
 function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';let lid=id||activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8));return{id:lid,title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP(),planUrl:lessonPlanLink(lid),saved:true}}
 function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
-async function saveCurrent(){autoLessonPlan();let firstSave=!activeLessonId;let snap=snapshot(activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)));activeLessonId=snap.id;slides.forEach(x=>x._savedLessonId=activeLessonId);localStorage.setItem('LessonStudioActiveId',activeLessonId);snap.planUrl=lessonPlanLink(activeLessonId);await dbPut(snap);buildQR();buildPresentQR();toast(firstSave?'Lesson saved · QR created ✓':'Lesson updated · same QR kept ✓')}
+async function publishVisitorPlan(id,secret){
+ const plan=visitorPlanData();
+ const res=await fetch(PLAN_API+'/rest/v1/rpc/publish_lesson_plan',{method:'POST',headers:{'apikey':PLAN_KEY,'Authorization':'Bearer '+PLAN_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_id:id,p_secret:secret,p_plan:plan})});
+ if(!res.ok)throw new Error('Public lesson plan could not be published');
+ return true;
+}
+async function saveCurrent(){
+ autoLessonPlan();
+ let firstSave=!activeLessonId;
+ let id=activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,10));
+ let secret=localStorage.getItem('LessonPlanSecret:'+id);
+ if(!secret){secret=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('LessonPlanSecret:'+id,secret)}
+ activeLessonId=id;slides.forEach(x=>x._savedLessonId=id);localStorage.setItem('LessonStudioActiveId',id);
+ try{
+   await publishVisitorPlan(id,secret);
+   let snap=snapshot(id);snap.planUrl=lessonPlanLink(id);snap.published=true;await dbPut(snap);
+   buildQR();buildPresentQR();toast(firstSave?'Lesson saved · public QR created ✓':'Lesson updated · same QR kept ✓');
+ }catch(e){console.error(e);toast('Lesson saved locally · QR publish failed');let snap=snapshot(id);await dbPut(snap)}
+}
 async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;slides=structuredClone(x.slides);slides.forEach(sl=>sl._savedLessonId=activeLessonId);localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
 function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
@@ -349,7 +373,7 @@ function visitorPlanData(){
  return {school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
-function lessonPlanLink(id){let token=visitorPlanToken();if(!token)return'';let root=location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html';return root+'#'+token}
+function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),id=q.get('lesson');if(!id)return;
