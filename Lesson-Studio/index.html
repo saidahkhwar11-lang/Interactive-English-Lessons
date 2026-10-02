@@ -95,7 +95,7 @@
 <option value="6">Grade 6 · Teacher Upload</option>
 </select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
-<main class="stageWrap"><div class="stage"><div class="banner"><div class="ico" id="ico">✨</div><div><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Scan / open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
+<main class="stageWrap"><div class="stage"><div class="banner"><div class="ico" id="ico">✨</div><div><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
@@ -130,7 +130,7 @@
 </div></div></div></div>
 <div class="presentation" id="presentation">
 <aside class="presentNav"><div class="presentBrand">✨ Lesson Presentation</div><div class="presentNavList" id="presentNavList"></div></aside>
-<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" title="Scan or click to open Lesson Plan" style="cursor:pointer;"display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div><small style="font-weight:900;color:#123e66">Scan<br>Lesson Plan</small></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
+<main class="presentMain"><div class="presentTop"><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" title="Scan or click to open Lesson Plan" style="cursor:pointer;"display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div><small style="font-weight:900;color:#123e66">Lesson Plan<br>Visitor Link</small></div><div class="presentActions"><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
 </div>
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
@@ -276,14 +276,8 @@ const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess'
 
 
 function renderQRInto(el,link,size){
- if(!el)return;el.innerHTML='';
- if(!link){el.innerHTML='<small style="font-weight:900">QR unavailable</small>';return}
- const img=document.createElement('img');
- img.alt='Lesson Plan QR code';img.width=size;img.height=size;
- img.style.cssText='display:block;width:'+size+'px;height:'+size+'px;object-fit:contain;background:white';
- img.src='https://quickchart.io/qr?size='+Math.max(180,size*4)+'&margin=2&text='+encodeURIComponent(link);
- img.onerror=()=>{el.innerHTML='<a target="_blank" rel="noopener" style="font-size:11px;font-weight:900;color:#123e66" href="'+link+'">Open Lesson Plan</a>'};
- el.appendChild(img);
+ if(!el)return;
+ el.innerHTML='<div style="width:'+size+'px;min-height:'+size+'px;display:grid;place-items:center;text-align:center;font-size:10px;line-height:1.25;font-weight:900;color:#647d8d;background:#f3f7f9;border-radius:10px;padding:5px">Public QR<br>not published</div>';
 }
 
 function buildQR(){
