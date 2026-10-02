@@ -270,7 +270,7 @@ function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.
 slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
 slides[0].mission='Upload the reading routine poster for this lesson.';
 slides[0].obj='Build reading fluency.';
-activeLessonId=null;cur=0;render();buildQR()}};render();
+activeLessonId=null;localStorage.removeItem('LessonStudioActiveId');cur=0;render();buildQR()}};render();
 
 const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'];
 
@@ -283,8 +283,10 @@ function renderQRInto(el,link,size){
 }
 
 function buildQR(){
- let link=lessonPlanLink();$('lpLink').value=link;
+ let link=activeLessonId?lessonPlanLink(activeLessonId):'';
+ if($('lpLink'))$('lpLink').value=link;
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
+ if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
 }
 function autoLessonPlan(){
  let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
@@ -334,8 +336,8 @@ function collectLP(){let o={};['lpTeacher','lpGrade','lpDate','lpTitle','lpObjec
 function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
 function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';let lid=id||activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8));return{id:lid,title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP(),planUrl:lessonPlanLink(lid)}}
 function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
-async function saveCurrent(){autoLessonPlan();let firstSave=!activeLessonId;let snap=snapshot(activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)));activeLessonId=snap.id;snap.planUrl=lessonPlanLink(activeLessonId);await dbPut(snap);buildQR();buildPresentQR();toast(firstSave?'Lesson saved · QR created ✓':'Lesson updated · same QR kept ✓')}
-async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;x.planUrl=x.planUrl||lessonPlanLink(x.id);slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
+async function saveCurrent(){autoLessonPlan();let firstSave=!activeLessonId;let snap=snapshot(activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)));activeLessonId=snap.id;localStorage.setItem('LessonStudioActiveId',activeLessonId);snap.planUrl=lessonPlanLink(activeLessonId);await dbPut(snap);buildQR();buildPresentQR();toast(firstSave?'Lesson saved · QR created ✓':'Lesson updated · same QR kept ✓')}
+async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
 function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
 function visitorPlanData(){
@@ -349,7 +351,7 @@ function visitorPlanData(){
  return {school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
 }
 function visitorPlanToken(){try{return btoa(unescape(encodeURIComponent(JSON.stringify(visitorPlanData())))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')}catch(e){return''}}
-function lessonPlanLink(id){let root=location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html';let token=visitorPlanToken();return token?root+'#'+token:''}
+function lessonPlanLink(id){let token=visitorPlanToken();if(!token)return'';let root=location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html';return root+'#'+token}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),id=q.get('lesson');if(!id)return;
@@ -359,6 +361,7 @@ async function loadLessonFromUrl(){
  }catch(e){}
 }
 setTimeout(loadLessonFromUrl,300);
+setTimeout(async()=>{if(activeLessonId)return;let savedId=localStorage.getItem('LessonStudioActiveId');if(!savedId)return;try{let items=await dbAll(),x=items.find(v=>v.id===savedId);if(x){activeLessonId=x.id;buildQR()}}catch(e){}},450);
 
 $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrary()};$('libraryClose').onclick=()=>$('libraryModal').classList.remove('open');$('exportLesson').onclick=exportCurrent;$('importLesson').onchange=e=>{let f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
 
