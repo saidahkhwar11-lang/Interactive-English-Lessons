@@ -331,7 +331,7 @@ function applyLessonTheme(){
  let icon='';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
 }function render(){applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.objectives||!s.objectives.length)){s.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
- const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&(!s.aud)&&(!s.objectives||s.objectives.length===0);
+ const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&!s.aud;
  let bodyEl=document.querySelector('.body');if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);
  $('list').innerHTML='';slides.forEach((x,i)=>{let d=document.createElement('div');d.className='item'+(i===cur?' active':'');d.innerHTML='<b>'+(i+1)+'. '+x.title+'</b><small>'+x.time+' min</small>'+(i>0?'<button class="slideDelete" title="Delete slide">×</button>':'');d.onclick=e=>{if(e.target.closest('.slideDelete'))return;cur=i;render()};let del=d.querySelector('.slideDelete');if(del)del.onclick=e=>{e.stopPropagation();if(confirm('Delete "'+x.title+'"?')){slides.splice(i,1);if(cur>=slides.length)cur=slides.length-1;else if(i<cur)cur--;render();markChanged();toast('Slide deleted ✓')}};$('list').appendChild(d)});$('lessonTitle').textContent=s.lesson;$('sub').textContent=s.sub;if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);$('type').textContent=s.type.toUpperCase();$('title').textContent=s.title;$('mission').textContent=s.mission;$('page').textContent='📖 Page '+s.page;$('time').textContent='⏱ '+s.time+' min';if(s.type==='Focus'){
  let overall=overallLessonObjectives();
@@ -567,7 +567,7 @@ function cleanPresentationDefaults(sl){
  const defaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'];
  const noMission=defaults.includes((sl.mission||'').trim());
  const noPage=!sl.page||sl.page.trim()===''||sl.page.trim()==='—';
- const noObj=!sl.obj||['Objective','Identify the main idea.','Build reading fluency.'].includes(sl.obj.trim());
+ const noObj=!sl.obj||['Objective','Identify the main idea.','Build reading fluency.','Introduce the lesson topic, learning objectives, and key vocabulary.'].includes(sl.obj.trim())||(sl.type==='Focus'&&(!sl.objectives||sl.objectives.length===0||sl.objectives.every(o=>o==='Introduce the lesson topic, learning objectives, and key vocabulary.')));
  const noAudio=!sl.aud;
  if(sl.img&&noMission&&noPage&&noObj&&noAudio){
    const details=host.querySelector('.presentDetails');
