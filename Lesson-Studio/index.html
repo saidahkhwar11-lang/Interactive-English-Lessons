@@ -564,18 +564,17 @@ function renderPresentation(){
 }
 function cleanPresentationDefaults(sl){
  const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
- const defaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'];
- const noMission=defaults.includes((sl.mission||'').trim());
- const noPage=!sl.page||sl.page.trim()===''||sl.page.trim()==='—';
- const noObj=!sl.obj||['Objective','Identify the main idea.','Build reading fluency.','Introduce the lesson topic, learning objectives, and key vocabulary.'].includes(sl.obj.trim())||(sl.type==='Focus'&&(!sl.objectives||sl.objectives.length===0||sl.objectives.every(o=>o==='Introduce the lesson topic, learning objectives, and key vocabulary.')));
- const noAudio=!sl.aud;
- if(sl.img&&noMission&&noPage&&noObj&&noAudio){
-   const details=host.querySelector('.presentDetails');
-   if(details)details.style.display='none';
-   const wrap=host.querySelector('.presentSlide');
-   if(wrap){wrap.style.gridTemplateColumns='minmax(0,1fr)';wrap.classList.add('pictureOnlySlide')};
-   const visual=host.querySelector('.presentVisual');
-   if(visual){visual.style.width='100%';visual.style.maxWidth='none'}
+ const mission=(sl.mission||'').trim(),page=(sl.page||'').trim();
+ const templateMission=!mission||['Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'].includes(mission);
+ const noPage=!page||page==='—',noAudio=!sl.aud;
+ // Focus objective belongs in Lesson Agenda; it does not count as slide-detail content.
+ const focusPosterOnly=sl.type==='Focus'&&!!sl.img&&templateMission&&noPage&&noAudio;
+ const genericNoObj=!sl.obj||['Objective','Identify the main idea.','Build reading fluency.'].includes((sl.obj||'').trim());
+ const genericPictureOnly=sl.type!=='Focus'&&!!sl.img&&templateMission&&noPage&&genericNoObj&&noAudio;
+ if(focusPosterOnly||genericPictureOnly){
+   const details=host.querySelector('.presentDetails');if(details)details.remove();
+   const wrap=host.querySelector('.presentSlide');if(wrap){wrap.classList.add('pictureOnlySlide');wrap.style.gridTemplateColumns='1fr'}
+   const visual=host.querySelector('.presentVisual');if(visual){visual.style.width='100%';visual.style.maxWidth='none'}
  }
 }
 function renderPresentReading(sl,host){
