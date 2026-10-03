@@ -179,6 +179,11 @@
 .presentNavItem small{line-height:1.35!important}.presentNavItem.active small{color:#3f7458!important;font-weight:800}.presentNavItem b{line-height:1.2}
 
 .navObjective{display:block;margin-top:8px;padding:7px 8px;border-radius:10px;background:#fff8d9;color:#5d5423;font-size:11px;line-height:1.35;font-weight:850;border:1px solid #f0dda0}
+
+.presentNavItem{overflow:visible!important;height:auto!important;min-height:72px!important}
+.presentNavItem.active{padding-bottom:12px!important}
+.presentNavItem .navObjective{display:flex!important;visibility:visible!important;opacity:1!important;width:100%!important;height:auto!important;max-height:none!important;margin:9px 0 0!important;padding:8px 9px!important;border-radius:11px!important;background:#fff6cf!important;border:1px solid #ecd78a!important;color:#5d4c17!important;font-size:11px!important;line-height:1.35!important;text-align:left!important;gap:5px!important;white-space:normal!important}
+.presentNavItem .navObjective strong{display:block!important;font-weight:850!important}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -535,7 +540,7 @@ function renderPresentation(){
  applyLessonTheme();const sl=slides[presentIndex];if(!sl)return;buildPresentQR();
  document.getElementById('presentLessonTitle').textContent=sl.lesson||'Lesson';document.getElementById('presentSub').textContent=sl.sub||'';
  const nav=document.getElementById('presentNavList');nav.innerHTML='';
- slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<span class="navObjective">🎯 '+esc2(chosen)+'</span>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
+ slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<div class="navObjective"><span>🎯</span><strong>'+esc2(chosen)+'</strong></div>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
  let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
