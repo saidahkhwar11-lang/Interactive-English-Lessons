@@ -321,7 +321,7 @@ function applyLessonTheme(){
  $('obj').textContent='🎯 '+(s.obj||'Activity objective');
 }
 let an=$('autoObjectiveNote');if(an){let g=inferActivity(s.mission,s.title,s.type);an.textContent=g.skill+' · '+g.objective;}
-$('eTitle').value=s.title;$('eLesson').value=s.lesson;$('eSub').value=s.sub$('eTime').value=s.time;$('ePage').value=s.page;$('eSkill').value=s.skill||'Reading';fillObjectives();renderSelectedObjectives();$('eMission').value=s.mission;
+$('eTitle').value=s.title;$('eLesson').value=s.lesson;$('eSub').value=s.sub;$('eTime').value=s.time;$('ePage').value=s.page;$('eSkill').value=s.skill||'Reading';fillObjectives();renderSelectedObjectives();$('eMission').value=s.mission;
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
    <div class="reading-poster-final" id="readingPosterArea"></div>
