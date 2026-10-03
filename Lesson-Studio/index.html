@@ -234,6 +234,15 @@
 .slideQText{padding:5px 7px!important}.slideReveal{box-shadow:0 4px 10px rgba(140,100,10,.14)}
 
 .focusKeywords{display:none}.focusKeywords.show{display:block}.focusKeywords textarea{width:100%;min-height:74px;padding:9px;border:1px solid #cedfe7;border-radius:10px}
+
+.activityHorizontal{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr) auto!important;gap:10px!important;padding:12px!important}
+.activityTopStrip{display:grid;grid-template-columns:auto minmax(220px,1fr) auto;gap:16px;align-items:center;background:linear-gradient(105deg,#fff5cf,#eaf8ff);border:1px solid #d8e7ec;border-radius:18px;padding:10px 14px}
+.activityTopTitle h2{margin:2px 0 0!important;font-size:20px!important;color:#a9530b}.activityTopMission{font-size:16px;font-weight:850;line-height:1.35;color:#123e66}.activityTopMeta{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.activityTopMeta .presentBadge{font-size:11px!important;padding:7px 9px!important}
+.activityHorizontal .presentVisual{width:100%!important;height:calc(100vh - 235px)!important;min-height:430px!important;padding:8px!important}.activityHorizontal .presentVisual img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;cursor:zoom-in}
+.activityHorizontal>.presentAudio{margin:0!important;padding:8px 12px!important}
+.presentImageViewer{position:fixed;inset:0;z-index:10000;background:rgba(8,27,42,.94);display:flex;align-items:center;justify-content:center;padding:18px}.presentImageViewer img{width:100%;height:100%;object-fit:contain}.presentImageClose{position:absolute;right:24px;top:20px;z-index:2;border:0;border-radius:12px;background:#fff;color:#123e66;padding:10px 14px;font-weight:950;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.2)}
+#presentation:fullscreen .presentImageViewer{z-index:10000!important}
+@media(max-width:900px){.activityTopStrip{grid-template-columns:1fr}.activityTopMeta{justify-content:flex-start}.activityHorizontal .presentVisual{height:calc(100vh - 300px)!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -707,10 +716,14 @@ function renderPresentation(){
  let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
- host.innerHTML='<div class="presentSlide"><div class="presentVisual">'+visual+'</div><aside class="presentDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2><div class="presentMission">'+mission+'</div><div class="presentBadges"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2(sl.obj||'Objective')+'</span></div>'+audio+'</aside></div>';
- if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
+ host.innerHTML='<div class="presentSlide activityHorizontal"><div class="activityTopStrip"><div class="activityTopTitle"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2></div><div class="activityTopMission">'+mission+'</div><div class="activityTopMeta"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2((sl.objectives&&sl.objectives[0])||sl.obj||'Objective')+'</span></div></div><div class="presentVisual">'+visual+'</div>'+audio+'</div>';
+ if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>openPresentationImage(sl.img)}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
- cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentDetails')||host.querySelector('.presentVisual');setupPresentQuestions(sl,qHost);
+ cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);
+}
+function openPresentationImage(src){
+ let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;
+ let viewer=document.createElement('div');viewer.className='presentImageViewer';viewer.innerHTML='<button class="presentImageClose">✕ Close</button><img alt="Maximized activity picture">';viewer.querySelector('img').src=src;parent.appendChild(viewer);viewer.querySelector('.presentImageClose').onclick=()=>viewer.remove();viewer.onclick=e=>{if(e.target===viewer)viewer.remove()};
 }
 function cleanPresentationDefaults(sl){
  const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
