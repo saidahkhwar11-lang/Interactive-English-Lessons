@@ -223,6 +223,15 @@
 #presentation:fullscreen .questionBubbleLayer{z-index:9998!important}
 #presentation:fullscreen .slideQuestionCard{z-index:9999!important}
 @media(max-width:850px){.questionBubbleLayer{left:6px!important;width:48px!important;gap:7px!important;padding:8px 5px!important}.questionBubble{width:36px!important;height:36px!important}.presentVisual:has(.questionBubbleLayer){padding-left:62px!important}}
+
+.slideQuestionCard{border-width:3px!important;box-shadow:0 15px 38px rgba(20,54,78,.24)!important;overflow:hidden}
+.slideQuestionCard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;border-radius:20px 0 0 20px}
+.slideQuestionCard.qTone0{background:linear-gradient(145deg,#fff0f5,#fff)!important;border-color:#f5a9c0!important}.slideQuestionCard.qTone0:before{background:#f45182}.slideQuestionCard.qTone0 .slideQHead{color:#c73361!important}
+.slideQuestionCard.qTone1{background:linear-gradient(145deg,#eaf7ff,#fff)!important;border-color:#9dd8f5!important}.slideQuestionCard.qTone1:before{background:#249de0}.slideQuestionCard.qTone1 .slideQHead{color:#1476ad!important}
+.slideQuestionCard.qTone2{background:linear-gradient(145deg,#eefbe9,#fff)!important;border-color:#acdca1!important}.slideQuestionCard.qTone2:before{background:#65b94f}.slideQuestionCard.qTone2 .slideQHead{color:#3e8a32!important}
+.slideQuestionCard.qTone3{background:linear-gradient(145deg,#fff5df,#fff)!important;border-color:#f2c777!important}.slideQuestionCard.qTone3:before{background:#f0a21d}.slideQuestionCard.qTone3 .slideQHead{color:#b77509!important}
+.slideQuestionCard.qTone4{background:linear-gradient(145deg,#f4edff,#fff)!important;border-color:#c9afea!important}.slideQuestionCard.qTone4:before{background:#8c5ed1}.slideQuestionCard.qTone4 .slideQHead{color:#6b42aa!important}
+.slideQText{padding:5px 7px!important}.slideReveal{box-shadow:0 4px 10px rgba(140,100,10,.14)}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -424,9 +433,9 @@ function setupPresentQuestions(sl,container){
 }
 function showSlideQuestion(sl,idx,visual,bubble){
  let qs=normaliseQuestions(sl),item=qs[idx],hasAnswer=!!(item.a&&item.a.trim());
- visual.querySelectorAll('.slideQuestionCard').forEach(x=>x.remove());
+ visual.querySelectorAll('.slideQuestionCard').forEach(x=>x.remove());visual.querySelectorAll('.slideAnswer').forEach(x=>x.remove());
  visual.querySelectorAll('.questionBubble').forEach(x=>x.classList.remove('open'));bubble.classList.add('open');
- let card=document.createElement('div');card.className='slideQuestionCard';
+ let card=document.createElement('div');card.className='slideQuestionCard qTone'+(idx%5);
  card.innerHTML='<div class="slideQHead"><span>❓ Question '+(idx+1)+'</span><button class="slideQClose">×</button></div><div class="slideQText">'+esc2(item.q)+'</div>'+(hasAnswer?'<button class="slideReveal">✨ Reveal Answer</button><div class="slideAnswer" hidden><b>Answer</b><div>'+esc2(item.a)+'</div></div>':'');
  visual.appendChild(card);
  card.querySelector('.slideQClose').onclick=()=>{card.remove();bubble.classList.remove('open')};
