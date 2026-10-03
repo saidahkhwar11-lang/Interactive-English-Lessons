@@ -225,7 +225,7 @@
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
 const objectiveBank={
-Reading:['Build reading fluency.','Identify the main idea.','Find specific information.','Understand key details.','Make a simple prediction.','Use context to understand meaning.'],
+Reading:['Introduce the lesson topic, learning objectives, and key vocabulary.','Build reading fluency.','Identify the main idea.','Find specific information.','Understand key details.','Make a simple prediction.','Use context to understand meaning.'],
 Listening:['Identify specific information.','Follow simple spoken instructions.','Understand the main idea.','Listen for key words and details.','Respond to information heard.'],
 Speaking:['Ask and answer simple questions.','Give clear directions.','Describe people, places or things.','Express an opinion with a reason.','Use target language in a conversation.'],
 Writing:['Write clear sentences.','Organise ideas in a short paragraph.','Use correct capitalisation and punctuation.','Use linking words to connect ideas.','Write for a clear purpose.'],
@@ -313,7 +313,7 @@ function applyLessonTheme(){
  if(banner){banner.classList.toggle('theme-shopping',shopping);banner.classList.toggle('theme-animals',!shopping)}
  if(pt){pt.classList.toggle('theme-shopping',shopping);pt.classList.toggle('theme-animals',!shopping)}
  let icon='';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
-}function render(){applyLessonTheme();let s=slides[cur];
+}function render(){applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.objectives||!s.objectives.length)){s.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
  const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&(!s.aud)&&(!s.objectives||s.objectives.length===0);
  let bodyEl=document.querySelector('.body');if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);
@@ -377,7 +377,7 @@ $('gradeSelect').onchange=()=>{
    
  }
  render();markChanged();
-};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
+};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
