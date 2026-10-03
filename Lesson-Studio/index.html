@@ -205,6 +205,10 @@
 @media(max-width:800px){.qaSides{grid-template-columns:1fr}.qaSide{min-height:180px}.qaText{font-size:23px}.questionPairAdd{grid-template-columns:1fr}}
 
 .qaQuestionOnly{display:block}.qaQuestionOnly .qaQuestion{width:100%;min-height:320px}.qaQuestionOnly .qaText{font-size:34px;max-width:800px;margin:auto}
+
+#presentation .qaPopup,#presentation:fullscreen .qaPopup{position:fixed!important;inset:0!important;z-index:9999!important}
+#presentation:fullscreen{overflow:hidden!important}
+#presentation:fullscreen .qaCard{max-height:92vh;overflow:auto}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -402,7 +406,7 @@ function setupPresentQuestions(sl,container){
 }
 function openQAPopup(sl,start){
  let qs=normaliseQuestions(sl),idx=start||0,revealed=false;
- let pop=document.createElement('div');pop.className='qaPopup';document.body.appendChild(pop);
+ let pop=document.createElement('div');pop.className='qaPopup';let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;parent.appendChild(pop);
  const paint=()=>{let item=qs[idx],hasAnswer=!!(item.a&&item.a.trim());pop.innerHTML='<div class="qaCard"><div class="qaTop"><b>Question '+(idx+1)+' of '+qs.length+'</b><button class="qaClose">✕ Close</button></div><div class="'+(hasAnswer?'qaSides':'qaQuestionOnly')+'"><div class="qaSide qaQuestion"><div class="qaLabel">❓ QUESTION</div><div class="qaText">'+esc2(item.q)+'</div></div>'+(hasAnswer?'<div class="qaSide qaAnswer"><div class="qaLabel">✨ ANSWER</div>'+(revealed?'<div class="qaText">'+esc2(item.a)+'</div>':'<div class="qaCovered">Answer hidden</div><button class="qaReveal">Reveal Answer</button>')+'</div>':'')+'</div><div class="qaBottom">'+(idx>0?'<button class="qaPrev">← Previous</button>':'')+(idx<qs.length-1?'<button class="qaNext">Next Question →</button>':'')+'</div></div>';
  pop.querySelector('.qaClose').onclick=()=>pop.remove();let r=pop.querySelector('.qaReveal');if(r)r.onclick=()=>{revealed=true;paint()};let n=pop.querySelector('.qaNext');if(n)n.onclick=()=>{idx++;revealed=false;paint()};let p=pop.querySelector('.qaPrev');if(p)p.onclick=()=>{idx--;revealed=false;paint()};
  };paint();
