@@ -195,6 +195,10 @@
 .presentNavItem small{font-size:11px!important;line-height:1.2!important;margin-top:4px!important}
 .presentNavItem .navObjective{font-size:9.5px!important;line-height:1.3!important;padding:7px!important;margin-top:7px!important}
 @media(max-width:900px){.presentation.open{grid-template-columns:175px minmax(0,1fr)!important}.presentNavItem b{font-size:13px!important}}
+
+.questionEditor{border-top:1px solid #dbe8ed;padding-top:12px}.questionAddRow{display:flex;gap:6px}.questionAddRow input{flex:1;padding:9px;border:1px solid #cedfe7;border-radius:9px}.questionAddRow button{border:0;border-radius:9px;background:#174f78;color:#fff;font-weight:900;padding:8px 11px;cursor:pointer}
+#questionList{display:grid;gap:6px;margin-bottom:7px}.qEdit{display:grid;grid-template-columns:1fr auto auto auto;gap:5px;align-items:center;background:#f7fbfd;border:1px solid #dbe8ed;border-radius:9px;padding:7px;font-size:11px}.qEdit button{border:0;background:#edf4f7;border-radius:7px;cursor:pointer;padding:5px 7px}.qEdit .qDel{background:#fde9ef;color:#a54360}
+.presentQuestions{margin-top:16px}.presentQuestionBtn{width:100%;border:0;border-radius:13px;background:#174f78;color:#fff;padding:11px;font-weight:900;cursor:pointer}.presentQuestionCard{margin-top:9px;padding:14px;border-radius:15px;background:linear-gradient(145deg,#fff7ce,#fff);border:1px solid #ecd88c;font-size:17px;font-weight:850;line-height:1.4;color:#173f67}.presentQuestionActions{display:flex;gap:7px;margin-top:8px}.presentQuestionActions button{border:0;border-radius:10px;padding:8px 10px;font-weight:900;cursor:pointer}.qNext{background:#1689c4;color:#fff}.qHide{background:#edf3f6;color:#31566c}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -206,6 +210,7 @@
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
 <div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea></div>
+<div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionAddRow"><input id="newQuestion" placeholder="Type a question…"><button type="button" id="addQuestion">＋ Add</button></div></div>
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
   <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
 </div>
@@ -349,6 +354,7 @@ $('ePage').value=s.page||'—';
 $('eSkill').value=s.skill||'Reading';
 fillObjectives();
 renderSelectedObjectives();
+renderQuestionEditor();
 $('eMission').value=s.mission||'';
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
@@ -374,6 +380,17 @@ if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value
  if(s.img){$('sheet').src=s.img;$('sheet').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
 }
 $('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
+function renderQuestionEditor(){
+ let box=$('questionList');if(!box||!slides[cur])return;let qs=slides[cur].questions=slides[cur].questions||[];box.innerHTML='';
+ qs.forEach((q,i)=>{let d=document.createElement('div');d.className='qEdit';d.innerHTML='<span>'+esc2(q)+'</span><button title="Move up">↑</button><button title="Move down">↓</button><button class="qDel" title="Delete">×</button>';let bs=d.querySelectorAll('button');bs[0].onclick=()=>{if(i>0){[qs[i-1],qs[i]]=[qs[i],qs[i-1]];renderQuestionEditor();markChanged()}};bs[1].onclick=()=>{if(i<qs.length-1){[qs[i+1],qs[i]]=[qs[i],qs[i+1]];renderQuestionEditor();markChanged()}};bs[2].onclick=()=>{qs.splice(i,1);renderQuestionEditor();markChanged()};box.appendChild(d)});
+}
+function setupPresentQuestions(sl,container){
+ let qs=sl.questions||[];if(!qs.length||!container)return;
+ let wrap=document.createElement('div');wrap.className='presentQuestions';wrap.innerHTML='<button class="presentQuestionBtn">❓ Questions</button><div class="presentQuestionArea"></div>';container.appendChild(wrap);
+ let area=wrap.querySelector('.presentQuestionArea'),idx=-1,button=wrap.querySelector('.presentQuestionBtn');
+ const paint=()=>{if(idx<0){area.innerHTML='';return}area.innerHTML='<div class="presentQuestionCard"><small>Question '+(idx+1)+' of '+qs.length+'</small><div style="margin-top:5px">'+esc2(qs[idx])+'</div></div><div class="presentQuestionActions">'+(idx<qs.length-1?'<button class="qNext">Next Question →</button>':'')+'<button class="qHide">Hide Questions</button></div>';let n=area.querySelector('.qNext');if(n)n.onclick=()=>{idx++;paint()};area.querySelector('.qHide').onclick=()=>{idx=-1;paint()}};
+ button.onclick=()=>{idx=0;paint()};
+}
 function fillObjectives(){
  let sk=$('eSkill')?.value||slides[cur]?.skill||'Reading',sel=$('eObjective');if(!sel)return;
  sel.innerHTML='<option value="">Choose an objective…</option>';
@@ -384,6 +401,8 @@ function renderSelectedObjectives(){let box=$('selectedObjectives');if(!box||!sl
 function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 $('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();renderSelectedObjectives();markChanged()};
 $('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(!v)return;if(v==='__custom')v=(prompt('Type your objective:')||'').trim();if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);renderSelectedObjectives();markChanged()}};
+$('addQuestion').onclick=()=>{let inp=$('newQuestion'),v=(inp.value||'').trim();if(!v)return;slides[cur].questions=slides[cur].questions||[];slides[cur].questions.push(v);inp.value='';renderQuestionEditor();markChanged()};
+$('newQuestion').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('addQuestion').click()}});
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
  if(slides[0] && slides[0].type==='Reading'){
@@ -560,7 +579,7 @@ function renderPresentation(){
  host.innerHTML='<div class="presentSlide"><div class="presentVisual">'+visual+'</div><aside class="presentDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2><div class="presentMission">'+mission+'</div><div class="presentBadges"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2(sl.obj||'Objective')+'</span></div>'+audio+'</aside></div>';
  if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
- cleanPresentationDefaults(sl);
+ cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentDetails')||host.querySelector('.presentVisual');setupPresentQuestions(sl,qHost);
 }
 function cleanPresentationDefaults(sl){
  const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
@@ -590,7 +609,7 @@ function renderPresentReading(sl,host){
  document.getElementById('pSaveAttendance').onclick=()=>{sl.attendance={className:document.getElementById('pClass').value.trim(),names:document.getElementById('pAbsentNames').value};let n=sl.attendance.names.split('\\n').filter(x=>x.trim()).length;document.getElementById('pAbsentCount').textContent=n;markChanged();if(typeof toast==='function')toast('Attendance saved ✓')};
  document.getElementById('pGroups').onclick=()=>document.getElementById('pGroupsPanel').classList.toggle('open');
  let stars=document.getElementById('pStars');sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
- sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];markChanged();b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
+ setupPresentQuestions(sl,document.querySelector('.presentTools'));sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];markChanged();b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
 }
 document.getElementById('presentFullscreen').onclick=async()=>{try{const p=document.getElementById('presentation');if(!document.fullscreenElement)await p.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
 document.addEventListener('fullscreenchange',()=>{let b=document.getElementById('presentFullscreen');if(b)b.textContent=document.fullscreenElement?'⛶ Exit Full Screen':'⛶ Full Screen'});
