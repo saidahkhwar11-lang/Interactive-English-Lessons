@@ -739,16 +739,17 @@ function visitorPlanData(){
    let inferred=inferActivity(sl.mission,sl.title,sl.type);
    return {stage:sl.title,time:sl.time,page:sl.page||'—',activity:sl.mission||'Complete the activity.',objective:(sl.objectives||[])[0]||inferred.objective,teacher:cells[0]||('Introduce, model and guide '+sl.title.toLowerCase()+'.'),students:cells[1]||(sl.mission||'Complete the activity.'),assessment:cells[2]||('Check progress toward: '+inferred.objective),support:cells[3]||'Support with modelling, visuals and guided prompts. Challenge with extension and independent application.'};
  });
- return {school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
+ return {interactiveLesson:interactiveLessonLink(),school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
+function interactiveLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('?')[0].split('#')[0]+'?lesson='+encodeURIComponent(lid)+'&present=1':''}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),id=q.get('lesson');if(!id)return;
  try{let items=await dbAll(),x=items.find(v=>v.id===id);if(!x)return;
  activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;if(x.grade)document.getElementById('gradeSelect').value=x.grade;applyLP(x.lessonPlan);render();buildQR();
- if(q.get('view')==='plan'||location.hash==='#lesson-plan'){document.getElementById('lpModal').classList.add('open');autoLessonPlan()}
+ if(q.get('view')==='plan'||location.hash==='#lesson-plan'){document.getElementById('lpModal').classList.add('open');autoLessonPlan()}else if(q.get('present')==='1'){setTimeout(()=>openPresentation(),150)}
  }catch(e){}
 }
 setTimeout(loadLessonFromUrl,300);
