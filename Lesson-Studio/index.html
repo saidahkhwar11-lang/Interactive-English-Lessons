@@ -158,7 +158,7 @@
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
 <option value="6">Grade 6 · Teacher Upload</option>
-</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
+</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
 <main class="stageWrap"><div class="stage"><div class="banner"><div class="lessonThemeIcon" id="ico">🛒</div><div class="bannerTitleWrap"><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
@@ -278,8 +278,8 @@ function setupRoutineExtras(sl){
  function countAbs(){let n=(sl.attendance.names||'').split('\n').filter(x=>x.trim()).length;let c=$('absentCount');if(c)c.textContent=n}
  countAbs();
  let at=document.querySelector('.attendance-toggle'),gt=document.querySelector('.groups-toggle');if(at)at.onclick=()=>{$('attendancePanel').classList.toggle('open')};if(gt)gt.onclick=()=>{$('groupPanel').classList.toggle('open')};
- let save=$('saveAttendance');if(save)save.onclick=()=>{sl.attendance={className:$('attendanceClass').value.trim(),names:$('absentNames').value};countAbs();if(typeof toast==='function')toast('Attendance saved ✓')};
- let gs=$('groupStars');if(gs){gs.innerHTML='';for(let i=0;i<6;i++){let b=document.createElement('button');b.type='button';b.className='group-star'+(sl.readingGroups[i]?' on':'');b.innerHTML='<span class="star">'+(sl.readingGroups[i]?'★':'☆')+'</span>Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];setupRoutineExtras(sl)};gs.appendChild(b)}}
+ let save=$('saveAttendance');if(save)save.onclick=()=>{sl.attendance={className:$('attendanceClass').value.trim(),names:$('absentNames').value};countAbs();markChanged();if(typeof toast==='function')toast('Attendance saved ✓')};
+ let gs=$('groupStars');if(gs){gs.innerHTML='';for(let i=0;i<6;i++){let b=document.createElement('button');b.type='button';b.className='group-star'+(sl.readingGroups[i]?' on':'');b.innerHTML='<span class="star">'+(sl.readingGroups[i]?'★':'☆')+'</span>Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];markChanged();setupRoutineExtras(sl)};gs.appendChild(b)}}
  let score=$('groupScore');if(score)score.textContent=sl.readingGroups.filter(Boolean).length+' / 6';
 }
 function applyLessonTheme(){
@@ -322,10 +322,10 @@ if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value
 }
 $('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
 function fillObjectives(){let sk=$('eSkill').value,sel=$('eObjective');sel.innerHTML='';(objectiveBank[sk]||[]).forEach(o=>{let op=document.createElement('option');op.textContent=o;op.value=o;sel.appendChild(op)});let op=document.createElement('option');op.textContent='Other / custom objective…';op.value='__custom';sel.appendChild(op)}
-function renderSelectedObjectives(){let box=$('selectedObjectives');box.innerHTML='';let arr=slides[cur].objectives||[];if(!arr.length){box.innerHTML='<small style="color:#648095">No objective selected yet.</small>';return}arr.forEach((o,i)=>{let d=document.createElement('div');d.style.cssText='background:#eef8fc;border:1px solid #d5e7ef;border-radius:10px;padding:7px;font-size:12px';d.innerHTML=esc2(o)+' <button type="button" data-oi="'+i+'" style="float:right;border:0;background:transparent;cursor:pointer">×</button>';box.appendChild(d)});box.querySelectorAll('button').forEach(b=>b.onclick=()=>{slides[cur].objectives.splice(+b.dataset.oi,1);render()})}
+function renderSelectedObjectives(){let box=$('selectedObjectives');box.innerHTML='';let arr=slides[cur].objectives||[];if(!arr.length){box.innerHTML='<small style="color:#648095">No objective selected yet.</small>';return}arr.forEach((o,i)=>{let d=document.createElement('div');d.style.cssText='background:#eef8fc;border:1px solid #d5e7ef;border-radius:10px;padding:7px;font-size:12px';d.innerHTML=esc2(o)+' <button type="button" data-oi="'+i+'" style="float:right;border:0;background:transparent;cursor:pointer">×</button>';box.appendChild(d)});box.querySelectorAll('button').forEach(b=>b.onclick=()=>{slides[cur].objectives.splice(+b.dataset.oi,1);render();markChanged()})}
 function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-$('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives()};
-$('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(v==='__custom')v=prompt('Type your objective:')||'';if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);render()}};
+$('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();markChanged()};
+$('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(v==='__custom')v=prompt('Type your objective:')||'';if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);render();markChanged()}};
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
  if(slides[0] && slides[0].type==='Reading'){
@@ -334,14 +334,14 @@ $('gradeSelect').onchange=()=>{
    slides[0].obj='Build reading fluency.';
    
  }
- render();
-};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson;n.sub=slides[0].sub;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render()};$('types').appendChild(b)});
-[['eTitle','title'],['eLesson','lesson'],['eSub','sub'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render()});
-function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
+ render();markChanged();
+};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson;n.sub=slides[0].sub;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
+[['eTitle','title'],['eLesson','lesson'],['eSub','sub'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
+function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();markChanged();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
 slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
 slides[0].mission='Upload the reading routine poster for this lesson.';
 slides[0].obj='Build reading fluency.';
-activeLessonId=null;localStorage.removeItem('LessonStudioActiveId');cur=0;render();buildQR()}};render();
+activeLessonId=null;localStorage.removeItem('LessonStudioActiveId');cur=0;render();buildQR();setSaveStatus('Not saved yet')}};render();
 
 const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'];
 
@@ -411,6 +411,22 @@ function collectLP(){let o={};['lpTeacher','lpGrade','lpDate','lpTitle','lpObjec
 function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
 function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';let lid=id||activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8));return{id:lid,title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP(),planUrl:lessonPlanLink(lid),saved:true}}
 function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
+let autoSaveTimer=null,autoSaveBusy=false;
+function setSaveStatus(t){let e=document.getElementById('autoSaveStatus');if(e)e.textContent=t}
+function markChanged(){
+ if(!activeLessonId){setSaveStatus('Not saved yet');return}
+ setSaveStatus('Saving…');clearTimeout(autoSaveTimer);
+ autoSaveTimer=setTimeout(autoSaveCurrent,650);
+}
+async function autoSaveCurrent(){
+ if(!activeLessonId||autoSaveBusy)return;autoSaveBusy=true;
+ try{
+  let snap=snapshot(activeLessonId);snap.published=true;await dbPut(snap);
+  let secret=localStorage.getItem('LessonPlanSecret:'+activeLessonId);
+  if(secret)try{await publishVisitorPlan(activeLessonId,secret)}catch(e){}
+  setSaveStatus('✓ Auto-saved');
+ }catch(e){setSaveStatus('Save failed')}finally{autoSaveBusy=false}
+}
 async function publishVisitorPlan(id,secret){
  const plan=visitorPlanData();
  const res=await fetch(PLAN_API+'/rest/v1/rpc/publish_lesson_plan',{method:'POST',headers:{'apikey':PLAN_KEY,'Authorization':'Bearer '+PLAN_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_id:id,p_secret:secret,p_plan:plan})});
@@ -427,10 +443,10 @@ async function saveCurrent(){
  try{
    await publishVisitorPlan(id,secret);
    let snap=snapshot(id);snap.planUrl=lessonPlanLink(id);snap.published=true;await dbPut(snap);
-   buildQR();buildPresentQR();toast(firstSave?'Lesson saved · public QR created ✓':'Lesson updated · same QR kept ✓');
- }catch(e){console.error(e);toast('Lesson saved locally · QR publish failed');let snap=snapshot(id);await dbPut(snap)}
+   buildQR();buildPresentQR();setSaveStatus('✓ Auto-saved');toast(firstSave?'Lesson saved · public QR created ✓':'Lesson updated · same QR kept ✓');
+ }catch(e){console.error(e);toast('Lesson saved locally · QR publish failed');let snap=snapshot(id);await dbPut(snap);setSaveStatus('✓ Saved locally')}
 }
-async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;slides=structuredClone(x.slides);slides.forEach(sl=>sl._savedLessonId=activeLessonId);localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
+async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{activeLessonId=x.id;slides=structuredClone(x.slides);slides.forEach(sl=>sl._savedLessonId=activeLessonId);localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();setSaveStatus('✓ Auto-save on');toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
 function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
 function visitorPlanData(){
@@ -491,13 +507,18 @@ function renderPresentReading(sl,host){
  document.getElementById('pPause').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}};
  document.getElementById('pReset').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;paint()};
  let pcs=document.getElementById('pClass');if(pcs)pcs.value=sl.attendance?.className||'';document.getElementById('pAttendance').onclick=()=>document.getElementById('pAttendancePanel').classList.toggle('open');
- document.getElementById('pSaveAttendance').onclick=()=>{sl.attendance={className:document.getElementById('pClass').value.trim(),names:document.getElementById('pAbsentNames').value};let n=sl.attendance.names.split('\\n').filter(x=>x.trim()).length;document.getElementById('pAbsentCount').textContent=n;if(typeof toast==='function')toast('Attendance saved ✓')};
+ document.getElementById('pSaveAttendance').onclick=()=>{sl.attendance={className:document.getElementById('pClass').value.trim(),names:document.getElementById('pAbsentNames').value};let n=sl.attendance.names.split('\\n').filter(x=>x.trim()).length;document.getElementById('pAbsentCount').textContent=n;markChanged();if(typeof toast==='function')toast('Attendance saved ✓')};
  document.getElementById('pGroups').onclick=()=>document.getElementById('pGroupsPanel').classList.toggle('open');
  let stars=document.getElementById('pStars');sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
- sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
+ sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];markChanged();b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
 }
 document.getElementById('presentFullscreen').onclick=async()=>{try{const p=document.getElementById('presentation');if(!document.fullscreenElement)await p.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
 document.addEventListener('fullscreenchange',()=>{let b=document.getElementById('presentFullscreen');if(b)b.textContent=document.fullscreenElement?'⛶ Exit Full Screen':'⛶ Full Screen'});
 document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
+document.addEventListener('paste',e=>{
+ const tag=(e.target.tagName||'').toLowerCase();if(['input','textarea','select'].includes(tag))return;
+ const items=[...(e.clipboardData?.items||[])],it=items.find(x=>x.type&&x.type.startsWith('image/'));if(!it)return;
+ const blob=it.getAsFile(),r=new FileReader();r.onload=()=>{slides[cur].img=r.result;slides[cur].imageName='Pasted image';render();markChanged();toast('Picture pasted ✓')};r.readAsDataURL(blob);e.preventDefault();
+});
 </script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
