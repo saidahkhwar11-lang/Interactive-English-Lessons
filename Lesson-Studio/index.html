@@ -184,6 +184,17 @@
 .presentNavItem.active{padding-bottom:12px!important}
 .presentNavItem .navObjective{display:flex!important;visibility:visible!important;opacity:1!important;width:100%!important;height:auto!important;max-height:none!important;margin:9px 0 0!important;padding:8px 9px!important;border-radius:11px!important;background:#fff6cf!important;border:1px solid #ecd78a!important;color:#5d4c17!important;font-size:11px!important;line-height:1.35!important;text-align:left!important;gap:5px!important;white-space:normal!important}
 .presentNavItem .navObjective strong{display:block!important;font-weight:850!important}
+
+/* Compact presentation lesson agenda */
+.presentation.open{grid-template-columns:205px minmax(0,1fr)!important}
+.presentNav{padding:14px 12px!important}
+.presentBrand{font-size:18px!important;line-height:1.15!important;margin:2px 4px 14px!important}
+.presentNavList{gap:7px!important}
+.presentNavItem{min-height:58px!important;padding:10px 11px!important;border-radius:14px!important}
+.presentNavItem b{font-size:14px!important;line-height:1.22!important}
+.presentNavItem small{font-size:11px!important;line-height:1.2!important;margin-top:4px!important}
+.presentNavItem .navObjective{font-size:9.5px!important;line-height:1.3!important;padding:7px!important;margin-top:7px!important}
+@media(max-width:900px){.presentation.open{grid-template-columns:175px minmax(0,1fr)!important}.presentNavItem b{font-size:13px!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
