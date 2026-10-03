@@ -494,6 +494,34 @@ function buildQR(){
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
 }
+function supportChallengeFor(sl){
+ let skill=(sl.skill||'').toLowerCase(),title=(sl.title||'').toLowerCase(),mission=(sl.mission||'').toLowerCase(),text=title+' '+mission;
+ if(sl.type==='Reading'){
+   return 'Support: Check that all students can access Alef and locate the assigned story. Assign one student in each group as a reading-tech helper to support classmates in finding the story.\nChallenge: Ask confident readers to identify one new word and one interesting idea to share after reading.';
+ }
+ if(sl.type==='Focus'){
+   return 'Support: Read the lesson objectives and key vocabulary aloud and briefly clarify unfamiliar words using the poster.\nChallenge: Ask students to predict how the key words connect to today’s lesson topic.';
+ }
+ if(skill==='vocabulary'||/vocab|word meaning|context clue|parentheses|dash/.test(text)){
+   return 'Support: Highlight the clue or punctuation around the unfamiliar word and model one example before students try independently.\nChallenge: Ask students to justify which clue helped them infer the meaning and use the word in a new sentence.';
+ }
+ if(skill==='speaking'||/discuss|partner|speak|describe|prediction/.test(text)){
+   return 'Support: Provide sentence starters and allow brief partner rehearsal before sharing.\nChallenge: Ask students to extend their response with a reason, example, or follow-up question.';
+ }
+ if(skill==='listening'||sl.type==='Listening'){
+   return 'Support: Play the audio again and direct students to listen for key words or one specific detail.\nChallenge: Ask students to infer meaning or explain which detail in the audio supports their answer.';
+ }
+ if(skill==='writing'||sl.type==='Writing'){
+   return 'Support: Provide a model, useful phrases, and a simple writing frame.\nChallenge: Ask students to add detail, vary sentence structure, and edit independently for accuracy.';
+ }
+ if(skill==='reading'||/read|main idea|detail|paragraph|text/.test(text)){
+   return 'Support: Chunk the text, guide students to underline key words, and model how to locate evidence for one answer.\nChallenge: Ask students to justify answers with evidence from the text or summarise the main idea in their own words.';
+ }
+ if((sl.questions||[]).length){
+   return 'Support: Allow pair discussion before opening each question bubble and give a clue if needed.\nChallenge: Ask students to explain why their answer is correct before revealing the saved answer.';
+ }
+ return 'Support: Model the first step and use visual or partner support where needed.\nChallenge: Ask students to explain their thinking or complete an extension independently.';
+}
 function autoLessonPlan(){
  let overall=overallLessonObjectives(),realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
@@ -524,7 +552,7 @@ function autoLessonPlan(){
    '<td><textarea>'+esc2(teacher)+'</textarea></td>'+
    '<td><textarea>'+esc2(student)+'</textarea></td>'+
    '<td><textarea>'+esc2(assess)+'</textarea></td>'+
-   '<td><textarea>Support with modelling, visuals and guided prompts. Challenge with extension and independent application.</textarea></td>';
+   '<td><textarea>'+esc2(supportChallengeFor(sl))+'</textarea></td>';
    body.appendChild(tr);
  });
  buildQR();
