@@ -251,6 +251,15 @@
 .presentSlide:not(.pictureOnlySlide) .presentVisual{min-height:520px!important}
 .pictureOnlySlide{display:block!important;padding:12px!important}.pictureOnlySlide .presentVisual{width:100%!important;height:calc(100vh - 125px)!important;min-height:560px!important;padding:8px!important}.pictureOnlySlide .presentVisual img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important}
 @media(max-width:900px){.presentSlide:not(.pictureOnlySlide){grid-template-columns:minmax(0,1fr) 230px!important}.compactDetails{padding:13px!important}.compactDetails h2{font-size:20px!important}}
+
+/* Reading Routine presentation: use full white canvas with no dead space */
+#presentSlide .presentReading{display:grid!important;grid-template-columns:minmax(430px,1.55fr) minmax(260px,.75fr)!important;gap:20px!important;align-items:start!important;width:min(1040px,100%)!important;margin:0 auto!important}
+#presentSlide .presentPoster{width:100%!important;min-width:0!important}
+#presentSlide .presentPoster img{display:block!important;width:100%!important;height:auto!important;max-height:calc(100vh - 185px)!important;object-fit:contain!important;margin:0 auto!important;cursor:zoom-in}
+#presentSlide .presentTools{width:100%!important;min-width:0!important;display:grid!important;gap:12px!important;align-content:start!important}
+#presentSlide .presentVisual:has(.presentReading){display:flex!important;align-items:flex-start!important;justify-content:center!important;width:100%!important;padding:18px!important}
+#presentSlide .presentSlide:has(.presentReading){display:block!important;padding:10px!important}
+@media(max-width:900px){#presentSlide .presentReading{grid-template-columns:minmax(0,1fr) 230px!important;gap:12px!important}#presentSlide .presentVisual:has(.presentReading){padding:10px!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -756,7 +765,7 @@ function renderPresentReading(sl,host){
  if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;
  const poster=sl.img?'<img id="presentReadingImg" alt="Reading poster">':'<div class="presentEmpty"><b>Reading Routine</b>Upload the reading poster in Design Mode.</div>';
  host.innerHTML='<div class="presentSlide" style="grid-template-columns:1fr"><div class="presentVisual"><div class="presentReading"><div class="presentPoster">'+poster+'</div><div class="presentTools"><div class="presentTimer"><b>📚 Reading Time</b><div class="presentClock" id="presentClock"></div><div class="presentTimerBtns"><button id="pStart" style="background:#1689c4;color:#fff">▶ Start</button><button id="pPause" style="background:#fff0bd">Ⅱ Pause</button><button id="pReset">↻ Reset</button></div></div><button class="presentToggle" id="pAttendance">👩‍🎓 Absent Record · <span id="pAbsentCount">'+absentCount(sl.attendance?.names)+'</span> absent</button><div class="presentPanel" id="pAttendancePanel"><div class="presentAttendanceForm"><label>Class / Section<select id="pClass"><option value="">Choose class</option><option value="9/4">9/4</option><option value="9/5">9/5</option><option value="6/5">6/5</option></select></label><label>Absent student names<textarea id="pAbsentNames" placeholder="One name per line">'+esc2(sl.attendance?.names||'')+'</textarea></label><button type="button" class="presentAttendanceSave" id="pSaveAttendance">Save Attendance</button></div></div><button class="presentToggle" id="pGroups">⭐ Reading Groups · '+(sl.readingGroups||[]).filter(Boolean).length+' / 6</button><div class="presentPanel" id="pGroupsPanel"><div class="presentStars" id="pStars"></div></div></div></div></div></div>';
- if(sl.img){let im=document.getElementById('presentReadingImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
+ if(sl.img){let im=document.getElementById('presentReadingImg');im.src=sl.img;im.onclick=()=>openPresentationImage(sl.img)}
  const paint=()=>{let c=document.getElementById('presentClock');if(c)c.textContent=String(Math.floor(presentRemaining/60)).padStart(2,'0')+':'+String(presentRemaining%60).padStart(2,'0')};paint();
  document.getElementById('pStart').onclick=()=>{if(presentTimerId)return;presentTimerId=setInterval(()=>{if(presentRemaining>0){presentRemaining--;paint()}else{clearInterval(presentTimerId);presentTimerId=null}},1000)};
  document.getElementById('pPause').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}};
