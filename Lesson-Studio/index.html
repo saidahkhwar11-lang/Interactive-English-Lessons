@@ -290,6 +290,8 @@
 .slideTimer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:8px 10px;border-radius:14px;background:linear-gradient(145deg,#e9f7ff,#fff4c9);border:1px solid #d6e5e9}.slideTimerClock{font-size:25px;font-weight:950;color:#123e66;letter-spacing:.02em}.slideTimerActions{display:flex;gap:4px}.slideTimerActions button{width:34px;height:31px;border:0;border-radius:9px;background:#fff;font-weight:950;color:#174f78;cursor:pointer}.slideTimerActions button:first-child{background:#1689c4;color:#fff}
 .floatingSlideTimer{position:absolute;right:22px;top:18px;z-index:30;width:205px}.pictureOnlySlide{position:relative!important}.floatingSlideTimer .slideTimer{margin:0;box-shadow:0 6px 18px rgba(20,55,80,.16);background:rgba(244,250,252,.95)}
 #presentation:fullscreen .floatingSlideTimer{z-index:9997}
+
+.instructionVisibility{display:flex!important;align-items:center;gap:7px;margin-top:7px;padding:8px 9px;border-radius:10px;background:#eef8fc;color:#315d75;font-size:11px!important;font-weight:850!important;text-transform:none!important;cursor:pointer}.instructionVisibility input{width:16px;height:16px;accent-color:#174f78}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -300,7 +302,7 @@
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
-<div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea></div>
+<div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea><label class="instructionVisibility"><input type="checkbox" id="showInstructions" checked> 👁 Show instructions in Presentation Mode</label></div>
 <div class="field focusKeywords" id="focusKeywordsField"><label>Lesson Key Words <small>· used in Lesson Plan</small></label><textarea id="eKeywords" placeholder="online, products, customers, categories…"></textarea></div>
 <div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionPairAdd"><input id="newQuestion" placeholder="Type a question…"><input id="newAnswer" placeholder="Type the answer…"><button type="button" id="addQuestion">＋ Add Q&A</button></div></div>
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
@@ -346,7 +348,7 @@ Vocabulary:['Understand key lesson vocabulary.','Use new words in context.','Mat
 Grammar:['Use the target grammar accurately.','Identify the target language structure.','Form correct sentences using the target structure.','Apply the grammar rule in context.']
 };
 const T=[['📚','Reading Routine','Reading'],['🎯','Lesson Focus','Focus'],['⚡','Starter','Starter'],['📝','Main Activity','Activity'],['🎧','Listening Activity','Listening'],['✍️','Writing Activity','Writing'],['💡','Custom Activity','Custom'],['🏆','Alef Game','Alef']];
-function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',images:[],aud:''}}
+function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',showInstructions:true,lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',images:[],aud:''}}
 let slides=[mk('Reading Routine','Reading')],cur=0;
 const $=x=>document.getElementById(x),icons={Reading:'📚',Focus:'🎯',Starter:'⚡',Activity:'🦒',Listening:'🎧',Writing:'✍️',Custom:'💡',Alef:'🏆'};
 let readingTimerId=null,readingRemaining=300;
@@ -456,7 +458,7 @@ $('eSkill').value=s.skill||'Reading';
 fillObjectives();
 renderSelectedObjectives();
 renderQuestionEditor();
-$('eMission').value=s.mission||'';
+$('eMission').value=s.mission||'';if(s.showInstructions===undefined)s.showInstructions=true;$('showInstructions').checked=s.showInstructions!==false;
 let selectedLabel=$('selectedObjectives')?.closest('.field')?.querySelector('label');if(selectedLabel)selectedLabel.textContent=s.type==='Focus'?'Lesson Objectives (max 3)':'Selected objectives (max 3)';let kwf=$('focusKeywordsField'),kwe=$('eKeywords');if(kwf)kwf.classList.toggle('show',s.type==='Focus');if(kwe)kwe.value=(s.keywords||[]).join(', ');
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
@@ -538,6 +540,7 @@ $('gradeSelect').onchange=()=>{
  render();markChanged();
 };$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=[];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
+$('showInstructions').onchange=e=>{slides[cur].showInstructions=e.target.checked;render();markChanged()};
 $('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);markChanged()};
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
@@ -776,11 +779,11 @@ function renderPresentation(){
  sl.images=sl.images||[];if(sl.img&&!sl.images.includes(sl.img))sl.images.unshift(sl.img);let pimgs=sl.images;let visual=pimgs.length?'<div class="presentGallery '+(pimgs.length===1?'singleImageGallery':'multiImageGallery')+'">'+pimgs.map((_,i)=>'<div class="presentImageCard" data-card="'+i+'"><div class="presentCardLabel">Part '+(i+1)+'</div><img class="presentGalleryImg" data-pgi="'+i+'" alt="Activity picture"><div class="presentCardQA" data-cardqa="'+i+'"></div></div>').join('')+'</div>':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
- let realMission=(sl.mission||'').trim(),templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
+ let realMission=(sl.mission||'').trim(),showMission=sl.showInstructions!==false,templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
  let realPage=!!(sl.page&&sl.page!=='—'),realObj=(sl.objectives&&sl.objectives.length?sl.objectives[0]:'');
- let hasDetails=!templateMission||realPage||!!realObj||!!sl.aud;
+ let hasDetails=(showMission&&!templateMission)||realPage||!!realObj||!!sl.aud;
  let timerHtml='<div class="slideTimer"><div class="slideTimerClock" id="slideTimerClock">'+String(sl.time||5).padStart(2,'0')+':00</div><div class="slideTimerActions"><button id="slideTimerStart">▶</button><button id="slideTimerPause">Ⅱ</button><button id="slideTimerReset">↻</button></div></div>';
- let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+timerHtml+audio+'</aside>':'';
+ let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(showMission&&!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+timerHtml+audio+'</aside>':'';
  host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+(!hasDetails?'<div class="floatingSlideTimer">'+timerHtml+'</div>':'')+'</div>';
  if(pimgs.length){host.querySelectorAll('.presentGalleryImg').forEach(im=>{let i=+im.dataset.pgi;im.src=pimgs[i];im.onclick=()=>openPresentationImage(pimgs[i])})}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;setupSlideTimer(sl);
@@ -802,8 +805,8 @@ function setupSlideTimer(sl){
 }
 function cleanPresentationDefaults(sl){
  const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
- const mission=(sl.mission||'').trim(),page=(sl.page||'').trim();
- const templateMission=!mission||['Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'].includes(mission);
+ const mission=(sl.mission||'').trim(),page=(sl.page||'').trim(),showMission=sl.showInstructions!==false;
+ const templateMission=!showMission||!mission||['Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'].includes(mission);
  const noPage=!page||page==='—',noAudio=!sl.aud;
  // Focus objective belongs in Lesson Agenda; it does not count as slide-detail content.
  const focusPosterOnly=sl.type==='Focus'&&!!sl.img&&templateMission&&noPage&&noAudio;
