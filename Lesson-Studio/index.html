@@ -260,6 +260,10 @@
 #presentSlide .presentVisual:has(.presentReading){display:flex!important;align-items:flex-start!important;justify-content:center!important;width:100%!important;padding:18px!important}
 #presentSlide .presentSlide:has(.presentReading){display:block!important;padding:10px!important}
 @media(max-width:900px){#presentSlide .presentReading{grid-template-columns:minmax(0,1fr) 230px!important;gap:12px!important}#presentSlide .presentVisual:has(.presentReading){padding:10px!important}}
+
+.designGallery{width:100%;height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-content:center}.designGalleryItem{position:relative;min-height:180px}.designGalleryItem img{width:100%;height:100%;max-height:420px;object-fit:contain;cursor:zoom-in}.designGalleryItem button{position:absolute;right:5px;top:5px;width:28px;height:28px;border:0;border-radius:50%;background:#f8dce5;color:#9d3555;font-weight:950;cursor:pointer}
+.presentGallery{width:100%;height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;align-items:center}.presentGalleryImg{width:100%;height:100%;max-height:calc(100vh - 185px);object-fit:contain;cursor:zoom-in;border-radius:12px}
+.presentGallery:has(.presentGalleryImg:nth-child(2)){grid-template-columns:repeat(2,minmax(0,1fr))}.presentGallery:has(.presentGalleryImg:nth-child(3)){grid-template-columns:repeat(2,minmax(0,1fr))}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -276,7 +280,7 @@
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
   <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
 </div>
-<label class="upload">🖼 Upload Activity Picture<input id="imgIn" type="file" accept="image/*"></label><label class="upload">🎧 Upload Audio<input id="audIn" type="file" accept="audio/*"></label></div></aside></div>
+<label class="upload">🖼 Upload Activity Picture<input id="imgIn" type="file" accept="image/*" multiple></label><label class="upload">🎧 Upload Audio<input id="audIn" type="file" accept="audio/*"></label></div></aside></div>
 <div class="modal" id="modal"><div class="modalCard"><h2>Add Slide</h2><div class="types" id="types"></div><p><button class="btn" id="cancel">Cancel</button></p></div></div>
 
 
@@ -316,7 +320,7 @@ Vocabulary:['Understand key lesson vocabulary.','Use new words in context.','Mat
 Grammar:['Use the target grammar accurately.','Identify the target language structure.','Form correct sentences using the target structure.','Apply the grammar rule in context.']
 };
 const T=[['📚','Reading Routine','Reading'],['🎯','Lesson Focus','Focus'],['⚡','Starter','Starter'],['📝','Main Activity','Activity'],['🎧','Listening Activity','Listening'],['✍️','Writing Activity','Writing'],['💡','Custom Activity','Custom'],['🏆','Alef Game','Alef']];
-function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',aud:''}}
+function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',images:[],aud:''}}
 let slides=[mk('Reading Routine','Reading')],cur=0;
 const $=x=>document.getElementById(x),icons={Reading:'📚',Focus:'🎯',Starter:'⚡',Activity:'🦒',Listening:'🎧',Writing:'✍️',Custom:'💡',Alef:'🏆'};
 let readingTimerId=null,readingRemaining=300;
@@ -405,7 +409,7 @@ function applyLessonTheme(){
    if(!(focus.keywords||[]).length)focus.keywords=['online','products','customers','categories','predict','communicate','huge','scientists'];
  }
 }
-function render(){migrateFocusStructuredData();applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
+function render(){migrateFocusStructuredData();applyLessonTheme();let s=slides[cur];s.images=s.images||[];if(s.img&&!s.images.includes(s.img))s.images.unshift(s.img);if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
  const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&!s.aud;
  let bodyEl=document.querySelector('.body');if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);
@@ -448,8 +452,8 @@ if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value
  else area.innerHTML='<label class="reading-upload-label">🖼<b>Upload Reading Poster</b><span>Use “Upload Activity Picture” on the right.</span></label>';
  setupReadingTimer(5*60); setupRoutineExtras(s);
 } else {
- $('canvas').innerHTML=s.img?'<img id="sheet">':'<div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div>';
- if(s.img){$('sheet').src=s.img;$('sheet').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
+ let imgs=(s.images||[]);$('canvas').innerHTML=imgs.length?'<div class="designGallery">'+imgs.map((_,i)=>'<div class="designGalleryItem"><img data-gi="'+i+'"><button data-delimg="'+i+'" title="Delete picture">×</button></div>').join('')+'</div>':'<div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div>';
+ if(imgs.length){$('canvas').querySelectorAll('img[data-gi]').forEach(im=>{let i=+im.dataset.gi;im.src=imgs[i];im.onclick=()=>{$('zoomImg').src=imgs[i];$('zoom').classList.add('open')}});$('canvas').querySelectorAll('[data-delimg]').forEach(b=>b.onclick=e=>{e.stopPropagation();let i=+b.dataset.delimg;s.images.splice(i,1);s.img=s.images[0]||'';render();markChanged()})}
 }
 $('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
 function normaliseQuestions(sl){
@@ -507,7 +511,14 @@ $('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
 $('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
-function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();markChanged();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
+function file(inp,key){
+ if(key==='img'){
+  let files=[...(inp.files||[])];if(!files.length)return;slides[cur].images=slides[cur].images||[];
+  Promise.all(files.map(f=>new Promise(res=>{let r=new FileReader();r.onload=()=>res({data:r.result,name:f.name});r.readAsDataURL(f)}))).then(items=>{items.forEach(x=>slides[cur].images.push(x.data));slides[cur].img=slides[cur].images[0]||'';slides[cur].imageName=items.map(x=>x.name).join(', ');render();markChanged();toast(items.length+' picture'+(items.length>1?'s':'')+' added ✓')});return;
+ }
+ let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;slides[cur].audioName=f.name;render();markChanged();toast('Audio added ✓')};r.readAsDataURL(f)
+}
+$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
 clearTimeout(autoSaveTimer);autoSaveTimer=null;
 activeLessonId=null;editingExistingLesson=false;$('saveLesson').textContent='💾 Save New Lesson';localStorage.removeItem('LessonStudioActiveId');
 slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
@@ -730,7 +741,7 @@ function renderPresentation(){
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<div class="navObjective"><span>🎯</span><strong>'+esc2(chosen)+'</strong></div>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
- let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
+ sl.images=sl.images||[];if(sl.img&&!sl.images.includes(sl.img))sl.images.unshift(sl.img);let pimgs=sl.images;let visual=pimgs.length?'<div class="presentGallery">'+pimgs.map((_,i)=>'<img class="presentGalleryImg" data-pgi="'+i+'" alt="Activity picture">').join('')+'</div>':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
  let realMission=(sl.mission||'').trim(),templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
@@ -738,7 +749,7 @@ function renderPresentation(){
  let hasDetails=!templateMission||realPage||!!realObj||!!sl.aud;
  let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+'<span class="presentBadge">⏱ '+sl.time+' min</span>'+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+audio+'</aside>':'';
  host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+'</div>';
- if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>openPresentationImage(sl.img)}
+ if(pimgs.length){host.querySelectorAll('.presentGalleryImg').forEach(im=>{let i=+im.dataset.pgi;im.src=pimgs[i];im.onclick=()=>openPresentationImage(pimgs[i])})}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
  cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);
 }
@@ -783,6 +794,6 @@ document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('l
 document.addEventListener('paste',e=>{
  const tag=(e.target.tagName||'').toLowerCase();if(['input','textarea','select'].includes(tag))return;
  const items=[...(e.clipboardData?.items||[])],it=items.find(x=>x.type&&x.type.startsWith('image/'));if(!it)return;
- const blob=it.getAsFile(),r=new FileReader();r.onload=()=>{slides[cur].img=r.result;slides[cur].imageName='Pasted image';render();markChanged();toast('Picture pasted ✓')};r.readAsDataURL(blob);e.preventDefault();
+ const blob=it.getAsFile(),r=new FileReader();r.onload=()=>{slides[cur].images=slides[cur].images||[];slides[cur].images.push(r.result);slides[cur].img=slides[cur].images[0]||r.result;slides[cur].imageName='Pasted image';render();markChanged();toast('Picture pasted ✓')};r.readAsDataURL(blob);e.preventDefault();
 });
 </script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
