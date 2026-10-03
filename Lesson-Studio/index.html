@@ -199,6 +199,10 @@
 .questionEditor{border-top:1px solid #dbe8ed;padding-top:12px}.questionAddRow{display:flex;gap:6px}.questionAddRow input{flex:1;padding:9px;border:1px solid #cedfe7;border-radius:9px}.questionAddRow button{border:0;border-radius:9px;background:#174f78;color:#fff;font-weight:900;padding:8px 11px;cursor:pointer}
 #questionList{display:grid;gap:6px;margin-bottom:7px}.qEdit{display:grid;grid-template-columns:1fr auto auto auto;gap:5px;align-items:center;background:#f7fbfd;border:1px solid #dbe8ed;border-radius:9px;padding:7px;font-size:11px}.qEdit button{border:0;background:#edf4f7;border-radius:7px;cursor:pointer;padding:5px 7px}.qEdit .qDel{background:#fde9ef;color:#a54360}
 .presentQuestions{margin-top:16px}.presentQuestionBtn{width:100%;border:0;border-radius:13px;background:#174f78;color:#fff;padding:11px;font-weight:900;cursor:pointer}.presentQuestionCard{margin-top:9px;padding:14px;border-radius:15px;background:linear-gradient(145deg,#fff7ce,#fff);border:1px solid #ecd88c;font-size:17px;font-weight:850;line-height:1.4;color:#173f67}.presentQuestionActions{display:flex;gap:7px;margin-top:8px}.presentQuestionActions button{border:0;border-radius:10px;padding:8px 10px;font-weight:900;cursor:pointer}.qNext{background:#1689c4;color:#fff}.qHide{background:#edf3f6;color:#31566c}
+
+.questionPairAdd{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}.questionPairAdd input{padding:9px;border:1px solid #cedfe7;border-radius:9px}.questionPairAdd button{border:0;border-radius:9px;background:#174f78;color:#fff;font-weight:900;padding:8px 11px;cursor:pointer}
+.qaPopup{position:fixed;inset:0;z-index:180;background:rgba(14,43,66,.58);display:grid;place-items:center;padding:35px}.qaCard{width:min(1050px,92vw);background:#fff;border-radius:28px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.22)}.qaTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.qaTop b{font-size:17px;color:#527087}.qaClose{border:0;background:#eef3f6;border-radius:12px;padding:9px 13px;font-weight:900;cursor:pointer}.qaSides{display:grid;grid-template-columns:1fr 1fr;gap:16px}.qaSide{min-height:270px;border-radius:22px;padding:24px;display:flex;flex-direction:column;justify-content:center;text-align:center}.qaQuestion{background:linear-gradient(145deg,#e9f7ff,#f4efff);border:2px solid #cfe4ef}.qaAnswer{background:linear-gradient(145deg,#fff5c9,#eaf8dc);border:2px solid #ead78c}.qaLabel{font-size:13px;font-weight:950;letter-spacing:.06em;margin-bottom:14px;color:#587184}.qaText{font-size:29px;line-height:1.3;font-weight:950;color:#123e66}.qaCovered{font-size:22px;font-weight:900;color:#8a7b42}.qaReveal{border:0;border-radius:13px;background:#e1a91b;color:#fff;padding:11px 17px;font-weight:950;font-size:15px;cursor:pointer;margin-top:15px}.qaBottom{display:flex;justify-content:center;gap:9px;margin-top:16px}.qaBottom button{border:0;border-radius:12px;padding:10px 15px;font-weight:950;cursor:pointer}.qaNext{background:#1689c4;color:#fff}.qaPrev{background:#edf3f6;color:#31566c}
+@media(max-width:800px){.qaSides{grid-template-columns:1fr}.qaSide{min-height:180px}.qaText{font-size:23px}.questionPairAdd{grid-template-columns:1fr}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -210,7 +214,7 @@
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
 <div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea></div>
-<div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionAddRow"><input id="newQuestion" placeholder="Type a question…"><button type="button" id="addQuestion">＋ Add</button></div></div>
+<div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionPairAdd"><input id="newQuestion" placeholder="Type a question…"><input id="newAnswer" placeholder="Type the answer…"><button type="button" id="addQuestion">＋ Add Q&A</button></div></div>
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
   <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
 </div>
@@ -380,17 +384,28 @@ if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value
  if(s.img){$('sheet').src=s.img;$('sheet').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
 }
 $('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
+function normaliseQuestions(sl){
+ sl.questions=sl.questions||[];
+ sl.questions=sl.questions.map(q=>typeof q==='string'?{q:q,a:''}:{q:q.q||'',a:q.a||''});
+ return sl.questions;
+}
 function renderQuestionEditor(){
- let box=$('questionList');if(!box||!slides[cur])return;let qs=slides[cur].questions=slides[cur].questions||[];box.innerHTML='';
- qs.forEach((q,i)=>{let d=document.createElement('div');d.className='qEdit';d.innerHTML='<span>'+esc2(q)+'</span><button title="Move up">↑</button><button title="Move down">↓</button><button class="qDel" title="Delete">×</button>';let bs=d.querySelectorAll('button');bs[0].onclick=()=>{if(i>0){[qs[i-1],qs[i]]=[qs[i],qs[i-1]];renderQuestionEditor();markChanged()}};bs[1].onclick=()=>{if(i<qs.length-1){[qs[i+1],qs[i]]=[qs[i],qs[i+1]];renderQuestionEditor();markChanged()}};bs[2].onclick=()=>{qs.splice(i,1);renderQuestionEditor();markChanged()};box.appendChild(d)});
+ let box=$('questionList');if(!box||!slides[cur])return;let qs=normaliseQuestions(slides[cur]);box.innerHTML='';
+ qs.forEach((item,i)=>{let d=document.createElement('div');d.className='qEdit';d.innerHTML='<span><b>Q:</b> '+esc2(item.q)+'<br><small><b>A:</b> '+esc2(item.a||'No answer yet')+'</small></span><button title="Move up">↑</button><button title="Move down">↓</button><button class="qDel" title="Delete">×</button>';let bs=d.querySelectorAll('button');bs[0].onclick=()=>{if(i>0){[qs[i-1],qs[i]]=[qs[i],qs[i-1]];renderQuestionEditor();markChanged()}};bs[1].onclick=()=>{if(i<qs.length-1){[qs[i+1],qs[i]]=[qs[i],qs[i+1]];renderQuestionEditor();markChanged()}};bs[2].onclick=()=>{qs.splice(i,1);renderQuestionEditor();markChanged()};box.appendChild(d)});
 }
 function setupPresentQuestions(sl,container){
- let qs=sl.questions||[];if(!qs.length||!container)return;
- let wrap=document.createElement('div');wrap.className='presentQuestions';wrap.innerHTML='<button class="presentQuestionBtn">❓ Questions</button><div class="presentQuestionArea"></div>';container.appendChild(wrap);
- let area=wrap.querySelector('.presentQuestionArea'),idx=-1,button=wrap.querySelector('.presentQuestionBtn');
- const paint=()=>{if(idx<0){area.innerHTML='';return}area.innerHTML='<div class="presentQuestionCard"><small>Question '+(idx+1)+' of '+qs.length+'</small><div style="margin-top:5px">'+esc2(qs[idx])+'</div></div><div class="presentQuestionActions">'+(idx<qs.length-1?'<button class="qNext">Next Question →</button>':'')+'<button class="qHide">Hide Questions</button></div>';let n=area.querySelector('.qNext');if(n)n.onclick=()=>{idx++;paint()};area.querySelector('.qHide').onclick=()=>{idx=-1;paint()}};
- button.onclick=()=>{idx=0;paint()};
+ let qs=normaliseQuestions(sl);if(!qs.length||!container)return;
+ let btn=document.createElement('button');btn.className='presentQuestionBtn';btn.textContent='❓ Questions';container.appendChild(btn);
+ btn.onclick=()=>openQAPopup(sl,0);
 }
+function openQAPopup(sl,start){
+ let qs=normaliseQuestions(sl),idx=start||0,revealed=false;
+ let pop=document.createElement('div');pop.className='qaPopup';document.body.appendChild(pop);
+ const paint=()=>{let item=qs[idx];pop.innerHTML='<div class="qaCard"><div class="qaTop"><b>Question '+(idx+1)+' of '+qs.length+'</b><button class="qaClose">✕ Close</button></div><div class="qaSides"><div class="qaSide qaQuestion"><div class="qaLabel">❓ QUESTION</div><div class="qaText">'+esc2(item.q)+'</div></div><div class="qaSide qaAnswer"><div class="qaLabel">✨ ANSWER</div>'+(revealed?'<div class="qaText">'+esc2(item.a||'No answer added.')+'</div>':'<div class="qaCovered">Answer hidden</div><button class="qaReveal">Reveal Answer</button>')+'</div></div><div class="qaBottom">'+(idx>0?'<button class="qaPrev">← Previous</button>':'')+(idx<qs.length-1?'<button class="qaNext">Next Question →</button>':'')+'</div></div>';
+ pop.querySelector('.qaClose').onclick=()=>pop.remove();let r=pop.querySelector('.qaReveal');if(r)r.onclick=()=>{revealed=true;paint()};let n=pop.querySelector('.qaNext');if(n)n.onclick=()=>{idx++;revealed=false;paint()};let p=pop.querySelector('.qaPrev');if(p)p.onclick=()=>{idx--;revealed=false;paint()};
+ };paint();
+}
+
 function fillObjectives(){
  let sk=$('eSkill')?.value||slides[cur]?.skill||'Reading',sel=$('eObjective');if(!sel)return;
  sel.innerHTML='<option value="">Choose an objective…</option>';
@@ -401,7 +416,7 @@ function renderSelectedObjectives(){let box=$('selectedObjectives');if(!box||!sl
 function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 $('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();renderSelectedObjectives();markChanged()};
 $('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(!v)return;if(v==='__custom')v=(prompt('Type your objective:')||'').trim();if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);renderSelectedObjectives();markChanged()}};
-$('addQuestion').onclick=()=>{let inp=$('newQuestion'),v=(inp.value||'').trim();if(!v)return;slides[cur].questions=slides[cur].questions||[];slides[cur].questions.push(v);inp.value='';renderQuestionEditor();markChanged()};
+$('addQuestion').onclick=()=>{let qi=$('newQuestion'),ai=$('newAnswer'),q=(qi.value||'').trim(),a=(ai.value||'').trim();if(!q)return;normaliseQuestions(slides[cur]).push({q,a});qi.value='';ai.value='';renderQuestionEditor();markChanged()};
 $('newQuestion').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('addQuestion').click()}});
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
