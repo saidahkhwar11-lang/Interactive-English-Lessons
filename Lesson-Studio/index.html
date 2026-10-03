@@ -232,6 +232,8 @@
 .slideQuestionCard.qTone3{background:linear-gradient(145deg,#fff5df,#fff)!important;border-color:#f2c777!important}.slideQuestionCard.qTone3:before{background:#f0a21d}.slideQuestionCard.qTone3 .slideQHead{color:#b77509!important}
 .slideQuestionCard.qTone4{background:linear-gradient(145deg,#f4edff,#fff)!important;border-color:#c9afea!important}.slideQuestionCard.qTone4:before{background:#8c5ed1}.slideQuestionCard.qTone4 .slideQHead{color:#6b42aa!important}
 .slideQText{padding:5px 7px!important}.slideReveal{box-shadow:0 4px 10px rgba(140,100,10,.14)}
+
+.focusKeywords{display:none}.focusKeywords.show{display:block}.focusKeywords textarea{width:100%;min-height:74px;padding:9px;border:1px solid #cedfe7;border-radius:10px}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -243,6 +245,7 @@
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
 <div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea></div>
+<div class="field focusKeywords" id="focusKeywordsField"><label>Lesson Key Words <small>· used in Lesson Plan</small></label><textarea id="eKeywords" placeholder="online, products, customers, categories…"></textarea></div>
 <div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionPairAdd"><input id="newQuestion" placeholder="Type a question…"><input id="newAnswer" placeholder="Type the answer…"><button type="button" id="addQuestion">＋ Add Q&A</button></div></div>
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
   <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
@@ -287,7 +290,7 @@ Vocabulary:['Understand key lesson vocabulary.','Use new words in context.','Mat
 Grammar:['Use the target grammar accurately.','Identify the target language structure.','Form correct sentences using the target structure.','Apply the grammar rule in context.']
 };
 const T=[['📚','Reading Routine','Reading'],['🎯','Lesson Focus','Focus'],['⚡','Starter','Starter'],['📝','Main Activity','Activity'],['🎧','Listening Activity','Listening'],['✍️','Writing Activity','Writing'],['💡','Custom Activity','Custom'],['🏆','Alef Game','Alef']];
-function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',aud:''}}
+function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',aud:''}}
 let slides=[mk('Reading Routine','Reading')],cur=0;
 const $=x=>document.getElementById(x),icons={Reading:'📚',Focus:'🎯',Starter:'⚡',Activity:'🦒',Listening:'🎧',Writing:'✍️',Custom:'💡',Alef:'🏆'};
 let readingTimerId=null,readingRemaining=300;
@@ -367,7 +370,7 @@ function applyLessonTheme(){
  if(banner){banner.classList.toggle('theme-shopping',shopping);banner.classList.toggle('theme-animals',!shopping)}
  if(pt){pt.classList.toggle('theme-shopping',shopping);pt.classList.toggle('theme-animals',!shopping)}
  let icon='';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
-}function render(){applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.objectives||!s.objectives.length)){s.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}
+}function render(){applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
  const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&!s.aud;
  let bodyEl=document.querySelector('.body');if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);
@@ -389,6 +392,7 @@ fillObjectives();
 renderSelectedObjectives();
 renderQuestionEditor();
 $('eMission').value=s.mission||'';
+let kwf=$('focusKeywordsField'),kwe=$('eKeywords');if(kwf)kwf.classList.toggle('show',s.type==='Focus');if(kwe)kwe.value=(s.keywords||[]).join(', ');
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
    <div class="reading-poster-final" id="readingPosterArea"></div>
@@ -462,8 +466,9 @@ $('gradeSelect').onchange=()=>{
    
  }
  render();markChanged();
-};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
+};$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=[];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
+$('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);markChanged()};
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
 $('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
@@ -522,16 +527,35 @@ function supportChallengeFor(sl){
  }
  return 'Support: Model the first step and use visual or partner support where needed.\nChallenge: Ask students to explain their thinking or complete an extension independently.';
 }
+function focusLessonData(){
+ let focus=slides.find(sl=>sl.type==='Focus');
+ let objectives=focus?(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.'):[];
+ // If the Focus slide has no manually selected lesson objectives, use explicit objectives from activity slides.
+ if(!objectives.length)objectives=overallLessonObjectives();
+ let keywords=focus?(focus.keywords||[]).filter(Boolean):[];
+ return {focus,objectives:objectives.slice(0,3),keywords};
+}
+function successCriterionFor(obj){
+ let x=(obj||'').replace(/[.]$/,'').trim(),l=x.toLowerCase();
+ if(/^discuss /.test(l))return 'I can '+l.replace(/^discuss /,'discuss ') + '.';
+ if(/^use /.test(l))return 'I can '+l+'.';
+ if(/^identify /.test(l))return 'I can '+l+'.';
+ if(/^describe /.test(l))return 'I can '+l+'.';
+ if(/^make /.test(l))return 'I can '+l+'.';
+ if(/^read /.test(l))return 'I can '+l+'.';
+ if(/^listen /.test(l))return 'I can '+l+'.';
+ if(/^write /.test(l))return 'I can '+l+'.';
+ return 'I can '+l+'.';
+}
 function autoLessonPlan(){
- let overall=overallLessonObjectives(),realSlides=slides.filter(sl=>sl.type!=='Focus');
+ let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
  $('lpTitle').value=slides[0]?.lesson||'';
  $('lpObjectives').value=overall.map((o,i)=>(i+1)+'. '+o).join('\n');
- $('lpSuccess').value=overall.map(o=>'I can '+o.replace(/[.]$/,'').charAt(0).toLowerCase()+o.replace(/[.]$/,'').slice(1)+'.').join('\n');
- let words=[];
- slides.forEach(sl=>{(sl.keywords||[]).forEach(w=>{if(w&&!words.includes(w))words.push(w)})});
+ $('lpSuccess').value=overall.map(successCriterionFor).join('\n');
+ let words=[...focusData.keywords];
  if(words.length)$('lpVocab').value=words.join(', ');
- else if(!$('lpVocab').value||$('lpVocab').value.includes('Add lesson key vocabulary'))$('lpVocab').value='Vocabulary from the lesson text and activities.';
+ else $('lpVocab').value='';
  let resources=['Interactive Lesson Studio'];
  if(slides.some(x=>x.img))resources.push('activity/poster images');
  if(slides.some(x=>x.aud))resources.push('audio');
@@ -638,7 +662,7 @@ function visitorPlanData(){
  let detailedFlow=slides.map((sl,i)=>{
    let cells=lpFlowRows[i]?[...lpFlowRows[i].querySelectorAll('textarea')].map(x=>x.value):[];
    let inferred=inferActivity(sl.mission,sl.title,sl.type);
-   return {stage:sl.title,time:sl.time,page:sl.page||'—',activity:sl.mission||'Complete the activity.',objective:inferred.objective,teacher:cells[0]||('Introduce, model and guide '+sl.title.toLowerCase()+'.'),students:cells[1]||(sl.mission||'Complete the activity.'),assessment:cells[2]||('Check progress toward: '+inferred.objective),support:cells[3]||'Support with modelling, visuals and guided prompts. Challenge with extension and independent application.'};
+   return {stage:sl.title,time:sl.time,page:sl.page||'—',activity:sl.mission||'Complete the activity.',objective:(sl.objectives||[])[0]||inferred.objective,teacher:cells[0]||('Introduce, model and guide '+sl.title.toLowerCase()+'.'),students:cells[1]||(sl.mission||'Complete the activity.'),assessment:cells[2]||('Check progress toward: '+inferred.objective),support:cells[3]||'Support with modelling, visuals and guided prompts. Challenge with extension and independent application.'};
  });
  return {school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
 }
