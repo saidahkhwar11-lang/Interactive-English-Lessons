@@ -121,6 +121,24 @@
 .theme-animals .lessonThemeIcon,.presentTop.theme-animals .presentThemeIcon{background:linear-gradient(145deg,#eef9d9,#fff2cf)!important;color:#286344}
 .theme-animals .lessonThemeIcon:after{content:"ANIMALS";display:block;position:absolute;font-size:7px;letter-spacing:.08em;font-weight:950;bottom:6px;color:#3c744e}
 .lessonThemeIcon{position:relative}
+
+/* Clean poster-style header badges */
+.banner.theme-shopping:after,.banner.theme-animals:after{content:""!important;display:none!important}
+.banner.theme-shopping:before,.banner.theme-animals:before{left:125px!important;width:420px!important;opacity:.72}
+.lessonThemeIcon{overflow:visible!important;font-size:0!important}
+.theme-shopping .lessonThemeIcon{background:linear-gradient(145deg,#e7f6ff,#fff2c7)!important;border-color:#fff!important}
+.theme-shopping .lessonThemeIcon:before{content:"🛒";font-size:42px;position:absolute;left:11px;top:11px;filter:drop-shadow(0 2px 1px rgba(20,65,95,.12))}
+.theme-shopping .lessonThemeIcon:after{content:"🛍️";font-size:23px;position:absolute;right:-9px;top:-10px;background:#fff1b8;border-radius:12px;padding:2px 4px;box-shadow:0 3px 8px rgba(50,70,80,.10)}
+.theme-animals .lessonThemeIcon{background:linear-gradient(145deg,#eef9d9,#fff2cf)!important;border-color:#fff!important}
+.theme-animals .lessonThemeIcon:before{content:"🐾";font-size:38px;position:absolute;left:15px;top:9px}
+.theme-animals .lessonThemeIcon:after{content:"🐘  🦁";font-size:15px;letter-spacing:1px;position:absolute;left:9px;bottom:5px;color:inherit}
+.presentTop.theme-shopping .presentThemeIcon,.presentTop.theme-animals .presentThemeIcon{font-size:0!important;position:relative;overflow:visible}
+.presentTop.theme-shopping .presentThemeIcon:before{content:"🛒";font-size:36px}
+.presentTop.theme-shopping .presentThemeIcon:after{content:"🛍️";font-size:18px;position:absolute;right:-7px;top:-8px}
+.presentTop.theme-animals .presentThemeIcon:before{content:"🐾";font-size:34px}
+.presentTop.theme-animals .presentThemeIcon:after{content:"🐘🦁";font-size:12px;position:absolute;bottom:3px;left:9px}
+.bannerTitleWrap{max-width:calc(100% - 220px)}
+.bannerTitleWrap h2{white-space:normal}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -254,7 +272,7 @@ function applyLessonTheme(){
  let shopping=grade==='9',banner=document.querySelector('.banner'),pt=document.getElementById('presentTop');
  if(banner){banner.classList.toggle('theme-shopping',shopping);banner.classList.toggle('theme-animals',!shopping)}
  if(pt){pt.classList.toggle('theme-shopping',shopping);pt.classList.toggle('theme-animals',!shopping)}
- let icon=shopping?'🛒':'🐾';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
+ let icon='';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
 }function render(){applyLessonTheme();let s=slides[cur];$('list').innerHTML='';slides.forEach((x,i)=>{let d=document.createElement('div');d.className='item'+(i===cur?' active':'');d.innerHTML='<b>'+(i+1)+'. '+x.title+'</b><small>'+x.time+' min</small>';d.onclick=()=>{cur=i;render()};$('list').appendChild(d)});$('lessonTitle').textContent=s.lesson;$('sub').textContent=s.sub;$('type').textContent=s.type.toUpperCase();$('title').textContent=s.title;$('mission').textContent=s.mission;$('page').textContent='📖 Page '+s.page;$('time').textContent='⏱ '+s.time+' min';if(s.type==='Focus'){
  let overall=overallLessonObjectives();
  $('mission').innerHTML=overall.length?'<b>Lesson Objectives</b><ol style="padding-left:20px;line-height:1.55">'+overall.map(x=>'<li>'+esc2(x)+'</li>').join('')+'</ol>':'Add activities to generate lesson objectives.';
