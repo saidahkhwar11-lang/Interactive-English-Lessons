@@ -209,6 +209,11 @@
 #presentation .qaPopup,#presentation:fullscreen .qaPopup{position:fixed!important;inset:0!important;z-index:9999!important}
 #presentation:fullscreen{overflow:hidden!important}
 #presentation:fullscreen .qaCard{max-height:92vh;overflow:auto}
+
+.questionBubbleLayer{position:absolute;inset:0;pointer-events:none;z-index:15}.questionBubble{pointer-events:auto;position:absolute;width:42px;height:42px;border-radius:50%;border:4px solid #fff;background:#f45182;color:#fff;font-size:19px;font-weight:950;box-shadow:0 4px 13px rgba(31,68,93,.22);cursor:pointer;transition:.15s}.questionBubble:nth-child(3n+2){background:#249de0}.questionBubble:nth-child(3n){background:#65b94f}.questionBubble:hover,.questionBubble.open{transform:scale(1.12);box-shadow:0 5px 16px rgba(31,68,93,.3)}
+.slideQuestionCard{position:absolute;z-index:25;right:3%;top:5%;width:min(390px,42%);background:#fff;border:2px solid #cfe2ec;border-radius:20px;padding:16px;box-shadow:0 14px 35px rgba(19,57,80,.2);text-align:left}.slideQHead{display:flex;justify-content:space-between;align-items:center;color:#174f78;font-size:13px;font-weight:950}.slideQClose{border:0;background:#eef3f6;border-radius:9px;width:30px;height:30px;font-weight:950;cursor:pointer}.slideQText{font-size:22px;line-height:1.35;font-weight:950;color:#123e66;margin:15px 0}.slideReveal{border:0;border-radius:11px;background:#e5ad24;color:#fff;font-weight:950;padding:9px 13px;cursor:pointer}.slideAnswer{margin-top:11px;background:#fff5c9;border:1px solid #ead78c;border-radius:12px;padding:11px;font-size:18px;line-height:1.35;color:#334f5f}.slideAnswer b{display:block;color:#9a7110;margin-bottom:5px}
+#presentation:fullscreen .slideQuestionCard{z-index:9999}
+@media(max-width:850px){.slideQuestionCard{width:55%}.slideQText{font-size:18px}.questionBubble{width:36px;height:36px;font-size:16px}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -402,15 +407,21 @@ function renderQuestionEditor(){
 }
 function setupPresentQuestions(sl,container){
  let qs=normaliseQuestions(sl);if(!qs.length||!container)return;
- let btn=document.createElement('button');btn.className='presentQuestionBtn';btn.textContent='❓ Questions';container.appendChild(btn);
- btn.onclick=()=>openQAPopup(sl,0);
+ let visual=document.querySelector('#presentSlide .presentVisual')||container;
+ visual.style.position='relative';
+ let layer=document.createElement('div');layer.className='questionBubbleLayer';
+ qs.forEach((item,i)=>{let b=document.createElement('button');b.className='questionBubble';b.textContent=i+1;b.title='Question '+(i+1);b.style.left=(6+(i%5)*10)+'%';b.style.top=(7+Math.floor(i/5)*12)+'%';b.onclick=e=>{e.stopPropagation();showSlideQuestion(sl,i,visual,b)};layer.appendChild(b)});
+ visual.appendChild(layer);
 }
-function openQAPopup(sl,start){
- let qs=normaliseQuestions(sl),idx=start||0,revealed=false;
- let pop=document.createElement('div');pop.className='qaPopup';let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;parent.appendChild(pop);
- const paint=()=>{let item=qs[idx],hasAnswer=!!(item.a&&item.a.trim());pop.innerHTML='<div class="qaCard"><div class="qaTop"><b>Question '+(idx+1)+' of '+qs.length+'</b><button class="qaClose">✕ Close</button></div><div class="'+(hasAnswer?'qaSides':'qaQuestionOnly')+'"><div class="qaSide qaQuestion"><div class="qaLabel">❓ QUESTION</div><div class="qaText">'+esc2(item.q)+'</div></div>'+(hasAnswer?'<div class="qaSide qaAnswer"><div class="qaLabel">✨ ANSWER</div>'+(revealed?'<div class="qaText">'+esc2(item.a)+'</div>':'<div class="qaCovered">Answer hidden</div><button class="qaReveal">Reveal Answer</button>')+'</div>':'')+'</div><div class="qaBottom">'+(idx>0?'<button class="qaPrev">← Previous</button>':'')+(idx<qs.length-1?'<button class="qaNext">Next Question →</button>':'')+'</div></div>';
- pop.querySelector('.qaClose').onclick=()=>pop.remove();let r=pop.querySelector('.qaReveal');if(r)r.onclick=()=>{revealed=true;paint()};let n=pop.querySelector('.qaNext');if(n)n.onclick=()=>{idx++;revealed=false;paint()};let p=pop.querySelector('.qaPrev');if(p)p.onclick=()=>{idx--;revealed=false;paint()};
- };paint();
+function showSlideQuestion(sl,idx,visual,bubble){
+ let qs=normaliseQuestions(sl),item=qs[idx],hasAnswer=!!(item.a&&item.a.trim());
+ visual.querySelectorAll('.slideQuestionCard').forEach(x=>x.remove());
+ visual.querySelectorAll('.questionBubble').forEach(x=>x.classList.remove('open'));bubble.classList.add('open');
+ let card=document.createElement('div');card.className='slideQuestionCard';
+ card.innerHTML='<div class="slideQHead"><span>❓ Question '+(idx+1)+'</span><button class="slideQClose">×</button></div><div class="slideQText">'+esc2(item.q)+'</div>'+(hasAnswer?'<button class="slideReveal">✨ Reveal Answer</button><div class="slideAnswer" hidden><b>Answer</b><div>'+esc2(item.a)+'</div></div>':'');
+ visual.appendChild(card);
+ card.querySelector('.slideQClose').onclick=()=>{card.remove();bubble.classList.remove('open')};
+ let r=card.querySelector('.slideReveal');if(r)r.onclick=()=>{let ans=card.querySelector('.slideAnswer');ans.hidden=false;r.style.display='none'};
 }
 
 function fillObjectives(){
