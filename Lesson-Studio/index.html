@@ -370,7 +370,16 @@ function applyLessonTheme(){
  if(banner){banner.classList.toggle('theme-shopping',shopping);banner.classList.toggle('theme-animals',!shopping)}
  if(pt){pt.classList.toggle('theme-shopping',shopping);pt.classList.toggle('theme-animals',!shopping)}
  let icon='';if(document.getElementById('ico'))document.getElementById('ico').textContent=icon;if(document.getElementById('presentThemeIcon'))document.getElementById('presentThemeIcon').textContent=icon;
-}function render(){applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
+}function migrateFocusStructuredData(){
+ let focus=slides.find(sl=>sl.type==='Focus');if(!focus)return;
+ let lesson=(focus.lesson||slides[0]?.lesson||'').toLowerCase();
+ if(lesson.includes('online shopping')){
+   let valid=(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.'&&o!=='Describe people, places or things.');
+   if(!valid.length)focus.objectives=['Discuss online shopping choices and make predictions before reading.','Use context clues and punctuation to understand new vocabulary.','Identify main ideas and key details in the text.'];
+   if(!(focus.keywords||[]).length)focus.keywords=['online','products','customers','categories','predict','communicate','huge','scientists'];
+ }
+}
+function render(){migrateFocusStructuredData();applyLessonTheme();let s=slides[cur];if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
  const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&!s.aud;
  let bodyEl=document.querySelector('.body');if(bodyEl)bodyEl.classList.toggle('visualFirst',visualOnly);
@@ -392,7 +401,7 @@ fillObjectives();
 renderSelectedObjectives();
 renderQuestionEditor();
 $('eMission').value=s.mission||'';
-let kwf=$('focusKeywordsField'),kwe=$('eKeywords');if(kwf)kwf.classList.toggle('show',s.type==='Focus');if(kwe)kwe.value=(s.keywords||[]).join(', ');
+let selectedLabel=$('selectedObjectives')?.closest('.field')?.querySelector('label');if(selectedLabel)selectedLabel.textContent=s.type==='Focus'?'Lesson Objectives (max 3)':'Selected objectives (max 3)';let kwf=$('focusKeywordsField'),kwe=$('eKeywords');if(kwf)kwf.classList.toggle('show',s.type==='Focus');if(kwe)kwe.value=(s.keywords||[]).join(', ');
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
    <div class="reading-poster-final" id="readingPosterArea"></div>
@@ -546,6 +555,7 @@ function successCriterionFor(obj){
  return 'I can '+l+'.';
 }
 function autoLessonPlan(){
+ migrateFocusStructuredData();
  let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
  $('lpTitle').value=slides[0]?.lesson||'';
