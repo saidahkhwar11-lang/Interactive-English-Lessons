@@ -214,6 +214,15 @@
 .slideQuestionCard{position:absolute;z-index:25;right:3%;top:5%;width:min(390px,42%);background:#fff;border:2px solid #cfe2ec;border-radius:20px;padding:16px;box-shadow:0 14px 35px rgba(19,57,80,.2);text-align:left}.slideQHead{display:flex;justify-content:space-between;align-items:center;color:#174f78;font-size:13px;font-weight:950}.slideQClose{border:0;background:#eef3f6;border-radius:9px;width:30px;height:30px;font-weight:950;cursor:pointer}.slideQText{font-size:22px;line-height:1.35;font-weight:950;color:#123e66;margin:15px 0}.slideReveal{border:0;border-radius:11px;background:#e5ad24;color:#fff;font-weight:950;padding:9px 13px;cursor:pointer}.slideAnswer{margin-top:11px;background:#fff5c9;border:1px solid #ead78c;border-radius:12px;padding:11px;font-size:18px;line-height:1.35;color:#334f5f}.slideAnswer b{display:block;color:#9a7110;margin-bottom:5px}
 #presentation:fullscreen .slideQuestionCard{z-index:9999}
 @media(max-width:850px){.slideQuestionCard{width:55%}.slideQText{font-size:18px}.questionBubble{width:36px;height:36px;font-size:16px}}
+
+/* Q&A vertical rail beside activity picture */
+.questionBubbleLayer{position:absolute!important;left:10px!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translateY(-50%)!important;width:56px!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;padding:10px 7px!important;border-radius:22px!important;background:rgba(15,67,112,.92)!important;box-shadow:0 7px 20px rgba(18,55,82,.18)!important;pointer-events:auto!important;z-index:20!important}
+.questionBubble{position:static!important;left:auto!important;top:auto!important;flex:0 0 auto!important;width:42px!important;height:42px!important}
+.presentVisual:has(.questionBubbleLayer){padding-left:76px!important}
+.slideQuestionCard{right:3%!important;top:6%!important}
+#presentation:fullscreen .questionBubbleLayer{z-index:9998!important}
+#presentation:fullscreen .slideQuestionCard{z-index:9999!important}
+@media(max-width:850px){.questionBubbleLayer{left:6px!important;width:48px!important;gap:7px!important;padding:8px 5px!important}.questionBubble{width:36px!important;height:36px!important}.presentVisual:has(.questionBubbleLayer){padding-left:62px!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -410,7 +419,7 @@ function setupPresentQuestions(sl,container){
  let visual=document.querySelector('#presentSlide .presentVisual')||container;
  visual.style.position='relative';
  let layer=document.createElement('div');layer.className='questionBubbleLayer';
- qs.forEach((item,i)=>{let b=document.createElement('button');b.className='questionBubble';b.textContent=i+1;b.title='Question '+(i+1);b.style.left=(6+(i%5)*10)+'%';b.style.top=(7+Math.floor(i/5)*12)+'%';b.onclick=e=>{e.stopPropagation();showSlideQuestion(sl,i,visual,b)};layer.appendChild(b)});
+ qs.forEach((item,i)=>{let b=document.createElement('button');b.className='questionBubble';b.textContent=i+1;b.title='Question '+(i+1);b.onclick=e=>{e.stopPropagation();showSlideQuestion(sl,i,visual,b)};layer.appendChild(b)});
  visual.appendChild(layer);
 }
 function showSlideQuestion(sl,idx,visual,bubble){
