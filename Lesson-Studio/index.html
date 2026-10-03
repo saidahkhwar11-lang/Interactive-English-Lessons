@@ -243,6 +243,14 @@
 .presentImageViewer{position:fixed;inset:0;z-index:10000;background:rgba(8,27,42,.94);display:flex;align-items:center;justify-content:center;padding:18px}.presentImageViewer img{width:100%;height:100%;object-fit:contain}.presentImageClose{position:absolute;right:24px;top:20px;z-index:2;border:0;border-radius:12px;background:#fff;color:#123e66;padding:10px 14px;font-weight:950;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.2)}
 #presentation:fullscreen .presentImageViewer{z-index:10000!important}
 @media(max-width:900px){.activityTopStrip{grid-template-columns:1fr}.activityTopMeta{justify-content:flex-start}.activityHorizontal .presentVisual{height:calc(100vh - 300px)!important}}
+
+/* Final activity presentation: large picture + compact side details */
+.presentSlide:not(.pictureOnlySlide){grid-template-columns:minmax(0,1fr) minmax(245px,300px)!important;gap:14px!important;padding:14px!important}
+.compactDetails{padding:18px!important;border-radius:22px!important;background:linear-gradient(160deg,#fff8df,#fffdf5)!important;border:1px solid #efd17a!important;box-shadow:0 7px 20px rgba(78,67,35,.07)!important;align-self:stretch!important}
+.compactDetails .kicker{font-size:10px!important}.compactDetails h2{font-size:24px!important;margin:12px 0!important;color:#a6530b!important}.compactDetails .presentMission{font-size:16px!important;line-height:1.45!important;font-weight:800!important;color:#123e66!important}.compactDetails .presentBadges{gap:6px!important;margin-top:14px!important}.compactDetails .presentBadge{font-size:11px!important;padding:7px 9px!important}.compactDetails .presentAudio{margin-top:14px!important;padding:10px!important}
+.presentSlide:not(.pictureOnlySlide) .presentVisual{min-height:520px!important}
+.pictureOnlySlide{display:block!important;padding:12px!important}.pictureOnlySlide .presentVisual{width:100%!important;height:calc(100vh - 125px)!important;min-height:560px!important;padding:8px!important}.pictureOnlySlide .presentVisual img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important}
+@media(max-width:900px){.presentSlide:not(.pictureOnlySlide){grid-template-columns:minmax(0,1fr) 230px!important}.compactDetails{padding:13px!important}.compactDetails h2{font-size:20px!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -716,7 +724,11 @@ function renderPresentation(){
  let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
- host.innerHTML='<div class="presentSlide activityHorizontal"><div class="activityTopStrip"><div class="activityTopTitle"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2></div><div class="activityTopMission">'+mission+'</div><div class="activityTopMeta"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2((sl.objectives&&sl.objectives[0])||sl.obj||'Objective')+'</span></div></div><div class="presentVisual">'+visual+'</div>'+audio+'</div>';
+ let realMission=(sl.mission||'').trim(),templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
+ let realPage=!!(sl.page&&sl.page!=='—'),realObj=(sl.objectives&&sl.objectives.length?sl.objectives[0]:'');
+ let hasDetails=!templateMission||realPage||!!realObj||!!sl.aud;
+ let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+'<span class="presentBadge">⏱ '+sl.time+' min</span>'+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+audio+'</aside>':'';
+ host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+'</div>';
  if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>openPresentationImage(sl.img)}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
  cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);
