@@ -525,7 +525,7 @@ $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModa
 
 let presentIndex=0,presentTimerId=null,presentRemaining=300;
 function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,lessonPlanLink(activeLessonId||'lesson'),58)}
-function openPresentation(){if(!activeLessonId){activeLessonId=(slides[0]&&slides[0]._savedLessonId)||localStorage.getItem('LessonStudioActiveId')||null}presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
+function openPresentation(){slides.forEach(x=>{if(x.type==='Focus'&&(!x.objectives||!x.objectives.length)){x.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];x.obj=x.objectives[0]}});if(!activeLessonId){activeLessonId=(slides[0]&&slides[0]._savedLessonId)||localStorage.getItem('LessonStudioActiveId')||null}presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
 async function closePresentation(){
  document.getElementById('presentation').classList.remove('open');
  if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}
@@ -535,7 +535,7 @@ function renderPresentation(){
  applyLessonTheme();const sl=slides[presentIndex];if(!sl)return;buildPresentQR();
  document.getElementById('presentLessonTitle').textContent=sl.lesson||'Lesson';document.getElementById('presentSub').textContent=sl.sub||'';
  const nav=document.getElementById('presentNavList');nav.innerHTML='';
- slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(!chosen&&x.type==='Reading'&&x.obj==='Build reading fluency.')chosen=x.obj;b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<span class="navObjective">🎯 '+esc2(chosen)+'</span>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
+ slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<span class="navObjective">🎯 '+esc2(chosen)+'</span>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
  let visual=sl.img?'<img id="presentImg" alt="Activity picture">':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
