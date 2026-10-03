@@ -96,6 +96,27 @@
 .bannerTitleWrap h2{font-weight:950;letter-spacing:-.02em}.bannerTitleWrap p{display:inline-block;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.62);font-weight:750}
 .presentTop.theme-shopping{background:linear-gradient(105deg,#e9f8ff,#fff2c9 55%,#ffe6ef)}.presentTop.theme-animals{background:linear-gradient(105deg,#eff9df,#e7f7ed 55%,#fff0ce)}
 .presentThemeIcon{font-size:31px;background:rgba(255,255,255,.72);width:52px;height:52px;border-radius:16px;display:grid;place-items:center}
+
+/* Poster-style dynamic lesson headers */
+.banner{position:relative;overflow:hidden;min-height:122px;padding:22px 34px!important;border-radius:0 0 24px 24px}
+.banner:before,.banner:after{content:"";position:absolute;border-radius:999px;pointer-events:none}
+.banner.theme-animals:before{width:360px;height:110px;background:rgba(159,207,91,.24);left:105px;top:8px;transform:rotate(-2deg)}
+.banner.theme-animals:after{content:"🌿  🐘  🦁";width:auto;height:auto;background:none;left:auto;right:125px;top:18px;font-size:30px;letter-spacing:8px;opacity:.82}
+.banner.theme-shopping:before{width:410px;height:112px;background:rgba(255,218,103,.30);left:110px;top:7px;transform:rotate(-1deg)}
+.banner.theme-shopping:after{content:"🛍️  ✨  💳";width:auto;height:auto;background:none;left:auto;right:120px;top:18px;font-size:28px;letter-spacing:8px;opacity:.88}
+.lessonThemeIcon{z-index:2;width:72px!important;height:72px!important;font-size:39px!important;border:4px solid rgba(255,255,255,.72);box-shadow:0 7px 18px rgba(34,75,85,.12)!important}
+.bannerTitleWrap{z-index:2;position:relative;min-width:0}.bannerTitleWrap h2{font-size:35px!important;line-height:1.05;margin:0!important;text-shadow:0 2px 0 rgba(255,255,255,.85);letter-spacing:-.025em}
+.theme-animals .bannerTitleWrap h2{color:#175b32!important}.theme-shopping .bannerTitleWrap h2{color:#073b70!important}
+.bannerTitleWrap p{font-size:15px!important;margin-top:9px!important;padding:7px 15px!important;border:2px solid rgba(255,255,255,.75);box-shadow:0 3px 10px rgba(40,78,91,.06)}
+.theme-animals .bannerTitleWrap p{background:#fff0cf!important;color:#326a48!important}.theme-shopping .bannerTitleWrap p{background:#dff2ff!important;color:#315f80!important}
+.banner #qrSlideBtn{z-index:3;box-shadow:0 5px 15px rgba(25,68,91,.09)}
+/* presentation header gets same poster feeling */
+.presentTop{position:relative;overflow:hidden;min-height:94px;padding:14px 24px!important}
+.presentTop:before{content:"";position:absolute;width:350px;height:90px;border-radius:999px;left:70px;top:2px;pointer-events:none}
+.presentTop.theme-animals:before{background:rgba(159,207,91,.22)}.presentTop.theme-shopping:before{background:rgba(255,218,103,.28)}
+.presentTop>div{position:relative;z-index:2}.presentTop h1{font-size:31px!important;font-weight:950!important;letter-spacing:-.02em;text-shadow:0 2px 0 rgba(255,255,255,.8)}
+.presentTop.theme-animals h1{color:#175b32!important}.presentTop.theme-shopping h1{color:#073b70!important}
+.presentThemeIcon{z-index:2!important;width:62px!important;height:62px!important;font-size:35px!important;border:3px solid rgba(255,255,255,.75);box-shadow:0 5px 14px rgba(34,75,85,.1)}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
