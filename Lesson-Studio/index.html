@@ -528,10 +528,8 @@ function supportChallengeFor(sl){
  return 'Support: Model the first step and use visual or partner support where needed.\nChallenge: Ask students to explain their thinking or complete an extension independently.';
 }
 function focusLessonData(){
- let focus=slides.find(sl=>sl.type==='Focus');
+ let focus=slides.find(sl=>sl.type==='Focus')||slides[1]||null;
  let objectives=focus?(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.'):[];
- // If the Focus slide has no manually selected lesson objectives, use explicit objectives from activity slides.
- if(!objectives.length)objectives=overallLessonObjectives();
  let keywords=focus?(focus.keywords||[]).filter(Boolean):[];
  return {focus,objectives:objectives.slice(0,3),keywords};
 }
@@ -554,8 +552,7 @@ function autoLessonPlan(){
  $('lpObjectives').value=overall.map((o,i)=>(i+1)+'. '+o).join('\n');
  $('lpSuccess').value=overall.map(successCriterionFor).join('\n');
  let words=[...focusData.keywords];
- if(words.length)$('lpVocab').value=words.join(', ');
- else $('lpVocab').value='';
+ $('lpVocab').value=words.join(', ');
  let resources=['Interactive Lesson Studio'];
  if(slides.some(x=>x.img))resources.push('activity/poster images');
  if(slides.some(x=>x.aud))resources.push('audio');
