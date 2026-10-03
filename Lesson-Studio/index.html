@@ -154,6 +154,16 @@
 .presentTop:before,.presentTop:after{display:none!important;content:""!important}
 .presentThemeIcon{grid-column:1!important}.presentTop>div:nth-of-type(2){grid-column:2!important}.presentTop #presentQRWrap{grid-column:3!important}.presentTop .presentActions{grid-column:4!important;margin-left:0!important}
 @media(max-width:760px){.banner{grid-template-columns:68px minmax(0,1fr) auto!important;column-gap:10px!important}.lessonThemeIcon{width:58px!important;height:58px!important}.bannerTitleWrap h2{font-size:27px!important}}
+
+/* Picture-only presentation slides: fill the white slide canvas */
+.presentSlide:has(.presentDetails[style*="display: none"]){padding:12px!important;display:block!important}
+.presentSlide:has(.presentDetails[style*="display: none"]) .presentVisual{width:100%!important;height:calc(100vh - 125px)!important;min-height:560px!important;padding:8px!important;border-radius:24px!important}
+.presentSlide:has(.presentDetails[style*="display: none"]) .presentVisual img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;border-radius:18px!important}
+@media(max-width:900px){.presentSlide:has(.presentDetails[style*="display: none"]) .presentVisual{height:calc(100vh - 115px)!important;min-height:420px!important}}
+
+.pictureOnlySlide{padding:12px!important;display:block!important}
+.pictureOnlySlide .presentVisual{width:100%!important;height:calc(100vh - 125px)!important;min-height:560px!important;padding:8px!important}
+.pictureOnlySlide .presentVisual img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -509,7 +519,7 @@ function cleanPresentationDefaults(sl){
    const details=host.querySelector('.presentDetails');
    if(details)details.style.display='none';
    const wrap=host.querySelector('.presentSlide');
-   if(wrap)wrap.style.gridTemplateColumns='minmax(0,1fr)';
+   if(wrap){wrap.style.gridTemplateColumns='minmax(0,1fr)';wrap.classList.add('pictureOnlySlide')};
    const visual=host.querySelector('.presentVisual');
    if(visual){visual.style.width='100%';visual.style.maxWidth='none'}
  }
