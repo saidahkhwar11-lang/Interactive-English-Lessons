@@ -321,7 +321,15 @@ function applyLessonTheme(){
  $('obj').textContent='🎯 '+(s.obj||'Activity objective');
 }
 let an=$('autoObjectiveNote');if(an){let g=inferActivity(s.mission,s.title,s.type);an.textContent=g.skill+' · '+g.objective;}
-$('eTitle').value=s.title;$('eLesson').value=s.lesson;$('eSub').value=s.sub;$('eTime').value=s.time;$('ePage').value=s.page;$('eSkill').value=s.skill||'Reading';fillObjectives();renderSelectedObjectives();$('eMission').value=s.mission;
+$('eTitle').value=s.title||'';
+$('eLesson').value=s.lesson||'Untitled Lesson';
+$('eSub').value=s.sub||'Grade · Unit · Lesson';
+$('eTime').value=s.time||5;
+$('ePage').value=s.page||'—';
+$('eSkill').value=s.skill||'Reading';
+fillObjectives();
+renderSelectedObjectives();
+$('eMission').value=s.mission||'';
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
  $('canvas').innerHTML=`<div class="reading-routine-final">
    <div class="reading-poster-final" id="readingPosterArea"></div>
@@ -346,11 +354,16 @@ if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value
  if(s.img){$('sheet').src=s.img;$('sheet').onclick=()=>{$('zoomImg').src=s.img;$('zoom').classList.add('open')}}
 }
 $('audio').innerHTML=s.aud?'<audio id="player" controls></audio>':'No audio added.';if(s.aud)$('player').src=s.aud}
-function fillObjectives(){let sk=$('eSkill').value,sel=$('eObjective');sel.innerHTML='';(objectiveBank[sk]||[]).forEach(o=>{let op=document.createElement('option');op.textContent=o;op.value=o;sel.appendChild(op)});let op=document.createElement('option');op.textContent='Other / custom objective…';op.value='__custom';sel.appendChild(op)}
-function renderSelectedObjectives(){let box=$('selectedObjectives');box.innerHTML='';let arr=slides[cur].objectives||[];if(!arr.length){box.innerHTML='<small style="color:#648095">No objective selected yet.</small>';return}arr.forEach((o,i)=>{let d=document.createElement('div');d.style.cssText='background:#eef8fc;border:1px solid #d5e7ef;border-radius:10px;padding:7px;font-size:12px';d.innerHTML=esc2(o)+' <button type="button" data-oi="'+i+'" style="float:right;border:0;background:transparent;cursor:pointer">×</button>';box.appendChild(d)});box.querySelectorAll('button').forEach(b=>b.onclick=()=>{slides[cur].objectives.splice(+b.dataset.oi,1);render();markChanged()})}
+function fillObjectives(){
+ let sk=$('eSkill')?.value||slides[cur]?.skill||'Reading',sel=$('eObjective');if(!sel)return;
+ sel.innerHTML='<option value="">Choose an objective…</option>';
+ (objectiveBank[sk]||[]).forEach(o=>{let op=document.createElement('option');op.textContent=o;op.value=o;sel.appendChild(op)});
+ let op=document.createElement('option');op.textContent='Other / custom objective…';op.value='__custom';sel.appendChild(op);
+}
+function renderSelectedObjectives(){let box=$('selectedObjectives');if(!box||!slides[cur])return;slides[cur].objectives=slides[cur].objectives||[];let arr=slides[cur].objectives;box.innerHTML='';if(!arr.length){box.innerHTML='<small style="color:#648095">No objective selected yet.</small>';return}arr.forEach((o,i)=>{let d=document.createElement('div');d.style.cssText='background:#eef8fc;border:1px solid #d5e7ef;border-radius:10px;padding:7px;font-size:12px';d.innerHTML=esc2(o)+' <button type="button" data-oi="'+i+'" style="float:right;border:0;background:transparent;cursor:pointer">×</button>';box.appendChild(d)});box.querySelectorAll('button').forEach(b=>b.onclick=()=>{slides[cur].objectives.splice(+b.dataset.oi,1);render();markChanged()})}
 function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-$('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();markChanged()};
-$('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(v==='__custom')v=prompt('Type your objective:')||'';if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);render();markChanged()}};
+$('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();renderSelectedObjectives();markChanged()};
+$('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(!v)return;if(v==='__custom')v=(prompt('Type your objective:')||'').trim();if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);renderSelectedObjectives();markChanged()}};
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
  if(slides[0] && slides[0].type==='Reading'){
@@ -362,9 +375,9 @@ $('gradeSelect').onchange=()=>{
  render();markChanged();
 };$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
-$('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);render();markChanged()};
+$('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
-$('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);render();markChanged()};
+$('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
 function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();markChanged();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
 clearTimeout(autoSaveTimer);autoSaveTimer=null;
 activeLessonId=null;localStorage.removeItem('LessonStudioActiveId');
@@ -417,7 +430,7 @@ function downloadLessonPlan(){
  autoLessonPlan();
  const vals={};lpIds.forEach(id=>vals[id]=$(id).value);
  let rows=[...$('lpFlowBody').querySelectorAll('tr')].map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc2(td.querySelector('textarea')?.value||td.innerText).replace(/\n/g,'<br>')+'</td>').join('')+'</tr>').join('');
- let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>body{font-family:Arial;margin:32px;color:#173f67}h1{color:#123e66}section{margin:18px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #bbb;padding:7px;vertical-align:top}th{background:#eef7fa}.box{white-space:pre-wrap;border:1px solid #d7e5eb;border-radius:10px;padding:10px}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><p><b>Teacher:</b> '+esc2(vals.lpTeacher)+' &nbsp; <b>Grade:</b> '+esc2(vals.lpGrade)+' &nbsp; <b>Date:</b> '+esc2(vals.lpDate)+'</p><h2>'+esc2(vals.lpTitle)+'</h2><section><h3>Learning Objectives</h3><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><h3>Success Criteria</h3><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h3>Key Vocabulary / Language</h3><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><h3>Resources</h3><div class="box">'+esc2(vals.lpResources)+'</div></section><section><h3>Lesson Flow</h3><table><tr><th>Stage</th><th>Teacher</th><th>Students</th><th>Assessment</th><th>Support & Challenge</th></tr>'+rows+'</table></section><section><h3>Differentiation</h3><div class="box">'+esc2(vals.lpDiff)+'</div></section><section><h3>Assessment & Follow-up</h3><div class="box">'+esc2(vals.lpAssess)+'</div></section><p><b>Lesson Plan Link:</b> '+esc2(lessonPlanLink())+'</p><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>';
+ let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>body{font-family:Arial;margin:32px;color:#173f67}h1{color:#123e66}section{margin:18px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #bbb;padding:7px;vertical-align:top}th{background:#eef7fa}.box{white-space:pre-wrap;border:1px solid #d7e5eb;border-radius:10px;padding:10px}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><p><b>Teacher:</b> '+esc2(vals.lpTeacher)+' &nbsp; <b>Grade:</b> '+esc2(vals.lpGrade)+' &nbsp; <b>Date:</b> '+esc2(vals.lpDate)+'</p><h2>'+esc2(vals.lpTitle)+'</h2><section><h3>Learning Objectives</h3><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><h3>Success Criteria</h3><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h3>Key Vocabulary / Language</h3><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><h3>Resources</h3><div class="box">'+esc2(vals.lpResources)+'</div></section><section><h3>Lesson Flow</h3><table><tr><th>Stage</th><th>Teacher</th><th>Students</th><th>Assessment</th><th>Support & Challenge</th></tr>'+rows+'</table></section><section><h3>Differentiation</h3><div class="box">'+esc2(vals.lpDiff)+'</div></section><section><h3>Assessment & Follow-up</h3><div class="box">'+esc2(vals.lpAssess)+'</div></section><p><b>Lesson Plan Link:</b> '+esc2(lessonPlanLink())+'</p></body></html>';
  let blob=new Blob([doc],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(vals.lpTitle||'lesson-plan').replace(/[^a-z0-9]+/gi,'-')+'.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 $('openLP').onclick=()=>{$('lpModal').classList.add('open');autoLessonPlan()};
