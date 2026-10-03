@@ -496,6 +496,23 @@ function renderPresentation(){
  host.innerHTML='<div class="presentSlide"><div class="presentVisual">'+visual+'</div><aside class="presentDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2><div class="presentMission">'+mission+'</div><div class="presentBadges"><span class="presentBadge">📖 Page '+esc2(sl.page||'—')+'</span><span class="presentBadge">⏱ '+sl.time+' min</span><span class="presentBadge">🎯 '+esc2(sl.obj||'Objective')+'</span></div>'+audio+'</aside></div>';
  if(sl.img){const im=document.getElementById('presentImg');im.src=sl.img;im.onclick=()=>{document.getElementById('zoomImg').src=sl.img;document.getElementById('zoom').classList.add('open')}}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
+ cleanPresentationDefaults(sl);
+}
+function cleanPresentationDefaults(sl){
+ const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
+ const defaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'];
+ const noMission=defaults.includes((sl.mission||'').trim());
+ const noPage=!sl.page||sl.page.trim()===''||sl.page.trim()==='—';
+ const noObj=!sl.obj||['Objective','Identify the main idea.','Build reading fluency.'].includes(sl.obj.trim());
+ const noAudio=!sl.aud;
+ if(sl.img&&noMission&&noPage&&noObj&&noAudio){
+   const details=host.querySelector('.presentDetails');
+   if(details)details.style.display='none';
+   const wrap=host.querySelector('.presentSlide');
+   if(wrap)wrap.style.gridTemplateColumns='minmax(0,1fr)';
+   const visual=host.querySelector('.presentVisual');
+   if(visual){visual.style.width='100%';visual.style.maxWidth='none'}
+ }
 }
 function renderPresentReading(sl,host){
  if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(sl.time||5)*60;
