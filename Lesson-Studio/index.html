@@ -333,24 +333,23 @@ function updateAutoObjective(){
  let n=$('autoObjectiveNote'); if(n)n.textContent=g.skill+" · "+g.objective;
 }
 function overallLessonObjectives(){
- let candidates=[];
+ let result=[];
  slides.forEach(sl=>{
-   if(sl.type==="Reading"||sl.type==="Alef")return;
-   let g=inferActivity(sl.mission,sl.title,sl.type);
-   if(g.objective&&!candidates.includes(g.objective))candidates.push(g.objective);
+   if(sl.type==='Reading'||sl.type==='Alef'||sl.type==='Focus')return;
+   let explicit=(sl.objectives||[]).filter(Boolean);
+   explicit.forEach(o=>{if(!result.includes(o)&&result.length<3)result.push(o)});
  });
- // Keep maximum 3 and favor distinct skills.
- let result=[],skills=new Set();
- for(let sl of slides){
-   if(sl.type==="Reading"||sl.type==="Alef")continue;
-   let g=inferActivity(sl.mission,sl.title,sl.type);
-   if(!skills.has(g.skill)&&!result.includes(g.objective)){result.push(g.objective);skills.add(g.skill)}
-   if(result.length===3)break;
+ if(result.length<3){
+   slides.forEach(sl=>{
+     if(result.length>=3||sl.type==='Reading'||sl.type==='Alef'||sl.type==='Focus')return;
+     let mission=(sl.mission||'').trim();
+     if(!mission||['Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission))return;
+     let g=inferActivity(mission,sl.title,sl.type);
+     if(g.objective&&!result.includes(g.objective))result.push(g.objective);
+   });
  }
- for(let c of candidates){if(result.length<3&&!result.includes(c))result.push(c)}
  return result.slice(0,3);
 }
-
 function absentCount(names){return String(names||'').split(/[\\n,;]+/).map(x=>x.trim()).filter(Boolean).length}
 function setupRoutineExtras(sl){
  sl.attendance=sl.attendance||{className:'',names:''}; sl.readingGroups=sl.readingGroups||[false,false,false,false,false,false];
@@ -496,22 +495,36 @@ function buildQR(){
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
 }
 function autoLessonPlan(){
- let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
+ let overall=overallLessonObjectives(),realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
- $('lpTitle').value=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'';
- $('lpObjectives').value=overall.map((x,i)=>(i+1)+'. '+x).join('\n');
- $('lpSuccess').value=overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\n');
- let skills=[...new Set(slides.filter(x=>!['Reading','Alef'].includes(x.type)).map(x=>inferActivity(x.mission,x.title,x.type).skill))];
- $('lpVocab').value='Skills: '+skills.join(', ')+'\\nAdd lesson key vocabulary here.';
+ $('lpTitle').value=slides[0]?.lesson||'';
+ $('lpObjectives').value=overall.map((o,i)=>(i+1)+'. '+o).join('\n');
+ $('lpSuccess').value=overall.map(o=>'I can '+o.replace(/[.]$/,'').charAt(0).toLowerCase()+o.replace(/[.]$/,'').slice(1)+'.').join('\n');
+ let words=[];
+ slides.forEach(sl=>{(sl.keywords||[]).forEach(w=>{if(w&&!words.includes(w))words.push(w)})});
+ if(words.length)$('lpVocab').value=words.join(', ');
+ else if(!$('lpVocab').value||$('lpVocab').value.includes('Add lesson key vocabulary'))$('lpVocab').value='Vocabulary from the lesson text and activities.';
+ let resources=['Interactive Lesson Studio'];
+ if(slides.some(x=>x.img))resources.push('activity/poster images');
+ if(slides.some(x=>x.aud))resources.push('audio');
+ if(slides.some(x=>(x.questions||[]).length))resources.push('interactive Q&A');
+ resources.push('timer');
+ $('lpResources').value=resources.join('; ')+'.';
+ if(!$('lpDiff').value)$('lpDiff').value='Support: modelling, visuals, guided prompts and partner support.\nChallenge: extension questions and independent application.';
+ if(!$('lpAssess').value)$('lpAssess').value='Ongoing checks through questioning, student responses, activity completion and lesson Q&A.';
  let body=$('lpFlowBody');body.innerHTML='';
  slides.forEach((sl,i)=>{
-   let tr=document.createElement('tr');
-   let g=inferActivity(sl.mission,sl.title,sl.type);
-   tr.innerHTML='<td><b>'+esc2(sl.title)+'</b><br><small>'+sl.time+' min'+(sl.page&&sl.page!=='—'?' · p. '+esc2(sl.page):'')+'</small></td>'+
-   '<td><textarea>Introduce/model '+esc2(sl.title.toLowerCase())+'.</textarea></td>'+
-   '<td><textarea>'+esc2(sl.mission||'Complete the activity.')+'</textarea></td>'+
-   '<td><textarea>Check: '+esc2(g.objective)+'</textarea></td>'+
-   '<td><textarea>Support with modelling/visuals. Challenge with extension.</textarea></td>';
+   let tr=document.createElement('tr'),explicit=(sl.objectives||[])[0],g=inferActivity(sl.mission,sl.title,sl.type);
+   let objective=explicit||(sl.type==='Reading'?'Build reading fluency.':g.objective);
+   let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
+   let student=sl.type==='Reading'?'Read silently using the assigned reading routine.':(template?'Engage with the displayed activity and respond to teacher prompts.':mission);
+   let teacher=sl.type==='Reading'?'Set the reading routine, monitor engagement and track participation.':('Introduce '+sl.title.toLowerCase()+', model where needed, and guide student responses.');
+   let assess=(sl.questions||[]).length?'Use the interactive question bubbles to check understanding.':'Check student responses and progress toward the activity objective.';
+   tr.innerHTML='<td><b>'+esc2(sl.title)+'</b><br><small>'+sl.time+' min'+(sl.page&&sl.page!=='—'?' · p. '+esc2(sl.page):'')+'</small><br><small>🎯 '+esc2(objective)+'</small></td>'+
+   '<td><textarea>'+esc2(teacher)+'</textarea></td>'+
+   '<td><textarea>'+esc2(student)+'</textarea></td>'+
+   '<td><textarea>'+esc2(assess)+'</textarea></td>'+
+   '<td><textarea>Support with modelling, visuals and guided prompts. Challenge with extension and independent application.</textarea></td>';
    body.appendChild(tr);
  });
  buildQR();
@@ -549,6 +562,7 @@ function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';s
 let autoSaveTimer=null,autoSaveBusy=false;
 function setSaveStatus(t){let e=document.getElementById('autoSaveStatus');if(e)e.textContent=t}
 function markChanged(){
+ if(document.getElementById('lpModal')?.classList.contains('open'))autoLessonPlan();
  if(!activeLessonId||!slides[0]||slides[0]._savedLessonId!==activeLessonId){setSaveStatus('New lesson · not saved');return}
  setSaveStatus('Saving…');clearTimeout(autoSaveTimer);
  autoSaveTimer=setTimeout(autoSaveCurrent,650);
