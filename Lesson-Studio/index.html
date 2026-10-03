@@ -139,6 +139,21 @@
 .presentTop.theme-animals .presentThemeIcon:after{content:"🐘🦁";font-size:12px;position:absolute;bottom:3px;left:9px}
 .bannerTitleWrap{max-width:calc(100% - 220px)}
 .bannerTitleWrap h2{white-space:normal}
+
+/* Final clean header alignment: theme art left, title center, QR right */
+.banner{display:grid!important;grid-template-columns:88px minmax(0,1fr) auto!important;column-gap:20px!important;align-items:center!important}
+.banner:before,.banner:after{display:none!important;content:""!important}
+.lessonThemeIcon{grid-column:1!important;justify-self:start!important;margin:0!important}
+.bannerTitleWrap{grid-column:2!important;max-width:none!important;width:100%!important}
+.banner #qrSlideBtn{grid-column:3!important;justify-self:end!important;margin-left:0!important}
+.theme-shopping .lessonThemeIcon:before{left:9px!important;top:12px!important}
+.theme-shopping .lessonThemeIcon:after{right:-6px!important;top:-7px!important}
+.theme-animals .lessonThemeIcon:before{left:15px!important;top:8px!important}
+.theme-animals .lessonThemeIcon:after{left:8px!important;bottom:5px!important}
+.presentTop{display:grid!important;grid-template-columns:70px minmax(0,1fr) auto auto!important;column-gap:14px!important;align-items:center!important}
+.presentTop:before,.presentTop:after{display:none!important;content:""!important}
+.presentThemeIcon{grid-column:1!important}.presentTop>div:nth-of-type(2){grid-column:2!important}.presentTop #presentQRWrap{grid-column:3!important}.presentTop .presentActions{grid-column:4!important;margin-left:0!important}
+@media(max-width:760px){.banner{grid-template-columns:68px minmax(0,1fr) auto!important;column-gap:10px!important}.lessonThemeIcon{width:58px!important;height:58px!important}.bannerTitleWrap h2{font-size:27px!important}}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
