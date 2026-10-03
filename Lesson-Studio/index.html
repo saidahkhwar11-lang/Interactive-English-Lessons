@@ -207,7 +207,7 @@
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
 <option value="6">Grade 6 · Teacher Upload</option>
-</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
+</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save New Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
 <main class="stageWrap"><div class="stage"><div class="banner"><div class="lessonThemeIcon" id="ico">🛒</div><div class="bannerTitleWrap"><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
@@ -434,7 +434,7 @@ $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$(
 $('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
 function file(inp,key){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;if(key==='img')slides[cur].imageName=f.name;if(key==='aud')slides[cur].audioName=f.name;render();markChanged();if(typeof toast==='function')toast(key==='img'?'Picture added ✓':'Audio added ✓')};r.readAsDataURL(f)}$('imgIn').onchange=e=>file(e.target,'img');$('audIn').onchange=e=>file(e.target,'aud');$('close').onclick=()=>$('zoom').classList.remove('open');$('zoom').onclick=e=>{if(e.target===$('zoom'))$('zoom').classList.remove('open')};$('new').onclick=()=>{if(confirm('Start a new blank lesson?')){let g=$('gradeSelect').value;
 clearTimeout(autoSaveTimer);autoSaveTimer=null;
-activeLessonId=null;localStorage.removeItem('LessonStudioActiveId');
+activeLessonId=null;editingExistingLesson=false;$('saveLesson').textContent='💾 Save New Lesson';localStorage.removeItem('LessonStudioActiveId');
 slides=[mk(g==='9'?'Alef Pathway Reading':'Reading Routine','Reading')];
 slides[0].mission='Upload the reading routine poster for this lesson.';
 slides[0].obj='Build reading fluency.';
@@ -498,6 +498,7 @@ if(location.hash==='#lesson-plan')setTimeout(()=>{$('lpModal').classList.add('op
 setTimeout(buildQR,700);
 
 let activeLessonId=null;
+let editingExistingLesson=false;
 const DB_NAME='LessonStudioDB',STORE='lessons';
 const PLAN_API='https://hobfifobduqslvnagwlb.supabase.co';
 const PLAN_KEY='sb_publishable_fbK9aPfpg1rgqy32fPR59A_uxp-kygF';
@@ -533,20 +534,26 @@ async function publishVisitorPlan(id,secret){
 }
 async function saveCurrent(){
  autoLessonPlan();
- let firstSave=!activeLessonId;
- let id=activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,10));
+ // Only update an existing record when it was explicitly opened from My Library.
+ let id;
+ if(editingExistingLesson&&activeLessonId){id=activeLessonId}
+ else{id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);activeLessonId=id;editingExistingLesson=true}
  let secret=localStorage.getItem('LessonPlanSecret:'+id);
  if(!secret){secret=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('LessonPlanSecret:'+id,secret)}
- activeLessonId=id;slides.forEach(x=>x._savedLessonId=id);localStorage.setItem('LessonStudioActiveId',id);
+ slides.forEach(x=>x._savedLessonId=id);localStorage.setItem('LessonStudioActiveId',id);
  try{
    await publishVisitorPlan(id,secret);
    let snap=snapshot(id);snap.planUrl=lessonPlanLink(id);snap.published=true;await dbPut(snap);
-   buildQR();buildPresentQR();setSaveStatus('✓ Auto-saved');toast(firstSave?'Lesson saved · public QR created ✓':'Lesson updated · same QR kept ✓');
- }catch(e){console.error(e);toast('Lesson saved locally · QR publish failed');let snap=snapshot(id);await dbPut(snap);setSaveStatus('✓ Saved locally')}
+   buildQR();buildPresentQR();setSaveStatus('✓ Auto-saved');
+   $('saveLesson').textContent='💾 Update Saved Lesson';
+   toast('Lesson saved safely ✓');
+ }catch(e){
+   console.error(e);let snap=snapshot(id);await dbPut(snap);setSaveStatus('✓ Saved locally');$('saveLesson').textContent='💾 Update Saved Lesson';toast('Lesson saved locally ✓')
+ }
 }
-async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{clearTimeout(autoSaveTimer);autoSaveTimer=null;activeLessonId=x.id;slides=structuredClone(x.slides);let globalLesson=slides.find(sl=>sl.lesson&&sl.lesson!=='Untitled Lesson')?.lesson||slides[0]?.lesson||'Untitled Lesson';let globalSub=slides.find(sl=>sl.sub&&sl.sub!=='Grade · Unit · Lesson')?.sub||slides[0]?.sub||'Grade · Unit · Lesson';slides.forEach(sl=>{sl._savedLessonId=activeLessonId;sl.lesson=globalLesson;sl.sub=globalSub});localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();setSaveStatus('✓ Auto-save on');toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
+async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a.updatedAt);$('libraryStatus').textContent=items.length?items.length+' saved lesson'+(items.length===1?'':'s'):'No saved lessons yet.';let g=$('libraryGrid');g.innerHTML='';items.forEach(x=>{let c=document.createElement('div');c.className='libraryCard';c.innerHTML='<h3>'+esc2(x.title)+'</h3><p>Grade '+esc2(x.grade)+' · '+new Date(x.updatedAt).toLocaleString()+'</p><p>'+x.slides.length+' slides</p><div class="libActions"><button class="libOpen">Open / Edit</button><button class="libCopy">Duplicate</button><button class="libDelete">Delete</button></div>';let [op,cp,del]=c.querySelectorAll('button');op.onclick=()=>{clearTimeout(autoSaveTimer);autoSaveTimer=null;activeLessonId=x.id;editingExistingLesson=true;$('saveLesson').textContent='💾 Update Saved Lesson';slides=structuredClone(x.slides);let globalLesson=slides.find(sl=>sl.lesson&&sl.lesson!=='Untitled Lesson')?.lesson||slides[0]?.lesson||'Untitled Lesson';let globalSub=slides.find(sl=>sl.sub&&sl.sub!=='Grade · Unit · Lesson')?.sub||slides[0]?.sub||'Grade · Unit · Lesson';slides.forEach(sl=>{sl._savedLessonId=activeLessonId;sl.lesson=globalLesson;sl.sub=globalSub});localStorage.setItem('LessonStudioActiveId',activeLessonId);x.planUrl=x.planUrl||lessonPlanLink(x.id);cur=0;$('gradeSelect').value=x.grade;applyLP(x.lessonPlan);$('libraryModal').classList.remove('open');render();buildQR();setSaveStatus('✓ Auto-save on');toast('Lesson opened')};cp.onclick=async()=>{let y=structuredClone(x);y.id='lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);y.title=x.title+' Copy';y.updatedAt=Date.now();y.planUrl=lessonPlanLink(y.id);if(y.slides[0])y.slides.forEach(sl=>{if(sl.lesson===x.title)sl.lesson=y.title});await dbPut(y);showLibrary()};del.onclick=async()=>{if(confirm('Delete this saved lesson?')){await dbDelete(x.id);if(activeLessonId===x.id)activeLessonId=null;showLibrary()}};g.appendChild(c)})}
 function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
+async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;editingExistingLesson=true;$('saveLesson').textContent='💾 Update Saved Lesson';slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
 function visitorPlanData(){
  let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
  let lpFlowRows=[...document.querySelectorAll('#lpFlowBody tr')];
@@ -568,7 +575,7 @@ async function loadLessonFromUrl(){
  }catch(e){}
 }
 setTimeout(loadLessonFromUrl,300);
-setTimeout(async()=>{if(activeLessonId)return;let savedId=localStorage.getItem('LessonStudioActiveId');if(!savedId)return;try{let items=await dbAll(),x=items.find(v=>v.id===savedId);if(x){activeLessonId=x.id;buildQR()}}catch(e){}},450);
+
 
 $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrary()};$('libraryClose').onclick=()=>$('libraryModal').classList.remove('open');$('exportLesson').onclick=exportCurrent;$('importLesson').onchange=e=>{let f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
 
