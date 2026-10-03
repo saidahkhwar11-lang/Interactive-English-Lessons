@@ -286,6 +286,10 @@
 .singleImageGallery .presentGalleryImg{width:100%!important;height:100%!important;max-height:calc(100vh - 150px)!important;object-fit:contain!important;border-radius:12px!important}
 .singleImageGallery .presentCardQA{left:8px!important}
 .multiImageGallery .presentImageCard{display:flex!important}
+
+.slideTimer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:8px 10px;border-radius:14px;background:linear-gradient(145deg,#e9f7ff,#fff4c9);border:1px solid #d6e5e9}.slideTimerClock{font-size:25px;font-weight:950;color:#123e66;letter-spacing:.02em}.slideTimerActions{display:flex;gap:4px}.slideTimerActions button{width:34px;height:31px;border:0;border-radius:9px;background:#fff;font-weight:950;color:#174f78;cursor:pointer}.slideTimerActions button:first-child{background:#1689c4;color:#fff}
+.floatingSlideTimer{position:absolute;right:22px;top:18px;z-index:30;width:205px}.pictureOnlySlide{position:relative!important}.floatingSlideTimer .slideTimer{margin:0;box-shadow:0 6px 18px rgba(20,55,80,.16);background:rgba(244,250,252,.95)}
+#presentation:fullscreen .floatingSlideTimer{z-index:9997}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -774,15 +778,26 @@ function renderPresentation(){
  let realMission=(sl.mission||'').trim(),templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
  let realPage=!!(sl.page&&sl.page!=='—'),realObj=(sl.objectives&&sl.objectives.length?sl.objectives[0]:'');
  let hasDetails=!templateMission||realPage||!!realObj||!!sl.aud;
- let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+'<span class="presentBadge">⏱ '+sl.time+' min</span>'+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+audio+'</aside>':'';
- host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+'</div>';
+ let timerHtml='<div class="slideTimer"><div class="slideTimerClock" id="slideTimerClock">'+String(sl.time||5).padStart(2,'0')+':00</div><div class="slideTimerActions"><button id="slideTimerStart">▶</button><button id="slideTimerPause">Ⅱ</button><button id="slideTimerReset">↻</button></div></div>';
+ let detailHtml=hasDetails?'<aside class="presentDetails compactDetails"><span class="kicker">'+esc2(sl.type.toUpperCase())+'</span><h2>'+esc2(sl.title)+'</h2>'+(!templateMission?'<div class="presentMission">'+esc2(realMission)+'</div>':'')+'<div class="presentBadges">'+(realPage?'<span class="presentBadge">📖 Page '+esc2(sl.page)+'</span>':'')+(realObj?'<span class="presentBadge">🎯 '+esc2(realObj)+'</span>':'')+'</div>'+timerHtml+audio+'</aside>':'';
+ host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+(!hasDetails?'<div class="floatingSlideTimer">'+timerHtml+'</div>':'')+'</div>';
  if(pimgs.length){host.querySelectorAll('.presentGalleryImg').forEach(im=>{let i=+im.dataset.pgi;im.src=pimgs[i];im.onclick=()=>openPresentationImage(pimgs[i])})}
- if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;
+ if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;setupSlideTimer(sl);
  cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);
 }
 function openPresentationImage(src){
  let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;
  let viewer=document.createElement('div');viewer.className='presentImageViewer';viewer.innerHTML='<button class="presentImageClose">✕ Close</button><img alt="Maximized activity picture">';viewer.querySelector('img').src=src;parent.appendChild(viewer);viewer.querySelector('.presentImageClose').onclick=()=>viewer.remove();viewer.onclick=e=>{if(e.target===viewer)viewer.remove()};
+}
+let slideTimerInterval=null;
+function setupSlideTimer(sl){
+ if(slideTimerInterval){clearInterval(slideTimerInterval);slideTimerInterval=null}
+ let remain=(sl.time||5)*60,clock=document.getElementById('slideTimerClock');if(!clock)return;
+ const paint=()=>clock.textContent=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');paint();
+ let st=document.getElementById('slideTimerStart'),pa=document.getElementById('slideTimerPause'),re=document.getElementById('slideTimerReset');
+ st.onclick=()=>{if(slideTimerInterval)return;slideTimerInterval=setInterval(()=>{if(remain>0){remain--;paint()}else{clearInterval(slideTimerInterval);slideTimerInterval=null}},1000)};
+ pa.onclick=()=>{if(slideTimerInterval){clearInterval(slideTimerInterval);slideTimerInterval=null}};
+ re.onclick=()=>{if(slideTimerInterval){clearInterval(slideTimerInterval);slideTimerInterval=null}remain=(sl.time||5)*60;paint()};
 }
 function cleanPresentationDefaults(sl){
  const host=document.getElementById('presentSlide');if(!host||sl.type==='Reading')return;
