@@ -279,6 +279,13 @@
 .compactDetails{align-self:start!important;height:auto!important;min-height:0!important;max-height:calc(100vh - 150px)!important;overflow:auto!important;padding:14px!important}
 .compactDetails h2{font-size:21px!important;margin:8px 0!important}.compactDetails .presentMission{font-size:14px!important;line-height:1.4!important}.compactDetails .presentBadges{margin-top:10px!important}
 .presentSlide:not(.pictureOnlySlide) .presentVisual{align-self:stretch!important}
+
+.singleImageGallery{display:block!important;width:100%!important;height:100%!important;padding:0!important}
+.singleImageGallery .presentImageCard{width:100%!important;height:100%!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.singleImageGallery .presentCardLabel{display:none!important}
+.singleImageGallery .presentGalleryImg{width:100%!important;height:100%!important;max-height:calc(100vh - 150px)!important;object-fit:contain!important;border-radius:12px!important}
+.singleImageGallery .presentCardQA{left:8px!important}
+.multiImageGallery .presentImageCard{display:flex!important}
 </style></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -761,7 +768,7 @@ function renderPresentation(){
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<div class="navObjective"><span>🎯</span><strong>'+esc2(chosen)+'</strong></div>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
- sl.images=sl.images||[];if(sl.img&&!sl.images.includes(sl.img))sl.images.unshift(sl.img);let pimgs=sl.images;let visual=pimgs.length?'<div class="presentGallery">'+pimgs.map((_,i)=>'<div class="presentImageCard" data-card="'+i+'"><div class="presentCardLabel">Part '+(i+1)+'</div><img class="presentGalleryImg" data-pgi="'+i+'" alt="Activity picture"><div class="presentCardQA" data-cardqa="'+i+'"></div></div>').join('')+'</div>':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
+ sl.images=sl.images||[];if(sl.img&&!sl.images.includes(sl.img))sl.images.unshift(sl.img);let pimgs=sl.images;let visual=pimgs.length?'<div class="presentGallery '+(pimgs.length===1?'singleImageGallery':'multiImageGallery')+'">'+pimgs.map((_,i)=>'<div class="presentImageCard" data-card="'+i+'"><div class="presentCardLabel">Part '+(i+1)+'</div><img class="presentGalleryImg" data-pgi="'+i+'" alt="Activity picture"><div class="presentCardQA" data-cardqa="'+i+'"></div></div>').join('')+'</div>':'<div class="presentEmpty"><b>'+esc2(sl.title)+'</b>No activity picture uploaded for this slide.</div>';
  let audio=sl.aud?'<div class="presentAudio"><b>🎧 Activity Audio</b><audio id="presentAudioPlayer" controls></audio></div>':'';
  let mission=sl.type==='Focus'?overallLessonObjectives().map(x=>'• '+esc2(x)).join('<br>'):esc2(sl.mission||'');
  let realMission=(sl.mission||'').trim(),templateMission=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.','Upload the reading routine poster for this lesson.'].includes(realMission);
