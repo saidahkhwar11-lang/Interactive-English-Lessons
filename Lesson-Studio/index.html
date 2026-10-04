@@ -292,7 +292,6 @@
 #presentation:fullscreen .floatingSlideTimer{z-index:9997}
 
 .instructionVisibility{display:flex!important;align-items:center;gap:7px;margin-top:7px;padding:8px 9px;border-radius:10px;background:#eef8fc;color:#315d75;font-size:11px!important;font-weight:850!important;text-transform:none!important;cursor:pointer}.instructionVisibility input{width:16px;height:16px;accent-color:#174f78}
-.answerEditor{margin-top:10px;padding:10px;border:1px solid #d7e8ef;border-radius:12px;background:#f7fbfd}.answerEditor label{font-size:11px;font-weight:900;color:#315d75}.answerAddRow{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:6px}.answerAddRow input{padding:8px;border:1px solid #cedfe7;border-radius:9px}.answerAddRow button{border:0;border-radius:9px;background:#167d68;color:#fff;font-weight:900;padding:8px 10px;cursor:pointer}.answerList{display:grid;gap:5px;margin-top:7px}.answerItem{display:flex;gap:6px;align-items:center;background:#fff;border:1px solid #dbe8ed;border-radius:9px;padding:6px}.answerItem span{flex:1;font-size:12px}.answerItem button{border:0;background:#f8dce5;color:#9d3555;border-radius:7px;cursor:pointer}.answerOverlay{position:absolute;z-index:25;max-width:72%;padding:10px 14px;border-radius:12px;background:#fff4b8;border:2px solid #e6a800;color:#173f67;font-weight:950;font-size:clamp(16px,2vw,27px);box-shadow:0 5px 16px rgba(0,0,0,.18);left:50%;top:50%;transform:translate(-50%,-50%);display:none}.answerOverlay.show{display:block}.answerRevealBar{position:absolute;left:12px;bottom:12px;z-index:30;display:flex;gap:6px;flex-wrap:wrap}.answerRevealBar button{border:0;border-radius:10px;background:#167d68;color:#fff;font-weight:900;padding:8px 10px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.14)}.answerRevealBar .resetAnswers{background:#6c7890}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -305,7 +304,7 @@
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
 <div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea><label class="instructionVisibility"><input type="checkbox" id="showInstructions" checked> 👁 Show instructions in Presentation Mode</label></div>
 <div class="field focusKeywords" id="focusKeywordsField"><label>Lesson Key Words <small>· used in Lesson Plan</small></label><textarea id="eKeywords" placeholder="online, products, customers, categories…"></textarea></div>
-<div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionPairAdd"><input id="newQuestion" placeholder="Type a question…"><input id="newAnswer" placeholder="Type the answer…"><button type="button" id="addQuestion">＋ Add Q&A</button></div></div><div class="answerEditor"><label>Answer Boxes on Activity Picture <small>· reveal one by one in Presentation</small></label><div class="answerAddRow"><input id="newPictureAnswer" placeholder="Type an answer to reveal…"><button type="button" id="addPictureAnswer">＋ Add Answer</button></div><div class="answerList" id="pictureAnswerList"></div></div>
+<div class="field questionEditor"><label>Questions <small>· hidden until revealed in Presentation</small></label><div id="questionList"></div><div class="questionPairAdd"><input id="newQuestion" placeholder="Type a question…"><input id="newAnswer" placeholder="Type the answer…"><button type="button" id="addQuestion">＋ Add Q&A</button></div></div>
 <div style="padding:10px;border-radius:12px;background:#eef8fc;border:1px solid #d7e8ef;font-size:12px">
   <b>✨ Auto Objective</b><div id="autoObjectiveNote" style="margin-top:4px;color:#567287">Type the activity instructions and the objective will be suggested automatically.</div>
 </div>
@@ -354,7 +353,7 @@ Vocabulary:['Understand key lesson vocabulary.','Use new words in context.','Mat
 Grammar:['Use the target grammar accurately.','Identify the target language structure.','Form correct sentences using the target structure.','Apply the grammar rule in context.']
 };
 const T=[['📚','Reading Routine','Reading'],['🎯','Lesson Focus','Focus'],['⚡','Starter','Starter'],['📝','Main Activity','Activity'],['🎧','Listening Activity','Listening'],['✍️','Writing Activity','Writing'],['💡','Custom Activity','Custom'],['🏆','Alef Game','Alef']];
-function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',showInstructions:true,lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',images:[],aud:'',pictureAnswers:[]}}
+function mk(a,b){return{title:a,type:b,time:b==='Alef'?5:5,page:'—',obj:'Objective',skill:'Reading',objectives:[],keywords:[],mission:'Add student instructions.',showInstructions:true,lesson:'Untitled Lesson',sub:'Grade · Unit · Lesson',img:'',images:[],aud:''}}
 let slides=[mk('Reading Routine','Reading')],cur=0;
 const $=x=>document.getElementById(x),icons={Reading:'📚',Focus:'🎯',Starter:'⚡',Activity:'🦒',Listening:'🎧',Writing:'✍️',Custom:'💡',Alef:'🏆'};
 let readingTimerId=null,readingRemaining=300;
@@ -464,7 +463,6 @@ $('eSkill').value=s.skill||'Reading';
 fillObjectives();
 renderSelectedObjectives();
 renderQuestionEditor();
-renderPictureAnswerEditor();
 $('eMission').value=s.mission||'';if(s.showInstructions===undefined)s.showInstructions=true;$('showInstructions').checked=s.showInstructions!==false;
 let selectedLabel=$('selectedObjectives')?.closest('.field')?.querySelector('label');if(selectedLabel)selectedLabel.textContent=s.type==='Focus'?'Lesson Objectives (max 3)':'Selected objectives (max 3)';let kwf=$('focusKeywordsField'),kwe=$('eKeywords');if(kwf)kwf.classList.toggle('show',s.type==='Focus');if(kwe)kwe.value=(s.keywords||[]).join(', ');
 if(s.type==='Reading' && ($('gradeSelect').value==='9' || $('gradeSelect').value==='6')){
@@ -524,24 +522,6 @@ function showSlideQuestion(sl,idx,visual,bubble){
  let r=card.querySelector('.slideReveal');if(r)r.onclick=()=>{let ans=card.querySelector('.slideAnswer');ans.hidden=false;r.style.display='none'};
 }
 
-function normalisePictureAnswers(sl){
- sl.pictureAnswers=sl.pictureAnswers||[];
- sl.pictureAnswers=sl.pictureAnswers.map((a,i)=>typeof a==='string'?{text:a,imageIndex:0}:{text:a.text||'',imageIndex:Number.isFinite(a.imageIndex)?a.imageIndex:0});
- return sl.pictureAnswers;
-}
-function renderPictureAnswerEditor(){
- let box=$('pictureAnswerList');if(!box||!slides[cur])return;let arr=normalisePictureAnswers(slides[cur]);box.innerHTML='';
- arr.forEach((a,i)=>{let d=document.createElement('div');d.className='answerItem';d.innerHTML='<span><b>'+(i+1)+'.</b> '+esc2(a.text)+'</span><button type="button">×</button>';d.querySelector('button').onclick=()=>{arr.splice(i,1);renderPictureAnswerEditor();markChanged()};box.appendChild(d)});
-}
-function setupPictureAnswers(sl,host){
- let arr=normalisePictureAnswers(sl);if(!arr.length||!host)return;
- let cards=[...host.querySelectorAll('.presentImageCard')];if(!cards.length)return;
- arr.forEach((a,i)=>{let card=cards[Math.min(a.imageIndex||0,cards.length-1)];let box=document.createElement('div');box.className='answerOverlay';box.dataset.answer=i;box.textContent=a.text;card.appendChild(box)});
- let bar=document.createElement('div');bar.className='answerRevealBar';let next=0;
- let reveal=document.createElement('button');reveal.textContent='✓ Reveal Answer';reveal.onclick=e=>{e.stopPropagation();let box=host.querySelector('.answerOverlay[data-answer="'+next+'"]');if(box){box.classList.add('show');next++;reveal.textContent=next<arr.length?'✓ Reveal Next Answer':'✓ All Answers Shown';reveal.disabled=next>=arr.length}};
- let reset=document.createElement('button');reset.className='resetAnswers';reset.textContent='↻ Hide Answers';reset.onclick=e=>{e.stopPropagation();host.querySelectorAll('.answerOverlay').forEach(x=>x.classList.remove('show'));next=0;reveal.disabled=false;reveal.textContent='✓ Reveal Answer'};
- bar.append(reveal,reset);(host.querySelector('.presentVisual')||host).appendChild(bar);
-}
 function fillObjectives(){
  let sk=$('eSkill')?.value||slides[cur]?.skill||'Reading',sel=$('eObjective');if(!sel)return;
  sel.innerHTML='<option value="">Choose an objective…</option>';
@@ -553,7 +533,6 @@ function esc2(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;',
 $('eSkill').onchange=e=>{slides[cur].skill=e.target.value;fillObjectives();renderSelectedObjectives();markChanged()};
 $('addObjective').onclick=()=>{let sld=slides[cur];sld.objectives=sld.objectives||[];if(sld.objectives.length>=3)return alert('Maximum 3 objectives.');let v=$('eObjective').value;if(!v)return;if(v==='__custom')v=(prompt('Type your objective:')||'').trim();if(v&&!sld.objectives.includes(v)){sld.objectives.push(v);renderSelectedObjectives();markChanged()}};
 $('addQuestion').onclick=()=>{let qi=$('newQuestion'),ai=$('newAnswer'),q=(qi.value||'').trim(),a=(ai.value||'').trim();if(!q)return;normaliseQuestions(slides[cur]).push({q,a});qi.value='';ai.value='';renderQuestionEditor();markChanged()};
-$('addPictureAnswer').onclick=()=>{let inp=$('newPictureAnswer'),v=(inp.value||'').trim();if(!v)return;normalisePictureAnswers(slides[cur]).push({text:v,imageIndex:0});inp.value='';renderPictureAnswerEditor();markChanged()};
 $('newQuestion').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('addQuestion').click()}});
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
@@ -895,7 +874,7 @@ function renderPresentation(){
  host.innerHTML='<div class="presentSlide '+(hasDetails?'':'pictureOnlySlide')+'"><div class="presentVisual">'+visual+'</div>'+detailHtml+(!hasDetails?'<div class="floatingSlideTimer">'+timerHtml+'</div>':'')+'</div>';
  if(pimgs.length){host.querySelectorAll('.presentGalleryImg').forEach(im=>{let i=+im.dataset.pgi;im.src=pimgs[i];im.onclick=()=>openPresentationImage(pimgs[i])})}
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;setupSlideTimer(sl);
- cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);setupPictureAnswers(sl,host);
+ cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);
 }
 function openPresentationImage(src){
  let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;
