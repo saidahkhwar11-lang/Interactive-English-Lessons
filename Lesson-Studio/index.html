@@ -511,21 +511,16 @@ function fitSavedAnswerFont(box,a){
    if((a.kind||'text')!=='text')return;
    const text=(a.text||'').trim();if(!text)return;
    const boxW=Math.max(20,box.clientWidth),boxH=Math.max(16,box.clientHeight);
-   // Short answers stay large. Long answers wrap and shrink only as much as needed
-   // so the COMPLETE answer always remains inside the saved answer box.
-   const targetW=boxW*.92,targetH=boxH*.88;
-   const probe=document.createElement('div');
-   probe.style.cssText='position:absolute;left:-99999px;top:-99999px;visibility:hidden;text-align:center;font-family:Arial,sans-serif;font-weight:900;line-height:1.04;white-space:normal;overflow-wrap:break-word;word-break:normal;padding:0;margin:0;';
-   probe.style.width=targetW+'px';probe.textContent=text;document.body.appendChild(probe);
-   let hi=Math.max(18,boxH*.62),lo=7,best=lo;
-   for(let i=0;i<15;i++){
-     let mid=(lo+hi)/2;probe.style.fontSize=mid+'px';
-     if(probe.scrollHeight<=targetH+1){best=mid;lo=mid}else hi=mid;
-   }
-   probe.remove();
-   box.style.setProperty('--answer-font',best+'px');
-   box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1.04';
-   box.style.padding='3px 6px';box.style.whiteSpace='normal';box.style.overflowWrap='break-word';box.style.wordBreak='normal';box.style.overflow='hidden';
+   // Fill the visible answer box, not an off-screen measuring box.
+   // Long answers may wrap, but they keep a strong classroom-readable minimum.
+   let px=Math.max(18,boxH*.34);
+   if(text.length<=22)px=Math.max(px,boxH*.52);
+   else if(text.length<=55)px=Math.max(px,boxH*.38);
+   else px=Math.max(px,boxH*.27);
+   px=Math.min(px,54);
+   box.style.setProperty('--answer-font',px+'px');
+   box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1.08';
+   box.style.padding='5% 6%';box.style.whiteSpace='normal';box.style.overflowWrap='break-word';box.style.wordBreak='normal';box.style.overflow='hidden';
  });
 }
 function setupSavedAnswerReveal(sl,host){
