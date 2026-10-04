@@ -720,7 +720,7 @@ function dbOpen(){return new Promise((res,rej)=>{let q=indexedDB.open(DB_NAME,1)
 async function dbPut(v){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(v);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
 async function dbAll(){let db=await dbOpen();return new Promise((res,rej)=>{let q=db.transaction(STORE).objectStore(STORE).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
 async function dbDelete(id){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
-function collectLP(){let o={};['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'].forEach(id=>o[id]=$(id)?.value||'');return o}
+function collectLP(){let o={};lpIds.forEach(id=>o[id]=$(id)?.value||'');return o}
 function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
 function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';let lid=id||activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8));return{id:lid,title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP(),planUrl:lessonPlanLink(lid),saved:true}}
 function toast(t){let x=$('saveToast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
@@ -735,6 +735,7 @@ function markChanged(){
 async function autoSaveCurrent(){
  if(!activeLessonId||!slides[0]||slides[0]._savedLessonId!==activeLessonId||autoSaveBusy)return;autoSaveBusy=true;
  try{
+  autoLessonPlan();
   let snap=snapshot(activeLessonId);snap.published=true;await dbPut(snap);
   let secret=localStorage.getItem('LessonPlanSecret:'+activeLessonId);
   if(secret)try{await publishVisitorPlan(activeLessonId,secret)}catch(e){}
@@ -770,14 +771,37 @@ async function showLibrary(){let items=(await dbAll()).sort((a,b)=>b.updatedAt-a
 function exportCurrent(){let snap=snapshot();let blob=new Blob([JSON.stringify(snap)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(snap.title||'lesson').replace(/[^a-z0-9]+/gi,'-')+'-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function importBackup(file){try{let x=JSON.parse(await file.text());if(!x.slides||!Array.isArray(x.slides))throw new Error('Invalid lesson backup');x.id='lesson-'+Date.now();x.updatedAt=Date.now();await dbPut(x);activeLessonId=x.id;editingExistingLesson=true;$('saveLesson').textContent='💾 Update Saved Lesson';slides=structuredClone(x.slides);cur=0;$('gradeSelect').value=x.grade||'9';applyLP(x.lessonPlan);render();buildQR();toast('Lesson imported and saved ✓')}catch(e){alert('Could not import this lesson backup.')}}
 function visitorPlanData(){
- let overall=typeof overallLessonObjectives==='function'?overallLessonObjectives():[];
- let lpFlowRows=[...document.querySelectorAll('#lpFlowBody tr')];
- let detailedFlow=slides.map((sl,i)=>{
-   let cells=lpFlowRows[i]?[...lpFlowRows[i].querySelectorAll('textarea')].map(x=>x.value):[];
-   let inferred=inferActivity(sl.mission,sl.title,sl.type);
-   return {stage:sl.title,time:sl.time,page:sl.page||'—',activity:sl.mission||'Complete the activity.',objective:(sl.objectives||[])[0]||inferred.objective,teacher:cells[0]||('Introduce, model and guide '+sl.title.toLowerCase()+'.'),students:cells[1]||(sl.mission||'Complete the activity.'),assessment:cells[2]||('Check progress toward: '+inferred.objective),support:cells[3]||'Support with modelling, visuals and guided prompts. Challenge with extension and independent application.'};
+ // Always generate the latest complete plan before publishing/scanning.
+ autoLessonPlan();
+ let rows=[...document.querySelectorAll('#lpFlowBody tr')].map(r=>{
+   let td=[...r.children];
+   return {
+     stage:(td[0]?.innerText||'').trim(),
+     activity:(td[1]?.innerText||'').trim(),
+     differentiation:(td[2]?.querySelector('textarea')?.value||td[2]?.innerText||'').trim(),
+     tool:(td[3]?.querySelector('textarea')?.value||td[3]?.innerText||'').trim()
+   };
  });
- return {interactiveLesson:interactiveLessonLink(),school:'Al Reyadah School',teacher:document.getElementById('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',grade:document.getElementById('lpGrade')?.value||('Grade '+document.getElementById('gradeSelect').value),date:document.getElementById('lpDate')?.value||'',title:document.getElementById('lpTitle')?.value||slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Lesson Plan',objectives:document.getElementById('lpObjectives')?.value||overall.map((x,i)=>(i+1)+'. '+x).join('\\n'),success:document.getElementById('lpSuccess')?.value||overall.map(x=>'I can '+x.charAt(0).toLowerCase()+x.slice(1)).join('\\n'),vocab:document.getElementById('lpVocab')?.value||'',resources:document.getElementById('lpResources')?.value||'Interactive Lesson Studio; textbook/activity images; audio; timer.',differentiation:document.getElementById('lpDiff')?.value||'',assessment:document.getElementById('lpAssess')?.value||'',flow:detailedFlow};
+ return {
+   interactiveLesson:interactiveLessonLink(),
+   school:'Al Reyadah School',
+   teacher:$('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',
+   grade:$('lpGrade')?.value||('Grade '+$('gradeSelect').value),
+   date:$('lpDate')?.value||'',
+   title:$('lpTitle')?.value||slides[0]?.lesson||'Lesson Plan',
+   topic:$('lpTopic')?.value||'',
+   objectives:$('lpObjectives')?.value||'',
+   hot:$('lpHOT')?.value||'',
+   success:$('lpSuccess')?.value||'',
+   vocab:$('lpVocab')?.value||'',
+   resources:$('lpResources')?.value||'',
+   plenary:$('lpAssess')?.value||'',
+   skills:$('lpSkills')?.value||'',
+   realWorld:$('lpRealWorld')?.value||'',
+   crossCurricular:$('lpCross')?.value||'',
+   uae:$('lpUAE')?.value||'',
+   flow:rows
+ };
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
