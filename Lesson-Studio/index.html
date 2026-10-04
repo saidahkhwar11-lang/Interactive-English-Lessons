@@ -689,6 +689,19 @@ function buildQR(){
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
 }
+function cleanActivityImageText(raw){
+ let t=String(raw||'').replace(/\s+/g,' ').trim();
+ if(!t)return '';
+ // OCR confidence is unreliable on decorative posters. Reject obviously garbled output.
+ const words=t.split(/\s+/).filter(Boolean);
+ const readable=words.filter(w=>/^[A-Za-z0-9][A-Za-z0-9'’.,!?()\-/:]{1,24}$/.test(w));
+ const ratio=words.length?readable.length/words.length:0;
+ if(ratio<0.72)return '';
+ // Remove common OCR debris and cap procedure detail so a whole poster is never dumped into the LP.
+ t=t.replace(/[^A-Za-z0-9\s.,!?;:'’()\-\/]/g,' ').replace(/\s+/g,' ').trim();
+ if(t.length>420)t=t.slice(0,420).replace(/\s+\S*$/,'')+'…';
+ return t;
+}
 function supportChallengeFor(sl){
  let skill=(sl.skill||'').toLowerCase(),title=(sl.title||'').toLowerCase(),mission=(sl.mission||'').toLowerCase(),text=title+' '+mission;
  if(sl.type==='Reading'){
@@ -772,16 +785,21 @@ function autoLessonPlan(){
  procedureSlides.forEach((sl,i)=>{
    let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
    let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
-   let pictureText=(sl.imageText||'').trim();
+   let pictureText=cleanActivityImageText(sl.imageText);
    // Activity picture text is a primary source because many worksheet/poster instructions live inside the image.
-   let activityDetail=[!template?mission:'',pictureText].filter(Boolean).join(' | ');
+   let activityDetail=!template?mission:'';
+   if(pictureText){
+     // Image text supplements typed instructions; never replace them with raw OCR.
+     if(!activityDetail)activityDetail=pictureText;
+     else if(!activityDetail.toLowerCase().includes(pictureText.slice(0,60).toLowerCase()))activityDetail+=' | Visual task details: '+pictureText;
+   }
    if(!activityDetail&&sl.type==='Reading')activityDetail='Read silently for '+(sl.time||5)+' minutes using the reading routine.';
    else if(!activityDetail)activityDetail='Complete the '+(sl.title||'activity').toLowerCase()+' task shown on the slide.';
    mission=activityDetail;
    template=false;
    // Build procedures from the ACTUAL slide instructions, not generic activity text.
    let student=sl.type==='Reading'
-     ? ((mission&&!template)?mission:'Read silently using the assigned reading routine.')
+     ? ('Read silently for '+(sl.time||5)+' minutes using the assigned reading routine.')
      : (template?'Complete the displayed activity and respond to teacher prompts.':mission);
    let teacher;
    if(sl.type==='Reading'){
