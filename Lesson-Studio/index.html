@@ -609,19 +609,23 @@ function supportChallengeFor(sl){
 }
 function focusLessonData(){
  let focus=slides.find(sl=>sl.type==='Focus')||null;
- // The Focus slide displays overallLessonObjectives(), so the lesson plan must use
- // that exact same source instead of only focus.objectives (which may be empty).
+ // Use exactly what the Focus slide displays.
  let objectives=overallLessonObjectives();
- // Preserve any explicitly selected Focus objectives as a fallback for imported lessons.
  if(!objectives.length&&focus){
    objectives=(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.');
  }
  let keywords=focus?(focus.keywords||[]).filter(Boolean):[];
- // Older/imported lessons may keep keywords in a comma-separated field.
- if(!keywords.length&&focus&&typeof focus.keywordText==='string'){
-   keywords=focus.keywordText.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
- }
  return {focus,objectives:objectives.slice(0,3),keywords};
+}
+function syncEditorIntoCurrentSlide(){
+ // oninput normally saves immediately, but force-sync visible editor values before
+ // building the plan so clicking Lesson Plan can never race the editor state.
+ let s=slides[cur]; if(!s)return;
+ if($('eLesson')){let v=$('eLesson').value;slides.forEach(sl=>sl.lesson=v);}
+ if($('eSub')){let v=$('eSub').value;slides.forEach(sl=>sl.sub=v);}
+ if($('eTitle'))s.title=$('eTitle').value;
+ if($('eMission'))s.mission=$('eMission').value;
+ if($('eKeywords')&&s.type==='Focus')s.keywords=$('eKeywords').value.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
 }
 function successCriterionFor(obj){
  let x=(obj||'').replace(/[.]$/,'').trim(),l=x.toLowerCase();
@@ -636,6 +640,7 @@ function successCriterionFor(obj){
  return 'I can '+l+'.';
 }
 function autoLessonPlan(){
+ syncEditorIntoCurrentSlide();
  migrateFocusStructuredData();
  let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
