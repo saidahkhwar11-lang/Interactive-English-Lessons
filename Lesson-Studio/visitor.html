@@ -8,9 +8,33 @@ async function load(){
  try{
   const r=await fetch(API+'/rest/v1/lesson_plans?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:{apikey:KEY,Authorization:'Bearer '+KEY}});
   if(!r.ok)throw new Error('request failed');const rows=await r.json();const x=rows[0];if(!x)throw new Error('not found');
-  const d={school:'Al Reyadah School',teacher:x.teacher,grade:x.grade,date:x.lesson_date,title:x.title,objectives:x.objectives,success:x.success_criteria,vocab:x.vocabulary,resources:x.resources,differentiation:x.differentiation,assessment:x.assessment_followup,flow:x.lesson_flow||[]};
-  let activities=(d.flow||[]).map((z,i)=>'<section class="activity"><div class="activityHead"><div><span class="step">Step '+(i+1)+'</span><h3>'+esc(z.stage)+'</h3></div><div class="activityMeta">⏱ '+esc(z.time)+' min · 📖 Page '+esc(z.page||'—')+'</div></div><div class="objective"><b>🎯 Activity Objective</b><div>'+esc(z.objective)+'</div></div><div class="activityGrid"><div><b>📌 Activity / Instructions</b><p>'+esc(z.activity||z.students)+'</p></div><div><b>👩‍🏫 Teacher Actions</b><p>'+esc(z.teacher)+'</p></div><div><b>👩‍🎓 Student Actions</b><p>'+esc(z.students)+'</p></div><div><b>✓ Assessment / Check</b><p>'+esc(z.assessment)+'</p></div><div class="wide"><b>🌱 Support & Challenge</b><p>'+esc(z.support)+'</p></div></div></section>').join('');
-  app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+'</h1><p>Visitor Lesson Plan · Read Only</p></div></section><section class="card meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson</small>'+esc(d.title)+'</div></section><section class="card section"><h2>Learning Objectives</h2><div class="pre">'+esc(d.objectives)+'</div></section><section class="card section"><h2>Success Criteria</h2><div class="pre">'+esc(d.success)+'</div></section><section class="card section"><h2>Key Vocabulary / Language</h2><div class="pre">'+esc(d.vocab)+'</div></section><section class="card section"><h2>Resources</h2><div class="pre">'+esc(d.resources)+'</div></section><section class="card section"><h2>Detailed Lesson Steps & Activities</h2>'+activities+'</section><section class="card section"><h2>Differentiation</h2><div class="pre">'+esc(d.differentiation)+'</div></section><section class="card section"><h2>Assessment & Follow-up</h2><div class="pre">'+esc(d.assessment)+'</div></section><div class="privacy">Read-only visitor lesson plan · No access to Lesson Studio, attendance or editing controls.</div>';
+  // New publications store the complete generated plan in plan_data.
+  // Fall back to legacy columns for older saved lessons.
+  const p=x.plan_data||x.plan||{};
+  const d={
+    school:p.school||'Al Reyadah School',teacher:p.teacher||x.teacher,grade:p.grade||x.grade,
+    date:p.date||x.lesson_date,title:p.title||x.title,topic:p.topic||'',
+    objectives:p.objectives||x.objectives||'',hot:p.hot||'',success:p.success||x.success_criteria||'',
+    vocab:p.vocab||x.vocabulary||'',resources:p.resources||x.resources||'',
+    plenary:p.plenary||x.assessment_followup||'',skills:p.skills||'',realWorld:p.realWorld||'',
+    crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
+  };
+  let rows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td>'+esc(z.activity||'')+'</td><td>'+esc(z.differentiation||z.support||'')+'</td><td>'+esc(z.tool||'')+'</td></tr>').join('');
+  app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only</p></div></section>'+
+  '<section class="card meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></section>'+
+  '<section class="card section"><h2>Lesson Topic</h2><div class="pre">'+esc(d.topic||d.title)+'</div></section>'+
+  '<section class="card section"><h2>Key Learning Objective(s)</h2><div class="pre">'+esc(d.objectives)+'</div></section>'+
+  '<section class="card section"><h2>H.O.T. Question(s)</h2><div class="pre">'+esc(d.hot)+'</div></section>'+
+  '<section class="card section"><h2>Keywords / New Vocabulary</h2><div class="pre">'+esc(d.vocab)+'</div></section>'+
+  '<section class="card section"><h2>Success Criteria</h2><div class="pre">'+esc(d.success)+'</div></section>'+
+  '<section class="card section"><h2>Resources / E-Implementation Tool</h2><div class="pre">'+esc(d.resources)+'</div></section>'+
+  '<section class="card section"><h2>Lesson Procedures</h2><table class="flow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody>'+rows+'</tbody></table></section>'+
+  '<section class="card section"><h2>Plenary / Exit Ticket</h2><div class="pre">'+esc(d.plenary)+'</div></section>'+
+  '<section class="card section"><h2>Independent Learners / Learning Skills</h2><div class="pre">'+esc(d.skills)+'</div></section>'+
+  '<section class="card section"><h2>Real World Connections / Innovation</h2><div class="pre">'+esc(d.realWorld)+'</div></section>'+
+  '<section class="card section"><h2>Cross Curricular (Links with other subjects)</h2><div class="pre">'+esc(d.crossCurricular)+'</div></section>'+
+  '<section class="card section"><h2>UAE Culture and Heritage (UAE Vision 2031)</h2><div class="pre">'+esc(d.uae)+'</div></section>'+
+  '<div class="privacy">Read-only visitor lesson plan · No access to Lesson Studio, attendance or editing controls.</div>';
  }catch(e){app.innerHTML='<div class="card bad"><h2>Lesson plan unavailable</h2><p>This lesson plan could not be loaded.</p></div>'}
 }
 load();
