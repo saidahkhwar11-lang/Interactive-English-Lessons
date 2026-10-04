@@ -615,6 +615,15 @@ function focusLessonData(){
    objectives=(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.');
  }
  let keywords=focus?(focus.keywords||[]).filter(Boolean):[];
+ // If the Focus keywords box is empty, build useful lesson vocabulary automatically
+ // from the lesson title, objectives and activity language so Lesson Plan is never blank.
+ if(!keywords.length){
+   const stop=new Set(['the','and','for','with','from','into','using','use','identify','understand','listen','read','write','give','clear','find','make','follow','ask','answer','lesson','student','students','activity','information','key','main','simple','correct','target','today','their','your','this','that','are','can','will','to','of','in','on','a','an']);
+   const source=[focus?.lesson||'',...objectives,...slides.map(sl=>sl.title||''),...slides.map(sl=>sl.mission||'')].join(' ').toLowerCase();
+   const words=(source.match(/[a-z][a-z'-]{2,}/g)||[]).filter(w=>!stop.has(w));
+   const freq={};words.forEach(w=>freq[w]=(freq[w]||0)+1);
+   keywords=Object.keys(freq).sort((a,b)=>freq[b]-freq[a]).slice(0,10);
+ }
  return {focus,objectives:objectives.slice(0,3),keywords};
 }
 function syncEditorIntoCurrentSlide(){
