@@ -512,7 +512,7 @@ function fitSavedAnswerFont(box,a){
    // Use the answer box itself as the visual reference.
    // Target font is 70% of box height; only reduce it when text would overflow.
    const boxW=Math.max(20,box.clientWidth),boxH=Math.max(16,box.clientHeight);
-   const preferred=Math.max(14,boxH*.70);
+   const preferred=Math.max(28,boxH*1.40); // 200% of the previous 70% target
    const probe=document.createElement('span');
    probe.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font-weight:950;line-height:1;font-family:inherit;';
    probe.textContent=text;probe.style.fontSize=preferred+'px';document.body.appendChild(probe);
@@ -522,7 +522,7 @@ function fitSavedAnswerFont(box,a){
    }
    probe.remove();
    // Never let classroom answers collapse to tiny text.
-   px=Math.max(Math.min(18,boxH*.45),px);
+   px=Math.max(Math.min(28,boxH*.90),px);
    box.style.setProperty('--answer-font',px+'px');
    box.style.lineHeight='1';
    box.style.padding='2px 5px';
