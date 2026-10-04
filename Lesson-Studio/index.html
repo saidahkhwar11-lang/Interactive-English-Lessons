@@ -510,24 +510,20 @@ function fitSavedAnswerFont(box,a){
    if((a.kind||'text')!=='text')return;
    const text=(a.text||'').trim();if(!text)return;
    const boxW=Math.max(20,box.clientWidth),boxH=Math.max(16,box.clientHeight);
-   // Classroom rule: use the box height for a strong readable font,
-   // then reduce ONLY if needed to keep the complete answer inside the box.
-   const targetW=boxW*.94,targetH=boxH*.82;
-   const probe=document.createElement('div');
-   probe.style.cssText='position:absolute;left:-99999px;top:-99999px;visibility:hidden;text-align:center;font-weight:950;line-height:1.05;font-family:Arial,sans-serif;white-space:normal;word-break:normal;overflow-wrap:normal;padding:0;margin:0;';
-   probe.style.width=targetW+'px';probe.textContent=text;document.body.appendChild(probe);
-   let preferred=Math.max(18,boxH*.58),px=preferred;
-   probe.style.fontSize=px+'px';
-   // Step down only until the entire answer fits; never auto-enlarge beyond preferred.
-   while(px>12 && (probe.scrollHeight>targetH+1 || probe.scrollWidth>targetW+1)){px-=1;probe.style.fontSize=px+'px'}
+   // Make the text visually fill the answer box.
+   // Start from 75% of box height and only shrink if the text is too wide.
+   let px=Math.max(16,boxH*.75);
+   const probe=document.createElement('span');
+   probe.style.cssText='position:absolute;left:-99999px;top:-99999px;visibility:hidden;white-space:nowrap;font-family:Arial,sans-serif;font-weight:900;line-height:1;';
+   probe.textContent=text;probe.style.fontSize=px+'px';document.body.appendChild(probe);
+   const measured=Math.max(1,probe.getBoundingClientRect().width),available=boxW*.90;
+   if(measured>available)px*=available/measured;
    probe.remove();
+   // Do not allow a large answer box to display tiny text.
+   px=Math.max(px,Math.min(32,boxH*.42));
    box.style.setProperty('--answer-font',px+'px');
-   box.style.fontFamily='Arial, sans-serif';
-   box.style.fontWeight='900';
-   box.style.lineHeight='1.05';
-   box.style.padding='3px 6px';
-   box.style.whiteSpace='normal';
-   box.style.overflow='hidden';
+   box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1';
+   box.style.padding='2px 5px';box.style.whiteSpace='nowrap';box.style.overflow='hidden';
  });
 }
 function setupSavedAnswerReveal(sl,host){
