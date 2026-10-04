@@ -19,8 +19,8 @@ async function load(){
     plenary:p.plenary||x.assessment_followup||'',skills:p.skills||'',realWorld:p.realWorld||'',
     crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
   };
-  let rows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td>'+esc(z.activity||'')+'</td><td>'+esc(z.differentiation||z.support||'')+'</td><td>'+esc(z.tool||'')+'</td></tr>').join('');
-  app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only</p></div></section>'+
+  let rows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
+  app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only · Generated from Lesson Focus, slide instructions and activity picture text</p></div></section>'+
   '<section class="card meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></section>'+
   '<section class="card section"><h2>Lesson Topic</h2><div class="pre">'+esc(d.topic||d.title)+'</div></section>'+
   '<section class="card section"><h2>Key Learning Objective(s)</h2><div class="pre">'+esc(d.objectives)+'</div></section>'+
