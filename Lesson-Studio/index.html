@@ -656,10 +656,21 @@ function autoLessonPlan(){
  realSlides.forEach((sl,i)=>{
    let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
    let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
-   let student=sl.type==='Reading'?'Students read silently using the assigned reading routine.':(template?'Students complete the displayed activity and respond to teacher prompts.':mission);
-   let teacher=sl.type==='Reading'?'Teacher sets the reading routine, monitors engagement and supports access.':'Teacher introduces '+sl.title.toLowerCase()+', models where needed, checks understanding and guides responses.';
-   let afl=(sl.questions||[]).length?'AFL: questioning and reveal answers to check understanding.':'AFL: observation, questioning and checking student responses.';
-   let main='<b>'+esc2(sl.title)+'</b><br>'+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
+   // Build procedures from the ACTUAL slide instructions, not generic activity text.
+   let student=sl.type==='Reading'
+     ? ((mission&&!template)?mission:'Read silently using the assigned reading routine.')
+     : (template?'Complete the displayed activity and respond to teacher prompts.':mission);
+   let teacher;
+   if(sl.type==='Reading'){
+     teacher='Set up the reading routine, explain the slide instructions, monitor engagement and support students as needed.';
+   }else if(!template){
+     teacher='Display the activity and guide students through these instructions: '+mission;
+   }else{
+     teacher='Introduce '+sl.title.toLowerCase()+', model the task where needed, and guide student responses.';
+   }
+   let qCount=(sl.questions||[]).length;
+   let afl=qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.':'AFL: Observe students completing the slide instructions and use questioning to check understanding.';
+   let main='<b>'+esc2(sl.title)+'</b><br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
    let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(sl.title)+'</td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
