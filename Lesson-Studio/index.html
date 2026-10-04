@@ -450,7 +450,7 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor';
- modal.innerHTML='<div class="answerZoomTop"><b>Answer Editor · Zoom View</b><button data-tool="text">T Text</button><button data-tool="tick">✓ Tick</button><button data-tool="circle">○ Circle</button><button data-tool="cross">✕ Cross</button><button data-tool="arrow">→ Arrow</button><button data-tool="highlight">🖍 Highlight</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img></div></div><aside class="answerZoomSide"><h3>Selected Answer</h3><textarea placeholder="Type the selected text answer here…"></textarea><div class="fontRow"><button class="fontDown">A−</button><button class="fontUp">A＋</button></div><button class="deleteSel" style="width:100%;background:#f7dce4;color:#8d3150">Delete Selected</button><p class="answerZoomHint">Choose a tool, then drag on the picture. Move or resize saved answers. Text answers can be typed here.</p><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>Answer Editor · Zoom View</b><button data-tool="text">T Text</button><button data-tool="tick">✓ Tick</button><button data-tool="circle">○ Circle</button><button data-tool="cross">✕ Cross</button><button data-tool="arrow">→ Arrow</button><button data-tool="highlight">🖍 Highlight</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img></div></div><aside class="answerZoomSide"><h3>Selected Answer</h3><textarea placeholder="Type the selected text answer here…"></textarea><div class="fontRow"><button class="fontDown">A−</button><button class="fontUp">A＋</button></div><button class="deleteSel" style="width:100%;background:#f7dce4;color:#8d3150">Delete Selected</button><p class="answerZoomHint">Choose a tool, then drag on the picture. Move or resize saved answers. Use A− / A+ to change the selected text size. Text answers can be typed here.</p><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList');
  let selected=null,activeTool=null,drawStart=null,temp=null;
@@ -467,17 +467,17 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  modal.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
  stage.onpointerdown=e=>{if(!activeTool||e.target.closest('.designAnswerBox'))return;e.preventDefault();let r=stage.getBoundingClientRect();drawStart={x:e.clientX,y:e.clientY,r};temp=document.createElement('div');temp.className='designAnswerBox kind-'+activeTool;temp.textContent=activeTool==='tick'?'✓':activeTool==='cross'?'✕':activeTool==='arrow'?'➜':'';stage.appendChild(temp)};
  stage.onpointermove=e=>{if(!drawStart||!temp)return;let r=drawStart.r,x1=Math.max(r.left,Math.min(r.right,drawStart.x)),y1=Math.max(r.top,Math.min(r.bottom,drawStart.y)),x2=Math.max(r.left,Math.min(r.right,e.clientX)),y2=Math.max(r.top,Math.min(r.bottom,e.clientY));temp.style.left=((Math.min(x1,x2)-r.left)/r.width*100)+'%';temp.style.top=((Math.min(y1,y2)-r.top)/r.height*100)+'%';temp.style.width=(Math.abs(x2-x1)/r.width*100)+'%';temp.style.height=(Math.abs(y2-y1)/r.height*100)+'%'};
- stage.onpointerup=e=>{if(!drawStart||!temp)return;let r=drawStart.r,br=temp.getBoundingClientRect(),w=Math.max(2,br.width/r.width*100),h=Math.max(2,br.height/r.height*100),x=(br.left-r.left)/r.width*100,y=(br.top-r.top)/r.height*100,kind=activeTool;temp.remove();temp=null;drawStart=null;activeTool=null;stage.style.cursor='';modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline='');selected={kind,imageIndex,x,y,w,h,text:'',fontPct:kind==='text'?55:70,fontSourcePx:(img.naturalWidth||1000)*(kind==='text'?.0135:.024),order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(selected);paint();if(kind==='text')ta.focus();markChanged()};
+ stage.onpointerup=e=>{if(!drawStart||!temp)return;let r=drawStart.r,br=temp.getBoundingClientRect(),w=Math.max(2,br.width/r.width*100),h=Math.max(2,br.height/r.height*100),x=(br.left-r.left)/r.width*100,y=(br.top-r.top)/r.height*100,kind=activeTool;temp.remove();temp=null;drawStart=null;activeTool=null;stage.style.cursor='';modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline='');selected={kind,imageIndex,x,y,w,h,text:'',fontPct:kind==='text'?55:70,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(selected);paint();if(kind==='text')ta.focus();markChanged()};
  ta.oninput=()=>{if(selected&&selected.kind==='text'){selected.text=ta.value;paint();markChanged()}};
- modal.querySelector('.fontDown').onclick=()=>{if(selected){selected.fontSourcePx=Math.max(8,(selected.fontSourcePx||((img.naturalWidth||1000)*.0135))-2);paint();markChanged()}};
- modal.querySelector('.fontUp').onclick=()=>{if(selected){selected.fontSourcePx=Math.min(120,(selected.fontSourcePx||((img.naturalWidth||1000)*.0135))+2);paint();markChanged()}};
+ modal.querySelector('.fontDown').onclick=()=>{if(selected&&selected.kind==='text'){selected.fontScale=Math.max(.45,(selected.fontScale||1)-.1);paint();markChanged()}};
+ modal.querySelector('.fontUp').onclick=()=>{if(selected&&selected.kind==='text'){selected.fontScale=Math.min(2,(selected.fontScale||1)+.1);paint();markChanged()}};
  modal.querySelector('.deleteSel').onclick=()=>{if(!selected)return;let all=normaliseAnswerBoxes(sl),i=all.indexOf(selected);if(i>=0)all.splice(i,1);selected=null;ta.value='';paint();markChanged()};
  modal.querySelector('.done').onclick=()=>{markChanged();modal.remove();render()};
  img.onload=paint;img.src=imgs[imageIndex];if(img.complete)paint();
 }
 function normaliseAnswerBoxes(sl){
  sl.answerBoxes=sl.answerBoxes||[];
- sl.answerBoxes.forEach(a=>{a.kind=a.kind||'text';
+ sl.answerBoxes.forEach(a=>{a.kind=a.kind||'text';if(a.fontScale==null)a.fontScale=1;
    if(a.fontPct==null){
      // Migrate older pixel font settings to a size relative to the saved box.
      a.fontPct=Math.max(28,Math.min(82,((a.fontSize||18)/Math.max(18,(a.h||6)*4))*100));
@@ -518,6 +518,7 @@ function fitSavedAnswerFont(box,a){
    else if(text.length<=55)px=Math.max(px,boxH*.48);
    else px=Math.max(px,boxH*.32);
    px=Math.min(px,72);
+   px*=Math.max(.45,Math.min(2,a.fontScale||1));
    box.style.setProperty('--answer-font',px+'px');
    box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1.08';
    box.style.padding='5% 6%';box.style.whiteSpace='normal';box.style.overflowWrap='break-word';box.style.wordBreak='normal';box.style.overflow='hidden';
