@@ -690,6 +690,45 @@ function buildQR(){
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
 }
+function procedureDetailFor(sl,pictureText){
+ const title=(sl.title||'').trim(),mission=(sl.mission||'').trim();
+ const source=(mission+' '+pictureText).replace(/\s+/g,' ').trim();
+ const low=(title+' '+source).toLowerCase();
+ const page=sl.page&&sl.page!=='—'?' on page '+sl.page:'';
+ let student='',teacher='';
+ if(sl.type==='Reading'){
+   student='Read silently for '+(sl.time||5)+' minutes and focus on key details.';
+   teacher='Set the silent-reading routine, ensure students are ready, monitor reading engagement and support students who need help accessing the text.';
+ }else if(/favorite animal|talk to your partner|speaking|discuss|partner/.test(low)){
+   student='Discuss the prompts with a partner: name a favorite animal, describe what it looks like, say where it lives, what it can do, and explain why you like it.';
+   teacher='Display the speaking prompts, model one complete response using the sentence starters, give partner-talk time, then invite students to share and extend answers with reasons.';
+ }else if(/vocab|habitat|diet|behavior|match.*word|matching/.test(low)){
+   student='Identify the key animal vocabulary and match each word with its correct meaning or example. Use habitat, diet and behavior accurately when discussing animals.';
+   teacher='Introduce the key vocabulary from the slide, clarify meaning with the visual examples, model one match, then check students can distinguish habitat, diet and behavior.';
+ }else if(/brown bear|hyena|giraffe|read.*answer|amazing animals/.test(low)){
+   student='Read the animal text'+page+' and identify information about habitat, diet and behavior. Record the relevant details in the three answer areas.';
+   teacher='Guide students to read for specific information'+page+', model how to locate one detail in the text, then ask students to find and record evidence for habitat, diet and behavior.';
+ }else if(/sort|sorting|cut out/.test(low)){
+   student='Work in groups to sort the mixed answer cards into the correct animal and category: habitat, diet or behavior. Discuss each choice before placing it.';
+   teacher='Organise students into groups, model one sorting example, ask students to justify where each mixed card belongs, and check the completed categories together.';
+ }else if(/direction|arrow|go straight|turn left|turn right|go past/.test(low)){
+   student='Use the direction words shown on the activity to write or say the correct instruction for each arrow or route.';
+   teacher='Review the direction language, model one example, then guide students to interpret each arrow or route and form the correct instruction.';
+ }else if(/model|modeling|modelling/.test(low)){
+   student='Follow the worked example, identify the strategy being modelled, and explain how the example reaches the answer before trying the next item.';
+   teacher='Think aloud through the model step by step, highlight the strategy and evidence used, then check understanding before students apply the same process.';
+ }else if(/application|apply|independent/.test(low)){
+   student='Apply the lesson skill independently to the task shown on the slide and use evidence or target vocabulary to complete the response.';
+   teacher='Release responsibility to students, monitor independent application, prompt with questions rather than giving answers, and review selected responses.';
+ }else if(source && !/^add student instructions\.?$/i.test(source)){
+   student=source;
+   teacher='Introduce the task, clarify the expected outcome, model a first step where needed, then monitor students as they complete: '+source;
+ }else{
+   student='Complete the task shown on the activity slide.';
+   teacher='Explain the task shown on the slide, model the first step where needed, monitor student responses and check understanding.';
+ }
+ return {teacher,student};
+}
 function cleanActivityImageText(raw){
  let t=String(raw||'').replace(/\s+/g,' ').trim();
  if(!t)return '';
@@ -798,20 +837,16 @@ function autoLessonPlan(){
    else if(!activityDetail)activityDetail='Complete the '+(sl.title||'activity').toLowerCase()+' task shown on the slide.';
    mission=activityDetail;
    template=false;
-   // Build procedures from the ACTUAL slide instructions, not generic activity text.
-   let student=sl.type==='Reading'
-     ? ('Read silently for '+(sl.time||5)+' minutes using the assigned reading routine.')
-     : (template?'Complete the displayed activity and respond to teacher prompts.':mission);
-   let teacher;
-   if(sl.type==='Reading'){
-     teacher='Set up the reading routine, explain the slide instructions, monitor engagement and support students as needed.';
-   }else if(!template){
-     teacher='Display the activity picture, use its task details and guide students through: '+mission;
-   }else{
-     teacher='Introduce '+sl.title.toLowerCase()+', model the task where needed, and guide student responses.';
-   }
-   let qCount=(sl.questions||[]).length;
-   let afl=qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.':'AFL: Observe students completing the slide instructions and use questioning to check understanding.';
+   // Build distinct procedures from the activity title, typed instructions and validated picture text.
+   let pd=procedureDetailFor(sl,pictureText);
+   let student=pd.student,teacher=pd.teacher;
+   let qCount=(sl.questions||[]).length,procLow=((sl.title||'')+' '+mission).toLowerCase();
+   let afl=qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.'
+     :(/partner|speaking|discuss/.test(procLow)?'AFL: Listen to partner responses and check use of the target language and supporting reasons.'
+     :/vocab|habitat|diet|behavior|match/.test(procLow)?'AFL: Check matches and ask students to explain why each example belongs to habitat, diet or behavior.'
+     :/read|bear|hyena|giraffe/.test(procLow)?'AFL: Check that students locate accurate details in the text and justify answers with textual evidence.'
+     :/sort|sorting/.test(procLow)?'AFL: Monitor group sorting decisions and ask students to justify selected categories.'
+     :'AFL: Check responses during the task and use targeted questioning to identify misconceptions.');
    let main='<b>'+esc2(sl.title)+'</b><br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
    let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
