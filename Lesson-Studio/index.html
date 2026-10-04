@@ -633,19 +633,20 @@ function successCriterionFor(obj){
  return 'I can '+l+'.';
 }
 function autoLessonPlan(){
+ const setLP=(id,value)=>{const el=$(id);if(el)el.value=value==null?'':value};
  syncEditorIntoCurrentSlide();
  migrateFocusStructuredData();
  let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
  // Procedures should include every created activity slide except Focus.
  // Reading Routine is included too because it is part of the created lesson.
  let procedureSlides=realSlides.filter(sl=>sl&&sl.title);
- $('lpGrade').value='Grade '+$('gradeSelect').value;
- $('lpTitle').value=slides[0]?.lesson||focusData.focus?.lesson||'';
- $('lpTopic').value=$('lpTitle').value||focusData.focus?.title||'Lesson';
- $('lpObjectives').value=overall.map(o=>'• '+o).join('\n');
- $('lpSuccess').value=overall.map((o,i)=>'✅ '+successCriterionFor(o)).join('\n');
- $('lpVocab').value=focusData.keywords.join(', ');
- let topicText=(($('lpTitle').value||'')+' '+overall.join(' ')).toLowerCase();
+ setLP('lpGrade','Grade '+$('gradeSelect').value);
+ setLP('lpTitle',slides[0]?.lesson||focusData.focus?.lesson||'');
+ setLP('lpTopic',($('lpTitle')?.value||'')||focusData.focus?.title||'Lesson');
+ setLP('lpObjectives',overall.map(o=>'• '+o).join('\n'));
+ setLP('lpSuccess',overall.map((o,i)=>'✅ '+successCriterionFor(o)).join('\n'));
+ setLP('lpVocab',focusData.keywords.join(', '));
+ let topicText=((($('lpTitle')?.value||'')||'')+' '+overall.join(' ')).toLowerCase();
  // H.O.T. question: connect the lesson topic to critical thinking and real life.
  if(/direction|map|zoo/.test(topicText)) $('lpHOT').value='Imagine your friend is lost in a new place. How would you give clear directions so they can find their way without using a phone?';
  else if(/shopping|online|product|customer/.test(topicText)) $('lpHOT').value='How can you decide whether buying something online is a good choice in real life? What information would you check first, and why?';
@@ -660,7 +661,7 @@ function autoLessonPlan(){
  if(realSlides.some(x=>x.type==='Reading'))resources.push($('gradeSelect').value==='6'?'Kutubi / reading routine':'Alef Library / reading routine');
  if(realSlides.some(x=>x.page&&x.page!=='—'))resources.push('textbook / workbook pages');
  resources.push('timer');
- $('lpResources').value=resources.join('; ')+'.';
+ setLP('lpResources',resources.join('; ')+'.');
  let body=$('lpFlowBody');body.innerHTML='';
  procedureSlides.forEach((sl,i)=>{
    let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
@@ -689,13 +690,13 @@ function autoLessonPlan(){
    body.appendChild(tr);
  });
  let last=procedureSlides[procedureSlides.length-1];
- $('lpAssess').value=last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.';
+ setLP('lpAssess',last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.');
  let skills=['Critical Thinking','Self-Learning','Clear Communication'];
  if(procedureSlides.some(sl=>/group|partner|pair|discuss|team/i.test((sl.mission||'')+' '+(sl.title||''))))skills.push('Collaboration','Positive Interactions');
- $('lpSkills').value=[...new Set(skills)].join('; ')+'.';
- $('lpRealWorld').value=/direction|map|zoo/.test(topicText)?'Use directions to navigate real places and maps.':'Connect today’s learning to a real-life situation.';
- $('lpCross').value=/direction|map|zoo/.test(topicText)?'Geography: maps, routes and location language.':'Link the lesson topic with relevant subjects where appropriate.';
- $('lpUAE').value=/direction|map/.test(topicText)?'Apply direction language to familiar UAE places and landmarks.':'Connect examples to UAE life, culture or familiar local contexts.';
+ setLP('lpSkills',[...new Set(skills)].join('; ')+'.');
+ setLP('lpRealWorld',/direction|map|zoo/.test(topicText)?'Use directions to navigate real places and maps.':'Connect today’s learning to a real-life situation.');
+ setLP('lpCross',/direction|map|zoo/.test(topicText)?'Geography: maps, routes and location language.':'Link the lesson topic with relevant subjects where appropriate.');
+ setLP('lpUAE',/direction|map/.test(topicText)?'Apply direction language to familiar UAE places and landmarks.':'Connect examples to UAE life, culture or familiar local contexts.');
  buildQR();
 }
 function downloadLessonPlan(){
