@@ -495,7 +495,11 @@ function fitSavedAnswerFont(box,a){
  requestAnimationFrame(()=>{
    let h=box.getBoundingClientRect().height,w=box.getBoundingClientRect().width,pct=(a.fontPct||55)/100;
    // Base font on rendered box height, but cap by width for short answer gaps.
-   let px=Math.max(9,Math.min(34,h*pct,w/Math.max(3,(a.text||'').length)*1.55));
+   let chars=Math.max(3,(a.text||'').length);
+   // Use more of the saved answer box in presentation/fullscreen while still fitting long answers.
+   let widthLimit=w/chars*2.15;
+   let heightLimit=h*pct*1.28;
+   let px=Math.max(11,Math.min(42,heightLimit,widthLimit));
    box.style.setProperty('--answer-font',px+'px');
    box.style.lineHeight='1.05';
  });
