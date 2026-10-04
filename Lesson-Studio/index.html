@@ -643,9 +643,13 @@ function autoLessonPlan(){
  $('lpSuccess').value=overall.map(o=>'✅ '+successCriterionFor(o)).join('\n');
  $('lpVocab').value=focusData.keywords.join(', ');
  let topicText=(($('lpTitle').value||'')+' '+overall.join(' ')).toLowerCase();
- if(/direction|map|zoo/.test(topicText)) $('lpHOT').value='How can clear directions help someone find the correct place?';
- else if(/read|text|main idea/.test(topicText)) $('lpHOT').value='Which details best support your understanding of the text?';
- else $('lpHOT').value='How can you use today’s learning in a new situation?';
+ // H.O.T. question: connect the lesson topic to critical thinking and real life.
+ if(/direction|map|zoo/.test(topicText)) $('lpHOT').value='Imagine your friend is lost in a new place. How would you give clear directions so they can find their way without using a phone?';
+ else if(/shopping|online|product|customer/.test(topicText)) $('lpHOT').value='How can you decide whether buying something online is a good choice in real life? What information would you check first, and why?';
+ else if(/animal|habitat|wildlife/.test(topicText)) $('lpHOT').value='If you were responsible for an animal, how would you design a safe place for it to live? Explain your choices.';
+ else if(/read|text|main idea/.test(topicText)) $('lpHOT').value='How can understanding the main idea of a text help you make better decisions in real life?';
+ else if(/write|email|message/.test(topicText)) $('lpHOT').value='How would you change your writing for different people or real-life situations, and why?';
+ else $('lpHOT').value='How could you use today’s learning to solve a real-life problem? Explain your thinking.';
  let resources=['Interactive Lesson Studio'];
  if(slides.some(x=>x.img))resources.push('textbook/activity images');
  if(slides.some(x=>x.aud))resources.push('audio');
