@@ -326,11 +326,16 @@
 <div class="lpField"><label>Lesson Title</label><input id="lpTitle"></div>
 <div class="lpField lpWide"><label>Learning Objectives</label><textarea id="lpObjectives"></textarea></div>
 <div class="lpField lpWide"><label>Success Criteria</label><textarea id="lpSuccess"></textarea></div>
-<div class="lpField"><label>Key Vocabulary / Language</label><textarea id="lpVocab"></textarea></div>
-<div class="lpField"><label>Resources</label><textarea id="lpResources">Interactive Lesson Studio; textbook/activity images; audio; Alef/Pathway; timer.</textarea></div>
-<div class="lpSection"><h3>Lesson Flow</h3><table class="lpFlow"><thead><tr><th>Stage</th><th>Teacher</th><th>Students</th><th>Assessment</th><th>Support & Challenge</th></tr></thead><tbody id="lpFlowBody"></tbody></table></div>
-<div class="lpField lpWide"><label>Differentiation</label><textarea id="lpDiff">Support: visuals, modelling, sentence frames and guided practice. Challenge: extension questions, independent application and deeper responses.</textarea></div>
-<div class="lpField lpWide"><label>Assessment & Follow-up</label><textarea id="lpAssess">Use questioning, observation, activity responses and the final task to check progress against the lesson objectives.</textarea></div>
+<div class="lpField"><label>Lesson Topic</label><input id="lpTopic"></div>
+<div class="lpField"><label>H.O.T. Question(s)</label><textarea id="lpHOT"></textarea></div>
+<div class="lpField lpWide"><label>Keywords / New Vocabulary</label><textarea id="lpVocab"></textarea></div>
+<div class="lpField"><label>Resources / E-Implementation Tool</label><textarea id="lpResources">Interactive Lesson Studio; textbook/activity images; audio; timer.</textarea></div>
+<div class="lpSection"><h3>Lesson Procedures</h3><table class="lpFlow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody id="lpFlowBody"></tbody></table></div>
+<div class="lpField lpWide"><label>Plenary / Exit Ticket</label><textarea id="lpAssess"></textarea></div>
+<div class="lpField lpWide"><label>Independent Learners / Learning Skills</label><textarea id="lpSkills">Critical Thinking; Self-Learning; Clear Communication; Positive Interactions; Collaboration.</textarea></div>
+<div class="lpField"><label>Real World Connections / Innovation</label><textarea id="lpRealWorld"></textarea></div>
+<div class="lpField"><label>Cross Curricular (Links with other subjects)</label><textarea id="lpCross"></textarea></div>
+<div class="lpField lpWide"><label>UAE Culture and Heritage (UAE Vision 2031)</label><textarea id="lpUAE"></textarea></div>
 <div class="lpSection"><h3>Lesson Plan QR Link</h3><div class="lpQRBox"><div id="bigQR"></div><div><b>Scan to view this lesson plan</b><p style="margin:5px 0;color:#648095;font-size:12px">When this Lesson Studio is hosted on GitHub Pages, this QR opens the lesson-plan view for the current lesson.</p><input id="lpLink" style="width:100%;padding:8px;border:1px solid #d4e3e9;border-radius:9px" readonly></div></div></div>
 </div></div></div></div>
 <div class="presentation" id="presentation">
@@ -561,7 +566,7 @@ slides[0].obj='Build reading fluency.';
 slides.forEach(x=>delete x._savedLessonId);
 cur=0;render();buildQR();setSaveStatus('New lesson · not saved')}};render();
 
-const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpObjectives','lpSuccess','lpVocab','lpResources','lpDiff','lpAssess'];
+const lpIds=['lpTeacher','lpGrade','lpDate','lpTitle','lpTopic','lpObjectives','lpHOT','lpSuccess','lpVocab','lpResources','lpAssess','lpSkills','lpRealWorld','lpCross','lpUAE'];
 
 
 function renderQRInto(el,link,size){
@@ -632,34 +637,40 @@ function autoLessonPlan(){
  migrateFocusStructuredData();
  let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
  $('lpGrade').value='Grade '+$('gradeSelect').value;
- $('lpTitle').value=slides[0]?.lesson||'';
- $('lpObjectives').value=overall.map((o,i)=>(i+1)+'. '+o).join('\n');
- $('lpSuccess').value=overall.map(successCriterionFor).join('\n');
- let words=[...focusData.keywords];
- $('lpVocab').value=words.join(', ');
+ $('lpTitle').value=slides[0]?.lesson||focusData.focus?.lesson||'';
+ $('lpTopic').value=focusData.focus?.title==='Lesson Focus'?($('lpTitle').value||'Lesson'):(focusData.focus?.title||$('lpTitle').value||'Lesson');
+ $('lpObjectives').value=overall.map(o=>'• '+o).join('\n');
+ $('lpSuccess').value=overall.map(o=>'✅ '+successCriterionFor(o)).join('\n');
+ $('lpVocab').value=focusData.keywords.join(', ');
+ let topicText=(($('lpTitle').value||'')+' '+overall.join(' ')).toLowerCase();
+ if(/direction|map|zoo/.test(topicText)) $('lpHOT').value='How can clear directions help someone find the correct place?';
+ else if(/read|text|main idea/.test(topicText)) $('lpHOT').value='Which details best support your understanding of the text?';
+ else $('lpHOT').value='How can you use today’s learning in a new situation?';
  let resources=['Interactive Lesson Studio'];
- if(slides.some(x=>x.img))resources.push('activity/poster images');
+ if(slides.some(x=>x.img))resources.push('textbook/activity images');
  if(slides.some(x=>x.aud))resources.push('audio');
  if(slides.some(x=>(x.questions||[]).length))resources.push('interactive Q&A');
  resources.push('timer');
  $('lpResources').value=resources.join('; ')+'.';
- if(!$('lpDiff').value)$('lpDiff').value='Support: modelling, visuals, guided prompts and partner support.\nChallenge: extension questions and independent application.';
- if(!$('lpAssess').value)$('lpAssess').value='Ongoing checks through questioning, student responses, activity completion and lesson Q&A.';
  let body=$('lpFlowBody');body.innerHTML='';
- slides.forEach((sl,i)=>{
-   let tr=document.createElement('tr'),explicit=(sl.objectives||[])[0],g=inferActivity(sl.mission,sl.title,sl.type);
-   let objective=explicit||(sl.type==='Reading'?'Build reading fluency.':g.objective);
+ realSlides.forEach((sl,i)=>{
+   let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
    let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
-   let student=sl.type==='Reading'?'Read silently using the assigned reading routine.':(template?'Engage with the displayed activity and respond to teacher prompts.':mission);
-   let teacher=sl.type==='Reading'?'Set the reading routine, monitor engagement and track participation.':('Introduce '+sl.title.toLowerCase()+', model where needed, and guide student responses.');
-   let assess=(sl.questions||[]).length?'Use the interactive question bubbles to check understanding.':'Check student responses and progress toward the activity objective.';
-   tr.innerHTML='<td><b>'+esc2(sl.title)+'</b><br><small>'+sl.time+' min'+(sl.page&&sl.page!=='—'?' · p. '+esc2(sl.page):'')+'</small><br><small>🎯 '+esc2(objective)+'</small></td>'+
-   '<td><textarea>'+esc2(teacher)+'</textarea></td>'+
-   '<td><textarea>'+esc2(student)+'</textarea></td>'+
-   '<td><textarea>'+esc2(assess)+'</textarea></td>'+
-   '<td><textarea>'+esc2(supportChallengeFor(sl))+'</textarea></td>';
+   let student=sl.type==='Reading'?'Students read silently using the assigned reading routine.':(template?'Students complete the displayed activity and respond to teacher prompts.':mission);
+   let teacher=sl.type==='Reading'?'Teacher sets the reading routine, monitors engagement and supports access.':'Teacher introduces '+sl.title.toLowerCase()+', models where needed, checks understanding and guides responses.';
+   let afl=(sl.questions||[]).length?'AFL: questioning and reveal answers to check understanding.':'AFL: observation, questioning and checking student responses.';
+   let main='<b>'+esc2(sl.title)+'</b><br>'+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
+   let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
+   let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
+   tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(sl.title)+'</td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
    body.appendChild(tr);
  });
+ let last=realSlides[realSlides.length-1];
+ $('lpAssess').value=last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.';
+ $('lpSkills').value='Critical Thinking; Self-Learning; Clear Communication; Positive Interactions; Collaboration.';
+ $('lpRealWorld').value=/direction|map|zoo/.test(topicText)?'Use directions to navigate real places and maps.':'Connect today’s learning to a real-life situation.';
+ $('lpCross').value=/direction|map|zoo/.test(topicText)?'Geography: maps, routes and location language.':'Link the lesson topic with relevant subjects where appropriate.';
+ $('lpUAE').value=/direction|map/.test(topicText)?'Apply direction language to familiar UAE places and landmarks.':'Connect examples to UAE life, culture or familiar local contexts.';
  buildQR();
 }
 function downloadLessonPlan(){
