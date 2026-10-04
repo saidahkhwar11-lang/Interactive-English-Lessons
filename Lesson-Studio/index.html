@@ -509,24 +509,25 @@ function fitSavedAnswerFont(box,a){
  requestAnimationFrame(()=>{
    if((a.kind||'text')!=='text')return;
    const text=(a.text||'').trim();if(!text)return;
-   // Use the answer box itself as the visual reference.
-   // Target font is 70% of box height; only reduce it when text would overflow.
    const boxW=Math.max(20,box.clientWidth),boxH=Math.max(16,box.clientHeight);
-   const preferred=Math.max(28,boxH*1.40); // 200% of the previous 70% target
-   const probe=document.createElement('span');
-   probe.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font-weight:950;line-height:1;font-family:inherit;';
-   probe.textContent=text;probe.style.fontSize=preferred+'px';document.body.appendChild(probe);
-   let px=preferred;
-   if(probe.getBoundingClientRect().width>boxW*.92){
-     px=preferred*((boxW*.92)/probe.getBoundingClientRect().width);
+   // Fill the answer box: find the largest font that fits BOTH its width and height.
+   // Bigger saved box = bigger answer. Smaller saved box = smaller answer.
+   const targetW=boxW*.92,targetH=boxH*.88;
+   const probe=document.createElement('div');
+   probe.style.cssText='position:absolute;left:-99999px;top:-99999px;visibility:hidden;text-align:center;font-weight:950;line-height:1.02;font-family:inherit;white-space:normal;overflow-wrap:normal;word-break:normal;padding:0;margin:0;';
+   probe.style.width=targetW+'px';probe.textContent=text;document.body.appendChild(probe);
+   let lo=6,hi=Math.max(24,boxH*2.5),best=lo;
+   for(let n=0;n<16;n++){
+     const mid=(lo+hi)/2;probe.style.fontSize=mid+'px';
+     const fits=probe.scrollHeight<=targetH+1 && probe.scrollWidth<=targetW+1;
+     if(fits){best=mid;lo=mid}else hi=mid;
    }
    probe.remove();
-   // Never let classroom answers collapse to tiny text.
-   px=Math.max(Math.min(28,boxH*.90),px);
-   box.style.setProperty('--answer-font',px+'px');
-   box.style.lineHeight='1';
-   box.style.padding='2px 5px';
-   box.style.whiteSpace='nowrap';
+   box.style.setProperty('--answer-font',best+'px');
+   box.style.lineHeight='1.02';
+   box.style.padding='2px 4px';
+   box.style.whiteSpace='normal';
+   box.style.overflow='hidden';
  });
 }
 function setupSavedAnswerReveal(sl,host){
