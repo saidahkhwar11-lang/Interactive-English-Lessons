@@ -514,10 +514,10 @@ function fitSavedAnswerFont(box,a){
    // Fill the visible answer box, not an off-screen measuring box.
    // Long answers may wrap, but they keep a strong classroom-readable minimum.
    let px=Math.max(18,boxH*.34);
-   if(text.length<=22)px=Math.max(px,boxH*.68);
-   else if(text.length<=55)px=Math.max(px,boxH*.38);
-   else px=Math.max(px,boxH*.27);
-   px=Math.min(px,54);
+   if(text.length<=22)px=Math.max(px,boxH*.82);
+   else if(text.length<=55)px=Math.max(px,boxH*.48);
+   else px=Math.max(px,boxH*.32);
+   px=Math.min(px,72);
    box.style.setProperty('--answer-font',px+'px');
    box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1.08';
    box.style.padding='5% 6%';box.style.whiteSpace='normal';box.style.overflowWrap='break-word';box.style.wordBreak='normal';box.style.overflow='hidden';
