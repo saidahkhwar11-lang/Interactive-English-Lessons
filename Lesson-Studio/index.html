@@ -608,9 +608,19 @@ function supportChallengeFor(sl){
  return 'Support: Model the first step and use visual or partner support where needed.\nChallenge: Ask students to explain their thinking or complete an extension independently.';
 }
 function focusLessonData(){
- let focus=slides.find(sl=>sl.type==='Focus')||slides[1]||null;
- let objectives=focus?(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.'):[];
+ let focus=slides.find(sl=>sl.type==='Focus')||null;
+ // The Focus slide displays overallLessonObjectives(), so the lesson plan must use
+ // that exact same source instead of only focus.objectives (which may be empty).
+ let objectives=overallLessonObjectives();
+ // Preserve any explicitly selected Focus objectives as a fallback for imported lessons.
+ if(!objectives.length&&focus){
+   objectives=(focus.objectives||[]).filter(o=>o&&o!=='Introduce the lesson topic, learning objectives, and key vocabulary.');
+ }
  let keywords=focus?(focus.keywords||[]).filter(Boolean):[];
+ // Older/imported lessons may keep keywords in a comma-separated field.
+ if(!keywords.length&&focus&&typeof focus.keywordText==='string'){
+   keywords=focus.keywordText.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+ }
  return {focus,objectives:objectives.slice(0,3),keywords};
 }
 function successCriterionFor(obj){
