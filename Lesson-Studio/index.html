@@ -292,7 +292,7 @@
 #presentation:fullscreen .floatingSlideTimer{z-index:9997}
 
 .instructionVisibility{display:flex!important;align-items:center;gap:7px;margin-top:7px;padding:8px 9px;border-radius:10px;background:#eef8fc;color:#315d75;font-size:11px!important;font-weight:850!important;text-transform:none!important;cursor:pointer}.instructionVisibility input{width:16px;height:16px;accent-color:#174f78}
-</style></head><body>
+</style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
 <option value="6">Grade 6 · Teacher Upload</option>
@@ -550,10 +550,24 @@ $('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
 $('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
+async function readActivityImageText(dataUrl,sl){
+ if(!dataUrl||!sl)return;
+ try{
+   sl.imageTextStatus='Reading activity picture…';markChanged();
+   if(!window.Tesseract){sl.imageTextStatus='Picture text reader unavailable';return}
+   const result=await Tesseract.recognize(dataUrl,'eng',{logger:()=>{}});
+   const text=(result?.data?.text||'').replace(/\s+/g,' ').trim();
+   if(text){
+     sl.imageText=((sl.imageText||'')+' '+text).trim();
+     sl.imageTextStatus='Picture instructions read ✓';
+     markChanged();
+   }else sl.imageTextStatus='No readable text found in picture';
+ }catch(e){console.warn('Activity picture OCR failed',e);sl.imageTextStatus='Could not read picture text'}
+}
 function file(inp,key){
  if(key==='img'){
   let files=[...(inp.files||[])];if(!files.length)return;slides[cur].images=slides[cur].images||[];
-  Promise.all(files.map(f=>new Promise(res=>{let r=new FileReader();r.onload=()=>res({data:r.result,name:f.name});r.readAsDataURL(f)}))).then(items=>{items.forEach(x=>slides[cur].images.push(x.data));slides[cur].img=slides[cur].images[0]||'';slides[cur].imageName=items.map(x=>x.name).join(', ');render();markChanged();toast(items.length+' picture'+(items.length>1?'s':'')+' added ✓')});return;
+  Promise.all(files.map(f=>new Promise(res=>{let r=new FileReader();r.onload=()=>res({data:r.result,name:f.name});r.readAsDataURL(f)}))).then(items=>{let target=slides[cur];items.forEach(x=>target.images.push(x.data));target.img=target.images[0]||'';target.imageName=items.map(x=>x.name).join(', ');render();markChanged();toast(items.length+' picture'+(items.length>1?'s':'')+' added ✓');items.forEach(x=>readActivityImageText(x.data,target));});return;
  }
  let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{slides[cur][key]=r.result;slides[cur].audioName=f.name;render();markChanged();toast('Audio added ✓')};r.readAsDataURL(f)
 }
@@ -667,8 +681,13 @@ function autoLessonPlan(){
  procedureSlides.forEach((sl,i)=>{
    let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
    let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
-   if(template&&sl.type==='Reading')mission='Read silently for '+(sl.time||5)+' minutes using the reading routine.';
-   else if(template)mission='Complete the '+(sl.title||'activity').toLowerCase()+' task shown on the slide.';
+   let pictureText=(sl.imageText||'').trim();
+   // Activity picture text is a primary source because many worksheet/poster instructions live inside the image.
+   let activityDetail=[!template?mission:'',pictureText].filter(Boolean).join(' | ');
+   if(!activityDetail&&sl.type==='Reading')activityDetail='Read silently for '+(sl.time||5)+' minutes using the reading routine.';
+   else if(!activityDetail)activityDetail='Complete the '+(sl.title||'activity').toLowerCase()+' task shown on the slide.';
+   mission=activityDetail;
+   template=false;
    // Build procedures from the ACTUAL slide instructions, not generic activity text.
    let student=sl.type==='Reading'
      ? ((mission&&!template)?mission:'Read silently using the assigned reading routine.')
@@ -677,7 +696,7 @@ function autoLessonPlan(){
    if(sl.type==='Reading'){
      teacher='Set up the reading routine, explain the slide instructions, monitor engagement and support students as needed.';
    }else if(!template){
-     teacher='Display the activity and guide students through these instructions: '+mission;
+     teacher='Display the activity picture, use its task details and guide students through: '+mission;
    }else{
      teacher='Introduce '+sl.title.toLowerCase()+', model the task where needed, and guide student responses.';
    }
@@ -906,8 +925,7 @@ document.addEventListener('fullscreenchange',()=>{let b=document.getElementById(
 document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
 document.addEventListener('paste',e=>{
- const tag=(e.target.tagName||'').toLowerCase();if(['input','textarea','select'].includes(tag))return;
  const items=[...(e.clipboardData?.items||[])],it=items.find(x=>x.type&&x.type.startsWith('image/'));if(!it)return;
- const blob=it.getAsFile(),r=new FileReader();r.onload=()=>{slides[cur].images=slides[cur].images||[];slides[cur].images.push(r.result);slides[cur].img=slides[cur].images[0]||r.result;slides[cur].imageName='Pasted image';render();markChanged();toast('Picture pasted ✓')};r.readAsDataURL(blob);e.preventDefault();
+ const blob=it.getAsFile(),r=new FileReader();r.onload=()=>{let target=slides[cur];target.images=target.images||[];target.images.push(r.result);target.img=target.images[0]||r.result;target.imageName='Pasted image';render();markChanged();toast('Picture pasted ✓');readActivityImageText(r.result,target)};r.readAsDataURL(blob);e.preventDefault();
 });
 </script><div class="saveToast" id="saveToast">Lesson saved ✓</div></body></html>
