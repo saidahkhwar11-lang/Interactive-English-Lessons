@@ -466,10 +466,10 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  modal.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
  stage.onpointerdown=e=>{if(!activeTool||e.target.closest('.designAnswerBox'))return;e.preventDefault();let r=stage.getBoundingClientRect();drawStart={x:e.clientX,y:e.clientY,r};temp=document.createElement('div');temp.className='designAnswerBox kind-'+activeTool;temp.textContent=activeTool==='tick'?'✓':activeTool==='cross'?'✕':activeTool==='arrow'?'➜':'';stage.appendChild(temp)};
  stage.onpointermove=e=>{if(!drawStart||!temp)return;let r=drawStart.r,x1=Math.max(r.left,Math.min(r.right,drawStart.x)),y1=Math.max(r.top,Math.min(r.bottom,drawStart.y)),x2=Math.max(r.left,Math.min(r.right,e.clientX)),y2=Math.max(r.top,Math.min(r.bottom,e.clientY));temp.style.left=((Math.min(x1,x2)-r.left)/r.width*100)+'%';temp.style.top=((Math.min(y1,y2)-r.top)/r.height*100)+'%';temp.style.width=(Math.abs(x2-x1)/r.width*100)+'%';temp.style.height=(Math.abs(y2-y1)/r.height*100)+'%'};
- stage.onpointerup=e=>{if(!drawStart||!temp)return;let r=drawStart.r,br=temp.getBoundingClientRect(),w=Math.max(2,br.width/r.width*100),h=Math.max(2,br.height/r.height*100),x=(br.left-r.left)/r.width*100,y=(br.top-r.top)/r.height*100,kind=activeTool;temp.remove();temp=null;drawStart=null;activeTool=null;stage.style.cursor='';modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline='');selected={kind,imageIndex,x,y,w,h,text:'',fontPct:kind==='text'?55:70,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(selected);paint();if(kind==='text')ta.focus();markChanged()};
+ stage.onpointerup=e=>{if(!drawStart||!temp)return;let r=drawStart.r,br=temp.getBoundingClientRect(),w=Math.max(2,br.width/r.width*100),h=Math.max(2,br.height/r.height*100),x=(br.left-r.left)/r.width*100,y=(br.top-r.top)/r.height*100,kind=activeTool;temp.remove();temp=null;drawStart=null;activeTool=null;stage.style.cursor='';modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline='');selected={kind,imageIndex,x,y,w,h,text:'',fontPct:kind==='text'?55:70,fontImagePct:kind==='text'?1.35:2.4,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(selected);paint();if(kind==='text')ta.focus();markChanged()};
  ta.oninput=()=>{if(selected&&selected.kind==='text'){selected.text=ta.value;paint();markChanged()}};
- modal.querySelector('.fontDown').onclick=()=>{if(selected){selected.fontPct=Math.max(20,(selected.fontPct||55)-5);paint();markChanged()}};
- modal.querySelector('.fontUp').onclick=()=>{if(selected){selected.fontPct=Math.min(95,(selected.fontPct||55)+5);paint();markChanged()}};
+ modal.querySelector('.fontDown').onclick=()=>{if(selected){selected.fontImagePct=Math.max(.5,(selected.fontImagePct||1.35)-.12);paint();markChanged()}};
+ modal.querySelector('.fontUp').onclick=()=>{if(selected){selected.fontImagePct=Math.min(5,(selected.fontImagePct||1.35)+.12);paint();markChanged()}};
  modal.querySelector('.deleteSel').onclick=()=>{if(!selected)return;let all=normaliseAnswerBoxes(sl),i=all.indexOf(selected);if(i>=0)all.splice(i,1);selected=null;ta.value='';paint();markChanged()};
  modal.querySelector('.done').onclick=()=>{markChanged();modal.remove();render()};
  img.onload=paint;img.src=imgs[imageIndex];if(img.complete)paint();
@@ -493,7 +493,7 @@ function renderDesignAnswerBoxes(sl,item,imageIndex){
    let rh=document.createElement('span');rh.className='ansResize';box.append(del,rh);
    box.onpointerdown=e=>{if(e.target===del||e.target===rh)return;e.stopPropagation();let r=item.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,ox=a.x,oy=a.y;box.setPointerCapture(e.pointerId);box.onpointermove=ev=>{a.x=Math.max(0,Math.min(100-a.w,ox+(ev.clientX-sx)/r.width*100));a.y=Math.max(0,Math.min(100-a.h,oy+(ev.clientY-sy)/r.height*100));box.style.left=a.x+'%';box.style.top=a.y+'%'};box.onpointerup=()=>{box.onpointermove=null;markChanged()}};
    rh.onpointerdown=e=>{e.stopPropagation();let r=item.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,ow=a.w,oh=a.h;rh.setPointerCapture(e.pointerId);rh.onpointermove=ev=>{a.w=Math.max(4,Math.min(100-a.x,ow+(ev.clientX-sx)/r.width*100));a.h=Math.max(3,Math.min(100-a.y,oh+(ev.clientY-sy)/r.height*100));box.style.width=a.w+'%';box.style.height=a.h+'%'};rh.onpointerup=()=>{rh.onpointermove=null;markChanged()}};
-   box.ondblclick=e=>{e.stopPropagation();document.querySelectorAll('.answerBoxPanel').forEach(x=>x.remove());let p=document.createElement('div');p.className='answerBoxPanel';p.innerHTML='<textarea></textarea><div class="row"><button class="fontDown">A−</button><button class="fontUp">A＋</button></div><div class="row"><button class="save">Save</button><button class="delete">Delete</button></div>';p.querySelector('textarea').value=a.text;item.appendChild(p);p.style.left=Math.min(75,a.x)+'%';p.style.top=Math.min(75,a.y+a.h+1)+'%';p.querySelector('.fontDown').onclick=ev=>{ev.stopPropagation();a.fontPct=Math.max(20,(a.fontPct||55)-5);fitSavedAnswerFont(box,a)};p.querySelector('.fontUp').onclick=ev=>{ev.stopPropagation();a.fontPct=Math.min(90,(a.fontPct||55)+5);fitSavedAnswerFont(box,a)};p.querySelector('.save').onclick=ev=>{ev.stopPropagation();let v=p.querySelector('textarea').value.trim();if(v)a.text=v;render();markChanged()};p.querySelector('.delete').onclick=ev=>{ev.stopPropagation();let all=normaliseAnswerBoxes(sl),real=all.indexOf(a);if(real>=0)all.splice(real,1);render();markChanged()};};
+   box.ondblclick=e=>{e.stopPropagation();document.querySelectorAll('.answerBoxPanel').forEach(x=>x.remove());let p=document.createElement('div');p.className='answerBoxPanel';p.innerHTML='<textarea></textarea><div class="row"><button class="fontDown">A−</button><button class="fontUp">A＋</button></div><div class="row"><button class="save">Save</button><button class="delete">Delete</button></div>';p.querySelector('textarea').value=a.text;item.appendChild(p);p.style.left=Math.min(75,a.x)+'%';p.style.top=Math.min(75,a.y+a.h+1)+'%';p.querySelector('.fontDown').onclick=ev=>{ev.stopPropagation();a.fontImagePct=Math.max(.5,(a.fontImagePct||1.35)-.12);fitSavedAnswerFont(box,a)};p.querySelector('.fontUp').onclick=ev=>{ev.stopPropagation();a.fontImagePct=Math.min(5,(a.fontImagePct||1.35)+.12);fitSavedAnswerFont(box,a)};p.querySelector('.save').onclick=ev=>{ev.stopPropagation();let v=p.querySelector('textarea').value.trim();if(v)a.text=v;render();markChanged()};p.querySelector('.delete').onclick=ev=>{ev.stopPropagation();let all=normaliseAnswerBoxes(sl),real=all.indexOf(a);if(real>=0)all.splice(real,1);render();markChanged()};};
    item.appendChild(box);fitSavedAnswerFont(box,a);
  });
 }
@@ -507,14 +507,17 @@ function startDrawAnswerBox(sl,item,imageIndex){
 }
 function fitSavedAnswerFont(box,a){
  requestAnimationFrame(()=>{
-   let h=box.getBoundingClientRect().height,w=box.getBoundingClientRect().width,pct=(a.fontPct||55)/100;
-   // Base font on rendered box height, but cap by width for short answer gaps.
-   let chars=Math.max(3,(a.text||'').length);
-   // Use more of the saved answer box in presentation/fullscreen while still fitting long answers.
-   let widthLimit=w/chars*2.15;
-   let heightLimit=h*pct*1.28;
-   let px=Math.max(11,Math.min(42,heightLimit,widthLimit));
-   box.style.setProperty('--answer-font',px+'px');
+   // Font is saved as a percentage of the rendered activity picture width.
+   // It therefore grows/shrinks at exactly the same ratio as the picture.
+   let card=box.closest('.presentImageCard,.answerZoomStage,.designGalleryItem')||box.parentElement;
+   let img=card?.querySelector('img');
+   let imageWidth=img?.getBoundingClientRect().width||card?.getBoundingClientRect().width||800;
+   if(a.fontImagePct==null){
+     // Migrate older settings once. Keep their visual intent but stop auto-fitting afterwards.
+     a.fontImagePct=Math.max(.65,Math.min(3.2,((a.fontPct||55)/55)*1.35));
+   }
+   let px=imageWidth*(a.fontImagePct/100);
+   box.style.setProperty('--answer-font',Math.max(8,px)+'px');
    box.style.lineHeight='1.05';
  });
 }
