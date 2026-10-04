@@ -514,7 +514,7 @@ function fitSavedAnswerFont(box,a){
    // Fill the visible answer box, not an off-screen measuring box.
    // Long answers may wrap, but they keep a strong classroom-readable minimum.
    let px=Math.max(18,boxH*.34);
-   if(text.length<=22)px=Math.max(px,boxH*.52);
+   if(text.length<=22)px=Math.max(px,boxH*.68);
    else if(text.length<=55)px=Math.max(px,boxH*.38);
    else px=Math.max(px,boxH*.27);
    px=Math.min(px,54);
