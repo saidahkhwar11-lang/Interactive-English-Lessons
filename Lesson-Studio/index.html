@@ -510,7 +510,7 @@ function fitSavedAnswerFont(box,a){
    if((a.kind||'text')!=='text')return;
    // Always fit text to about 70% of its saved answer box.
    // This is based on the BOX itself, so it stays consistent at every picture size.
-   const targetW=Math.max(12,box.clientWidth*.70),targetH=Math.max(10,box.clientHeight*.70);
+   const targetW=Math.max(12,box.clientWidth*1.50),targetH=Math.max(10,box.clientHeight*1.50);
    const text=(a.text||'').trim();if(!text)return;
    let lo=6,hi=Math.max(10,Math.min(120,targetH)),best=lo;
    const probe=document.createElement('span');
