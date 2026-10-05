@@ -295,6 +295,11 @@
 .slideTimer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:8px 10px;border-radius:14px;background:linear-gradient(145deg,#e9f7ff,#fff4c9);border:1px solid #d6e5e9}.slideTimerClock{font-size:25px;font-weight:950;color:#123e66;letter-spacing:.02em}.slideTimerActions{display:flex;gap:4px}.slideTimerActions button{width:34px;height:31px;border:0;border-radius:9px;background:#fff;font-weight:950;color:#174f78;cursor:pointer}.slideTimerActions button:first-child{background:#1689c4;color:#fff}
 .floatingSlideTimer{position:absolute;right:22px;top:18px;z-index:30;width:205px}.pictureOnlySlide{position:relative!important}.floatingSlideTimer .slideTimer{margin:0;box-shadow:0 6px 18px rgba(20,55,80,.16);background:rgba(244,250,252,.95)}
 #presentation:fullscreen .floatingSlideTimer{z-index:9997}
+#presentation:fullscreen .presentSavedAnswer{z-index:99998!important}
+#presentation:fullscreen .presentSavedAnswer.show{display:flex!important;visibility:visible!important;opacity:1!important}
+#presentation:fullscreen .savedAnswerControls{z-index:99999!important;position:fixed!important;right:18px!important;top:50%!important;transform:translateY(-50%)!important}
+#presentation:fullscreen .presentImageCard{overflow:visible!important}
+
 
 .instructionVisibility{display:flex!important;align-items:center;gap:7px;margin-top:7px;padding:8px 9px;border-radius:10px;background:#eef8fc;color:#315d75;font-size:11px!important;font-weight:850!important;text-transform:none!important;cursor:pointer}.instructionVisibility input{width:16px;height:16px;accent-color:#174f78}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
@@ -1073,7 +1078,7 @@ function renderPresentReading(sl,host){
  setupPresentQuestions(sl,document.querySelector('.presentTools'));sl.readingGroups.forEach((on,i)=>{let b=document.createElement('button');b.className='presentStar'+(on?' on':'');b.innerHTML=(on?'★ ':'☆ ')+'Group '+(i+1);b.onclick=()=>{sl.readingGroups[i]=!sl.readingGroups[i];markChanged();b.classList.toggle('on',sl.readingGroups[i]);b.innerHTML=(sl.readingGroups[i]?'★ ':'☆ ')+'Group '+(i+1);let gb=document.getElementById('pGroups');if(gb)gb.childNodes[0].nodeValue='⭐ Reading Groups · '+sl.readingGroups.filter(Boolean).length+' / 6'};stars.appendChild(b)});
 }
 document.getElementById('presentFullscreen').onclick=async()=>{try{const p=document.getElementById('presentation');if(!document.fullscreenElement)await p.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
-document.addEventListener('fullscreenchange',()=>{let b=document.getElementById('presentFullscreen');if(b)b.textContent=document.fullscreenElement?'⛶ Exit Full Screen':'⛶ Full Screen'});
+document.addEventListener('fullscreenchange',()=>{let b=document.getElementById('presentFullscreen');if(b)b.textContent=document.fullscreenElement?'⛶ Exit Full Screen':'⛶ Full Screen';setTimeout(()=>{let sl=slides[presentIndex];if(!sl)return;let boxes=[...document.querySelectorAll('#presentation .presentSavedAnswer')],arr=normaliseAnswerBoxes(sl);boxes.forEach((box,i)=>{let a=arr[i];if(a)fitSavedAnswerFont(box,a)})},180)});
 document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
 document.addEventListener('paste',e=>{
