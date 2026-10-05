@@ -1039,10 +1039,18 @@ function openPresentationImage(src,sl,imageIndex=0){
  let arr=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex).sort((a,b)=>(a.order||0)-(b.order||0));
  let zoomPairs=[];
  arr.forEach((a,i)=>{let box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.dataset.savedAnswer=i;box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':a.text;stage.appendChild(box);zoomPairs.push([box,a])});
- const fitZoomAnswers=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>zoomPairs.forEach(([box,a])=>fitSavedAnswerFont(box,a))));
+ const fitZoomAnswers=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   // Lock the overlay coordinate system to the exact rendered image rectangle.
+   const r=img.getBoundingClientRect();
+   if(r.width&&r.height){stage.style.width=r.width+'px';stage.style.height=r.height+'px';stage.style.maxWidth='none';stage.style.maxHeight='none';img.style.width='100%';img.style.height='100%'}
+   zoomPairs.forEach(([box,a])=>fitSavedAnswerFont(box,a));
+ }));
  if(img.complete&&img.naturalWidth)fitZoomAnswers();else img.addEventListener('load',fitZoomAnswers,{once:true});
  if(arr.length){let controls=document.createElement('div');controls.className='savedAnswerControls';let next=0,boxes=[...stage.querySelectorAll('.presentSavedAnswer')];let reveal=document.createElement('button');reveal.textContent='✓ Reveal Answer';reveal.onclick=e=>{e.stopPropagation();if(next<boxes.length){let idx=next++,shown=boxes[idx];shown.classList.add('show');let a=arr[idx];if(a)setTimeout(()=>fitSavedAnswerFont(shown,a),0);reveal.textContent=next<boxes.length?'✓ Reveal Next':'✓ All Answers Shown';reveal.disabled=next>=boxes.length}};let hide=document.createElement('button');hide.className='hideSavedAnswers';hide.textContent='↻ Hide Answers';hide.onclick=e=>{e.stopPropagation();boxes.forEach(x=>x.classList.remove('show'));next=0;reveal.disabled=false;reveal.textContent='✓ Reveal Answer'};controls.append(reveal,hide);viewer.appendChild(controls)}
- parent.appendChild(viewer);viewer.querySelector('.presentImageClose').onclick=()=>viewer.remove();viewer.onclick=e=>{if(e.target===viewer)viewer.remove()};
+ parent.appendChild(viewer);
+ const syncZoom=()=>{if(viewer.isConnected)fitZoomAnswers()};window.addEventListener('resize',syncZoom);
+ const closeViewer=()=>{window.removeEventListener('resize',syncZoom);viewer.remove()};
+ viewer.querySelector('.presentImageClose').onclick=closeViewer;viewer.onclick=e=>{if(e.target===viewer)closeViewer()};
 }
 let slideTimerInterval=null;
 function setupSlideTimer(sl){
