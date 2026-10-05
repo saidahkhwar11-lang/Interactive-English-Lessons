@@ -7,7 +7,7 @@ async function load(){
  if(!id){app.innerHTML='<div class="card bad"><h2>Lesson plan unavailable</h2><p>This link does not contain a lesson ID.</p></div>';return}
  try{
   const r=await fetch(API+'/rest/v1/lesson_plans?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:{apikey:KEY,Authorization:'Bearer '+KEY}});
-  if(!r.ok)throw new Error('request failed');const rows=await r.json();const x=rows[0];if(!x)throw new Error('not found');
+  if(!r.ok)throw new Error('request failed');const apiRows=await r.json();const x=apiRows[0];if(!x)throw new Error('not found');
   // New publications store the complete generated plan in plan_data.
   // Fall back to legacy columns for older saved lessons.
   const p=x.plan_data||x.plan||{};
@@ -19,7 +19,7 @@ async function load(){
     plenary:p.plenary||x.assessment_followup||'',skills:p.skills||'',realWorld:p.realWorld||'',
     crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
   };
-  let rows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
+  let flowRows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
   app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only · Generated from Lesson Focus, slide instructions and activity picture text</p></div></section>'+
   '<section class="card meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></section>'+
   '<section class="card section"><h2>Lesson Topic</h2><div class="pre">'+esc(d.topic||d.title)+'</div></section>'+
@@ -28,7 +28,7 @@ async function load(){
   '<section class="card section"><h2>Keywords / New Vocabulary</h2><div class="pre">'+esc(d.vocab)+'</div></section>'+
   '<section class="card section"><h2>Success Criteria</h2><div class="pre">'+esc(d.success)+'</div></section>'+
   '<section class="card section"><h2>Resources / E-Implementation Tool</h2><div class="pre">'+esc(d.resources)+'</div></section>'+
-  '<section class="card section"><h2>Lesson Procedures</h2><table class="flow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody>'+rows+'</tbody></table></section>'+
+  '<section class="card section"><h2>Lesson Procedures</h2><table class="flow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody>'+flowRows+'</tbody></table></section>'+
   '<section class="card section"><h2>Plenary / Exit Ticket</h2><div class="pre">'+esc(d.plenary)+'</div></section>'+
   '<section class="card section"><h2>Independent Learners / Learning Skills</h2><div class="pre">'+esc(d.skills)+'</div></section>'+
   '<section class="card section"><h2>Real World Connections / Innovation</h2><div class="pre">'+esc(d.realWorld)+'</div></section>'+
