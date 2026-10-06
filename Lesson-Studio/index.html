@@ -984,8 +984,7 @@ function visitorPlanData(){
    };
  });
  return {
-   interactiveLesson:sharedLessonLink(),
-   lessonData:{grade:$('gradeSelect').value,slides:structuredClone(slides)},
+   interactiveLesson:interactiveLessonLink(),
    school:'Al Reyadah School',
    teacher:$('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',
    grade:$('lpGrade')?.value||('Grade '+$('gradeSelect').value),
@@ -1007,8 +1006,7 @@ function visitorPlanData(){
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
-function sharedLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/share.html?id='+encodeURIComponent(lid):''}
-function interactiveLessonLink(id){return sharedLessonLink(id)}
+function interactiveLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('?')[0].split('#')[0]+'?lesson='+encodeURIComponent(lid)+'&present=1':''}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),id=q.get('lesson');if(!id)return;
