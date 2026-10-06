@@ -699,8 +699,11 @@ function renderQRInto(el,link,size){
  img.onerror=()=>{el.innerHTML='<a href="'+link+'" target="_blank" style="font-size:10px;font-weight:900;color:#123e66">Open Plan</a>'};
  el.appendChild(img);
 }
+function adminLessonPlanLink(){return location.href.split('#')[0]+'#lesson-plan'}
 function buildQR(){
- let link=lessonPlanLink(activeLessonId||'lesson');
+ // Inside the admin/editor, QR and Lesson Plan controls must open the exact same generated plan as the Admin Lesson Plan modal.
+ // Visitor/public QR uses the read-only published copy only when the lesson is being used in Visitor Mode.
+ let link=visitorMode?lessonPlanLink(activeLessonId||'lesson'):adminLessonPlanLink();
  if($('lpLink'))$('lpLink').value=link;
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
@@ -1071,7 +1074,7 @@ $('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrar
 
 
 let presentIndex=0,presentTimerId=null,presentRemaining=300;
-function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,lessonPlanLink(activeLessonId||'lesson'),58)}
+function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,visitorMode?lessonPlanLink(activeLessonId||'lesson'):adminLessonPlanLink(),58)}
 function openPresentation(){slides.forEach(x=>{if(x.type==='Focus'&&(!x.objectives||!x.objectives.length)){x.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];x.obj=x.objectives[0]}});if(!activeLessonId){activeLessonId=(slides[0]&&slides[0]._savedLessonId)||localStorage.getItem('LessonStudioActiveId')||null}presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
 async function closePresentation(){
  document.getElementById('presentation').classList.remove('open');
