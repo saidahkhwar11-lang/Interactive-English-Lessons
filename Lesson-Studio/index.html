@@ -869,13 +869,24 @@ function autoLessonPlan(){
    if(body)body.appendChild(tr);
  });
  let last=procedureSlides[procedureSlides.length-1];
- setLP('lpAssess',last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.');
+ let lessonContext=(topicText+' '+procedureSlides.map(sl=>(sl.title||'')+' '+(sl.mission||'')+' '+(sl.objectives||[]).join(' ')).join(' ')).toLowerCase();
+ let assess=last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.';
+ if(/creative writing|story|writing today|baseline/.test(lessonContext))assess='Exit Ticket: Students submit their independent writing sample and identify one part of their writing they are proud of. Teacher keeps the sample as baseline evidence for later comparison.';
+ else if(/vocab|new word|context clue/.test(lessonContext))assess='Exit Ticket: Students use one new word correctly in context and explain the clue that helped them understand its meaning.';
+ else if(/main idea|read|paragraph/.test(lessonContext))assess='Exit Ticket: Students state the main idea or one key detail from the text and support the response with evidence.';
+ setLP('lpAssess',assess);
  let skills=['Critical Thinking','Self-Learning','Clear Communication'];
+ if(/creative writing|story|write|draft|notebook/.test(lessonContext))skills.push('Creativity','Reflection','Independent Writing');
  if(procedureSlides.some(sl=>/group|partner|pair|discuss|team/i.test((sl.mission||'')+' '+(sl.title||''))))skills.push('Collaboration','Positive Interactions');
  setLP('lpSkills',[...new Set(skills)].join('; ')+'.');
- setLP('lpRealWorld',/direction|map|zoo/.test(topicText)?'Use directions to navigate real places and maps.':'Connect today’s learning to a real-life situation.');
- setLP('lpCross',/direction|map|zoo/.test(topicText)?'Geography: maps, routes and location language.':'Link the lesson topic with relevant subjects where appropriate.');
- setLP('lpUAE',/direction|map/.test(topicText)?'Apply direction language to familiar UAE places and landmarks.':'Connect examples to UAE life, culture or familiar local contexts.');
+ let realWorld='Students connect the lesson skill to authentic communication and situations they may experience outside the classroom.';
+ let cross='English Language Arts: reading, speaking and writing skills are integrated across the lesson.';
+ let uae='Students connect learning to familiar UAE contexts and demonstrate positive values that support responsible participation in their community.';
+ if(/creative writing|story|writing today|baseline/.test(lessonContext)){realWorld='Students use personal experiences and real-life situations as inspiration for meaningful creative writing and reflect on lessons learned from everyday experiences.';cross='Arabic Language: shared creative-writing process and story development. Moral Education: reflection on experiences, choices and lessons learned.';uae='Students develop their voice as young writers in the UAE and connect personal experiences, positive values and responsible citizenship to their writing.'}
+ else if(/direction|map|zoo/.test(lessonContext)){realWorld='Students use direction language to navigate real places, explain routes and help others reach a destination clearly.';cross='Geography: maps, routes, landmarks and location language.';uae='Students apply direction language to familiar UAE places, streets and landmarks.'}
+ else if(/shopping|online|product|customer|e-commerce/.test(lessonContext)){realWorld='Students connect reading to real online-shopping choices by evaluating products, information and responsible purchasing decisions.';cross='Digital Literacy and Mathematics: online information, prices, choices and responsible consumer decisions.';uae='Students connect responsible digital shopping and informed decision-making to daily life in the UAE.'}
+ else if(/animal|habitat|wildlife/.test(lessonContext)){realWorld='Students connect reading and vocabulary to animal care, habitats and responsible treatment of living things.';cross='Science: animals, habitats, diet and behavior.';uae='Students connect animal learning to UAE wildlife, conservation and respect for the environment.'}
+ setLP('lpRealWorld',realWorld);setLP('lpCross',cross);setLP('lpUAE',uae);
  buildQR();
 }
 function downloadLessonPlan(){
