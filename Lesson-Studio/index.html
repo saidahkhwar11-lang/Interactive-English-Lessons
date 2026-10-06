@@ -312,7 +312,7 @@
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
 <option value="6">Grade 6 · Teacher Upload</option>
-</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save New Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
+</select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save New Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="shareLesson" style="background:#8b5aa7">🔗 Share Lesson</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
 <main class="stageWrap"><div class="stage"><div class="banner"><div class="lessonThemeIcon" id="ico">🛒</div><div class="bannerTitleWrap"><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
 <div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
@@ -328,7 +328,7 @@
 <div class="modal" id="modal"><div class="modalCard"><h2>Add Slide</h2><div class="types" id="types"></div><p><button class="btn" id="cancel">Cancel</button></p></div></div>
 
 
-<div class="lpModal" id="libraryModal"><div class="lpShell">
+<div class="lpModal" id="shareModal"><div class="lpShell"><div class="lpHead"><div style="font-size:34px">🔗</div><div><h2>Share Lesson with Teachers</h2><small>Presentation-only link. Your Lesson Studio, library and editing controls stay private.</small></div><div class="lpActions"><button class="btn" id="shareClose">× Close</button></div></div><div class="lpContent"><div class="lpQRBox"><div id="shareQR" style="width:150px;height:150px"></div><div style="flex:1"><b>Teacher Presentation Link</b><p style="color:#648095;font-size:12px">Teachers can present the lesson and use its Lesson Plan QR, but cannot access your editor or library.</p><input id="shareLink" style="width:100%;padding:9px;border:1px solid #d4e3e9;border-radius:9px" readonly><div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="copyShareLink">Copy Link</button><button class="btn" id="openShareLink" style="background:#d46b3c">Open Shared View</button></div></div></div></div></div></div><div class="lpModal" id="libraryModal"><div class="lpShell">
 <div class="lpHead"><div style="font-size:34px">📚</div><div><h2>My Lesson Library</h2><small>Saved on this browser. Use Backup to move lessons to another computer.</small></div><div class="lpActions"><button class="btn" id="libraryClose">× Close</button></div></div>
 <div class="lpContent"><div id="libraryStatus" style="margin-bottom:12px;color:#648095"></div><div id="libraryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px"></div></div>
 </div></div>
@@ -971,7 +971,8 @@ function visitorPlanData(){
    };
  });
  return {
-   interactiveLesson:interactiveLessonLink(),
+   interactiveLesson:sharedLessonLink(),
+   lessonData:{grade:$('gradeSelect').value,slides:structuredClone(slides)},
    school:'Al Reyadah School',
    teacher:$('lpTeacher')?.value||'Ms. Saidah Suhail Khwar',
    grade:$('lpGrade')?.value||('Grade '+$('gradeSelect').value),
@@ -993,7 +994,8 @@ function visitorPlanData(){
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
-function interactiveLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('?')[0].split('#')[0]+'?lesson='+encodeURIComponent(lid)+'&present=1':''}
+function sharedLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/share.html?id='+encodeURIComponent(lid):''}
+function interactiveLessonLink(id){return sharedLessonLink(id)}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),id=q.get('lesson');if(!id)return;
@@ -1005,6 +1007,8 @@ async function loadLessonFromUrl(){
 setTimeout(loadLessonFromUrl,300);
 
 
+function showShareLesson(){if(!activeLessonId)return alert('Save this lesson first, then share it.');let link=sharedLessonLink(activeLessonId);$('shareLink').value=link;renderQRInto($('shareQR'),link,150);$('shareModal').classList.add('open')}
+$('shareLesson').onclick=showShareLesson;$('shareClose').onclick=()=>$('shareModal').classList.remove('open');$('copyShareLink').onclick=async()=>{let v=$('shareLink').value;if(!v)return;try{await navigator.clipboard.writeText(v);toast('Share link copied ✓')}catch(e){$('shareLink').select();document.execCommand('copy');toast('Share link copied ✓')}};$('openShareLink').onclick=()=>{let v=$('shareLink').value;if(v)window.open(v,'_blank')};
 $('saveLesson').onclick=saveCurrent;$('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrary()};$('libraryClose').onclick=()=>$('libraryModal').classList.remove('open');$('exportLesson').onclick=exportCurrent;$('importLesson').onchange=e=>{let f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
 
 
