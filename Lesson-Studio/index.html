@@ -700,12 +700,8 @@ function renderQRInto(el,link,size){
  el.appendChild(img);
 }
 function canonicalLessonPlanLink(){
- // Preserve the exact lesson identity in the QR. A fresh browser must load that lesson before opening its plan.
- let base=location.href.split('#')[0],id=activeLessonId||(slides[0]&&slides[0]._savedLessonId);
- if(id&&!new URL(base).searchParams.get('lesson')){
-   let u=new URL(base);u.searchParams.set('lesson',id);if(visitorMode)u.searchParams.set('mode','visitor');base=u.toString();
- }else if(visitorMode&&!new URL(base).searchParams.get('mode')){let u=new URL(base);u.searchParams.set('mode','visitor');base=u.toString()}
- return base+'#lesson-plan';
+ let id=activeLessonId||(slides[0]&&slides[0]._savedLessonId);
+ return id?lessonPlanLink(id):'';
 }
 function buildQR(){
  let link=canonicalLessonPlanLink();
