@@ -20,22 +20,19 @@ async function load(){
     crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
   };
   let flowRows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
-  app.innerHTML='<section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only · Generated from Lesson Focus, slide instructions and activity picture text</p></div></section>'+
-  '<section class="card meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></section>'+
-  '<section class="card section"><h2>Lesson Topic</h2><div class="pre">'+esc(d.topic||d.title)+'</div></section>'+
-  '<section class="card section"><h2>Key Learning Objective(s)</h2><div class="pre">'+esc(d.objectives)+'</div></section>'+
-  '<section class="card section"><h2>H.O.T. Question(s)</h2><div class="pre">'+esc(d.hot)+'</div></section>'+
-  '<section class="card section"><h2>Keywords / New Vocabulary</h2><div class="pre">'+esc(d.vocab)+'</div></section>'+
-  '<section class="card section"><h2>Success Criteria</h2><div class="pre">'+esc(d.success)+'</div></section>'+
-  '<section class="card section"><h2>Resources / E-Implementation Tool</h2><div class="pre">'+esc(d.resources)+'</div></section>'+
-  '<section class="card section"><h2>Lesson Procedures</h2><table class="flow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody>'+flowRows+'</tbody></table></section>'+
-  '<section class="card section"><h2>Plenary / Exit Ticket</h2><div class="pre">'+esc(d.plenary)+'</div></section>'+
-  '<section class="card section"><h2>Independent Learners / Learning Skills</h2><div class="pre">'+esc(d.skills)+'</div></section>'+
-  '<section class="card section"><h2>Real World Connections / Innovation</h2><div class="pre">'+esc(d.realWorld)+'</div></section>'+
-  '<section class="card section"><h2>Cross Curricular (Links with other subjects)</h2><div class="pre">'+esc(d.crossCurricular)+'</div></section>'+
-  '<section class="card section"><h2>UAE Culture and Heritage (UAE Vision 2031)</h2><div class="pre">'+esc(d.uae)+'</div></section>'+
-  '<div class="privacy">Read-only visitor lesson plan · No access to Lesson Studio, attendance or editing controls.</div>';
- }catch(e){app.innerHTML='<div class="card bad"><h2>Lesson plan unavailable</h2><p>This lesson plan could not be loaded.</p></div>'}
+  app.innerHTML='<div class="lpShell" style="background:#fff;border-radius:24px;overflow:hidden"><section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only · Same Lesson Plan as Lesson Studio</p></div></section>'+
+'<div class="lpContent" style="padding:18px"><div class="meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></div>'+
+'<section class="card section"><h2>Learning Objectives</h2><div class="pre">'+esc(d.objectives)+'</div></section>'+
+'<section class="card section"><h2>Success Criteria</h2><div class="pre">'+esc(d.success)+'</div></section>'+
+'<div class="meta" style="margin-top:14px"><div><small>Lesson Topic</small>'+esc(d.topic||d.title)+'</div><div><small>H.O.T. Question(s)</small><div class="pre">'+esc(d.hot)+'</div></div></div>'+
+'<section class="card section"><h2>Keywords / New Vocabulary</h2><div class="pre">'+esc(d.vocab)+'</div></section>'+
+'<section class="card section"><h2>Resources / E-Implementation Tool</h2><div class="pre">'+esc(d.resources)+'</div></section>'+
+'<section class="card section"><h2>Lesson Procedures</h2><table class="flow"><thead><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr></thead><tbody>'+flowRows+'</tbody></table></section>'+
+'<section class="card section"><h2>Plenary / Exit Ticket</h2><div class="pre">'+esc(d.plenary)+'</div></section>'+
+'<section class="card section"><h2>Independent Learners / Learning Skills</h2><div class="pre">'+esc(d.skills)+'</div></section>'+
+'<div class="meta" style="margin-top:14px"><div><small>Real World Connections / Innovation</small><div class="pre">'+esc(d.realWorld)+'</div></div><div><small>Cross Curricular (Links with other subjects)</small><div class="pre">'+esc(d.crossCurricular)+'</div></div></div>'+
+'<section class="card section"><h2>UAE Culture and Heritage (UAE Vision 2031)</h2><div class="pre">'+esc(d.uae)+'</div></section></div></div>'+
+'<div class="privacy">Read-only copy of the Lesson Studio Lesson Plan · No editing controls.</div>'; }catch(e){app.innerHTML='<div class="card bad"><h2>Lesson plan unavailable</h2><p>This lesson plan could not be loaded.</p></div>'}
 }
 load();
 </script></body></html>
