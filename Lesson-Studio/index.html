@@ -707,11 +707,27 @@ function buildQR(){
 }
 function procedureDetailFor(sl,pictureText){
  const title=(sl.title||'').trim(),mission=(sl.mission||'').trim();
- const source=(mission+' '+pictureText).replace(/\s+/g,' ').trim();
- const low=(title+' '+source).toLowerCase();
+ const questions=(sl.questions||[]).map(q=>typeof q==='string'?q:(q.q||q.question||'')).filter(Boolean);
+ const answers=(sl.questions||[]).map(q=>typeof q==='object'?(q.a||q.answer||''):'').filter(Boolean);
+ const objectives=(sl.objectives||[]).filter(Boolean);
+ const source=(mission+' '+pictureText+' '+questions.join(' ')).replace(/\s+/g,' ').trim();
+ const low=(title+' '+source+' '+objectives.join(' ')).toLowerCase();
  const page=sl.page&&sl.page!=='—'?' on page '+sl.page:'';
+ const qDetail=questions.length?' Saved checks: '+questions.join(' | '):'';
  let student='',teacher='';
- if(sl.type==='Reading'){
+ if(/creative writing|my writing today|baseline|memorable moment/.test(low)){
+   student='Complete the baseline creative-writing task independently in the dedicated Creative Writing section of the notebook. Write about the assigned personal experience or memorable moment using current writing ability without a model, story frame, or pre-teaching. Include what happened, feelings and what was learned where these prompts appear on the slide.';
+   teacher='Explain that this is a baseline sample, clarify only the task instructions and time limit, and avoid teaching story structure, vocabulary or giving a model before students write. Monitor independent writing, collect the completed sample as baseline evidence, and use it later to measure growth.';
+ }else if(/prepare notebook|writing journey|allocate.*section|dedicated section/.test(low)){
+   student='Prepare a dedicated Creative Writing section in the English notebook. Add the heading “Creative Writing – My Writing Journey” and keep future plans, drafts, feedback and final writing together in this section.';
+   teacher='Show students where to allocate the Creative Writing section, check that the heading is written clearly, and explain that all initiative work and evidence will be kept together and organised throughout the writing journey.';
+ }else if(/hero/.test(low)&&/think|share|starter/.test(low)){
+   student='Look at the word HERO, think independently for one minute about who can be a hero, what makes someone a hero and what values a hero may show, then share one idea with a partner.';
+   teacher='Display the HERO prompt, give one minute of silent thinking time, then facilitate brief Turn & Talk responses. Accept students’ existing ideas without introducing Charter characters, story structure or model vocabulary that could influence the baseline writing.';
+ }else if(/story part|story element|character|setting|problem|solution/.test(low)&&!/baseline/.test(low)){
+   student='Recall the main story elements shown on the slide and explain the role of the character, setting, events/problem and solution using prior knowledge.';
+   teacher='Elicit the story elements from students first, reveal or confirm them from the slide, and use short questions to check that students can distinguish each part before moving to the writing task.';
+ }else if(sl.type==='Reading'){
    student='Read silently for '+(sl.time||5)+' minutes and focus on key details.';
    teacher='Set the silent-reading routine, ensure students are ready, monitor reading engagement and support students who need help accessing the text.';
  }else if(/favorite animal|talk to your partner|speaking|discuss|partner/.test(low)){
@@ -736,8 +752,8 @@ function procedureDetailFor(sl,pictureText){
    student='Apply the lesson skill independently to the task shown on the slide and use evidence or target vocabulary to complete the response.';
    teacher='Release responsibility to students, monitor independent application, prompt with questions rather than giving answers, and review selected responses.';
  }else if(source && !/^add student instructions\.?$/i.test(source)){
-   student=source;
-   teacher='Introduce the task, clarify the expected outcome, model a first step where needed, then monitor students as they complete: '+source;
+   student=source+(qDetail?'.'+qDetail:'');
+   teacher='Introduce the exact task shown on the slide, clarify the expected product and success point, then monitor students while they complete it.'+(questions.length?' Use the saved questions to check understanding and reveal saved answers only after students respond.':'')
  }else{
    student='Complete the task shown on the activity slide.';
    teacher='Explain the task shown on the slide, model the first step where needed, monitor student responses and check understanding.';
