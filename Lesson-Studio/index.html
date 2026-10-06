@@ -715,12 +715,12 @@ function procedureDetailFor(sl,pictureText){
  const page=sl.page&&sl.page!=='—'?' on page '+sl.page:'';
  const qDetail=questions.length?' Saved checks: '+questions.join(' | '):'';
  let student='',teacher='';
- if(/creative writing|my writing today|baseline|memorable moment/.test(low)){
-   student='Complete the baseline creative-writing task independently in the dedicated Creative Writing section of the notebook. Write about the assigned personal experience or memorable moment using current writing ability without a model, story frame, or pre-teaching. Include what happened, feelings and what was learned where these prompts appear on the slide.';
-   teacher='Explain that this is a baseline sample, clarify only the task instructions and time limit, and avoid teaching story structure, vocabulary or giving a model before students write. Monitor independent writing, collect the completed sample as baseline evidence, and use it later to measure growth.';
- }else if(/prepare notebook|writing journey|allocate.*section|dedicated section/.test(low)){
-   student='Prepare a dedicated Creative Writing section in the English notebook. Add the heading “Creative Writing – My Writing Journey” and keep future plans, drafts, feedback and final writing together in this section.';
-   teacher='Show students where to allocate the Creative Writing section, check that the heading is written clearly, and explain that all initiative work and evidence will be kept together and organised throughout the writing journey.';
+ if(/prepare notebook|writing journey|allocate.*section|dedicated section/.test(low)){
+   student='Prepare a dedicated Creative Writing section in the English notebook. Add the heading “Creative Writing – My Writing Journey”. Keep all future planning, drafts, teacher feedback, improvements and final writing together in this section.';
+   teacher='Give students the full 10 minutes to organise the notebook. Show where the Creative Writing section should begin, ask students to write the heading “Creative Writing – My Writing Journey”, and check that every student has prepared a clear dedicated section. Explain that this section will hold evidence from the whole initiative.';
+ }else if(/creative writing|my writing today|baseline|memorable moment/.test(low)){
+   student='Write the baseline creative-writing sample independently for the full writing session. Respond to the assigned personal-experience or memorable-moment prompt using current writing ability. Develop what happened, how you felt and what you learned, without using a model or teacher-provided story frame.';
+   teacher='Explain that this 20-minute task is the baseline writing assessment. Clarify the prompt and time only; do not pre-teach story structure, provide model sentences or supply vocabulary. Monitor independent writing without correcting during the task, then collect the completed sample as baseline evidence for later comparison.';
  }else if(/hero/.test(low)&&/think|share|starter/.test(low)){
    student='Look at the word HERO, think independently for one minute about who can be a hero, what makes someone a hero and what values a hero may show, then share one idea with a partner.';
    teacher='Display the HERO prompt, give one minute of silent thinking time, then facilitate brief Turn & Talk responses. Accept students’ existing ideas without introducing Charter characters, story structure or model vocabulary that could influence the baseline writing.';
@@ -881,7 +881,7 @@ function autoLessonPlan(){
    let main='<b>'+esc2(sl.title)+'</b><br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
    let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
-   let stage=sl.type==='Reading'?'Reading Routine':(i===0?'Warm up / Starter':(i===procedureSlides.length-1?'Plenary / Exit Ticket':'Main Activity '+i));
+   let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(/exit|plenary/i.test(sl.title||'')?'Plenary / Exit Ticket':'Main Activity '+i));
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(stage)+'<br><small>'+esc2(sl.title)+'</small></td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
    if(body)body.appendChild(tr);
  });
