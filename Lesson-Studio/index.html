@@ -642,10 +642,11 @@ $('newQuestion').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDef
 $('gradeSelect').onchange=()=>{
  let g=$('gradeSelect').value;
  if(slides[0] && slides[0].type==='Reading'){
-   slides[0].title=g==='9'?'Alef Pathway Reading':'Reading Routine';
-   slides[0].mission='Upload the reading routine poster for this lesson.';
+   slides[0].title=g==='9'?'Alef Pathway Reading':'Free Reading';
+   slides[0].mission=g==='9'?'Open the assigned reading task in ALEF Pathway.':'Read the free-reading text/poster provided by your teacher.';
    slides[0].obj='Build reading fluency.';
-   
+   // Grade 6 does not use the Grade 9 ALEF Pathway poster. Clear it when switching a copied lesson to Grade 6 so the teacher can upload the correct free-reading poster.
+   if(g==='6'){slides[0].img='';slides[0].images=[];slides[0].imageName='';}
  }
  render();markChanged();
 };$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=[];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
