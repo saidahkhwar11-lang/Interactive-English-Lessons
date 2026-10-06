@@ -920,6 +920,29 @@ function dbOpen(){return new Promise((res,rej)=>{let q=indexedDB.open(DB_NAME,1)
 async function dbPut(v){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(v);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
 async function dbAll(){let db=await dbOpen();return new Promise((res,rej)=>{let q=db.transaction(STORE).objectStore(STORE).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
 async function dbDelete(id){let db=await dbOpen();return new Promise((res,rej)=>{let tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function splitCloudLesson(x){
+ const lesson=structuredClone(x),assets={},seen=new Map();let n=0;
+ const put=v=>{if(typeof v!=='string'||!v.startsWith('data:'))return v;if(seen.has(v))return '@asset:'+seen.get(v);let k='a'+(++n);seen.set(v,k);assets[k]=v;return '@asset:'+k};
+ (lesson.slides||[]).forEach(sl=>{sl.img=put(sl.img);sl.aud=put(sl.aud);if(Array.isArray(sl.images))sl.images=sl.images.map(put)});
+ return {lesson,assets};
+}
+async function publishCloudLesson(x){
+ const {lesson,assets}=splitCloudLesson(x),keys=Object.keys(assets),chunk=180000;
+ const manifest={lesson,assetKeys:keys};
+ let r=await fetch(PLAN_API+'/rest/v1/rpc/publish_cloud_lesson',{method:'POST',headers:{apikey:PLAN_KEY,Authorization:'Bearer '+PLAN_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_id:x.id,p_title:x.title||'Lesson',p_grade:String(x.grade||''),p_manifest:manifest})});
+ if(!r.ok)throw new Error('Could not publish lesson details');
+ for(const k of keys){let v=assets[k],part=0;for(let p=0;p<v.length;p+=chunk){let rr=await fetch(PLAN_API+'/rest/v1/rpc/publish_cloud_asset_part',{method:'POST',headers:{apikey:PLAN_KEY,Authorization:'Bearer '+PLAN_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_lesson:x.id,p_key:k,p_part:part++,p_data:v.slice(p,p+chunk)})});if(!rr.ok)throw new Error('Could not publish lesson media')}}
+ return true;
+}
+async function cloudLessons(){let r=await fetch(PLAN_API+'/rest/v1/cloud_lesson_library?select=lesson_id,title,grade,manifest,updated_at&order=updated_at.desc',{headers:{apikey:PLAN_KEY,Authorization:'Bearer '+PLAN_KEY}});if(!r.ok)return[];return await r.json()}
+async function loadCloudLesson(id){
+ let list=await cloudLessons(),row=list.find(x=>x.lesson_id===id);if(!row)return null;let lesson=structuredClone(row.manifest.lesson||{});
+ let r=await fetch(PLAN_API+'/rest/v1/cloud_lesson_assets?lesson_id=eq.'+encodeURIComponent(id)+'&select=asset_key,part_no,data&order=asset_key.asc,part_no.asc',{headers:{apikey:PLAN_KEY,Authorization:'Bearer '+PLAN_KEY}}),parts=r.ok?await r.json():[],assets={};
+ parts.forEach(p=>assets[p.asset_key]=(assets[p.asset_key]||'')+p.data);
+ const get=v=>typeof v==='string'&&v.startsWith('@asset:')?(assets[v.slice(7)]||''):v;
+ (lesson.slides||[]).forEach(sl=>{sl.img=get(sl.img);sl.aud=get(sl.aud);if(Array.isArray(sl.images))sl.images=sl.images.map(get)});
+ return lesson;
+}
 function collectLP(){let o={};lpIds.forEach(id=>o[id]=$(id)?.value||'');return o}
 function applyLP(o){if(!o)return;Object.entries(o).forEach(([id,v])=>{if($(id))$(id).value=v})}
 function snapshot(id){let title=slides.find(x=>x.type==='Focus')?.lesson||slides[0]?.lesson||'Untitled Lesson';let lid=id||activeLessonId||('lesson-'+Date.now()+'-'+Math.random().toString(36).slice(2,8));return{id:lid,title,grade:$('gradeSelect').value,updatedAt:Date.now(),slides:structuredClone(slides),lessonPlan:collectLP(),planUrl:lessonPlanLink(lid),saved:true}}
