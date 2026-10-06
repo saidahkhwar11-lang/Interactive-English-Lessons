@@ -947,7 +947,7 @@ async function publishVisitorPlan(id,secret){
  if(!res.ok)throw new Error('Public lesson plan could not be published');
  return true;
 }
-async function publishSharedLesson(id,secret,lessonSlides,grade){const payload={grade:grade,slides:structuredClone(lessonSlides||[])};const res=await fetch(PLAN_API+'/rest/v1/rpc/publish_shared_lesson_v2',{method:'POST',headers:{'apikey':PLAN_KEY,'Authorization':'Bearer '+PLAN_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_id:id,p_payload:payload})});if(!res.ok){let msg=await res.text();throw new Error('Shared lesson publish failed: '+msg)}return true}
+async function publishSharedLesson(id,secret,lessonSlides,grade){const payload={grade:grade,slides:structuredClone(lessonSlides||[])};const url=PLAN_API+'/rest/v1/shared_lesson_payloads?on_conflict=id';const res=await fetch(url,{method:'POST',headers:{'apikey':PLAN_KEY,'Authorization':'Bearer '+PLAN_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:id,payload:payload})});if(!res.ok){let msg=await res.text();throw new Error('Shared lesson publish failed: '+msg)}return true}
 async function saveCurrent(){
  autoLessonPlan();
  // Only update an existing record when it was explicitly opened from My Library.
