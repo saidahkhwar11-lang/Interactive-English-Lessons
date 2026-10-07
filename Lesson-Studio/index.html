@@ -943,7 +943,15 @@ async function dbDelete(id){let db=await dbOpen();return new Promise((res,rej)=>
 function splitCloudLesson(x){
  const lesson=structuredClone(x),assets={},seen=new Map();let n=0;
  const put=v=>{if(typeof v!=='string'||!v.startsWith('data:'))return v;if(seen.has(v))return '@asset:'+seen.get(v);let k='a'+(++n);seen.set(v,k);assets[k]=v;return '@asset:'+k};
- (lesson.slides||[]).forEach(sl=>{sl.img=put(sl.img);sl.aud=put(sl.aud);if(Array.isArray(sl.images))sl.images=sl.images.map(put)});
+ (lesson.slides||[]).forEach(sl=>{
+  // Normalise every slide before publishing. Some older/edited slides kept the
+  // visible picture only in img, while newer slides use images[].
+  sl.images=Array.isArray(sl.images)?sl.images.filter(Boolean):[];
+  if(sl.img&&!sl.images.includes(sl.img))sl.images.unshift(sl.img);
+  sl.images=sl.images.map(put);
+  sl.img=sl.images[0]||put(sl.img)||'';
+  sl.aud=put(sl.aud);
+ });
  return {lesson,assets};
 }
 async function publishCloudLesson(x){
