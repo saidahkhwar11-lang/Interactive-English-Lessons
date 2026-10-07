@@ -1078,10 +1078,15 @@ async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),publicLesson=q.get('publicLesson'),id=q.get('lesson');
  if(publicLesson){try{let r=await fetch(publicLesson,{cache:'no-store'});if(!r.ok)return;let x=await r.json();activeLessonId=x.id;slides=structuredClone(x.slides||[]);cur=0;if(x.grade)document.getElementById('gradeSelect').value=x.grade;applyLP(x.lessonPlan);render();buildQR();if(q.get('present')==='1')setTimeout(()=>openPresentation(),150);return}catch(e){console.error('Public lesson load failed',e);return}}
  if(!id)return;
- try{let items=await dbAll(),x=items.find(v=>v.id===id);if(!x)return;
- activeLessonId=x.id;slides=structuredClone(x.slides);cur=0;if(x.grade)document.getElementById('gradeSelect').value=x.grade;applyLP(x.lessonPlan);render();buildQR();
- if(q.get('view')==='plan'||location.hash==='#lesson-plan'){document.getElementById('lpModal').classList.add('open');autoLessonPlan()}else if(q.get('present')==='1'){setTimeout(()=>openPresentation(),150)}
- }catch(e){}
+ try{
+  // Visitor links must load the published cloud copy; the creator's IndexedDB
+  // exists only in the admin browser and is intentionally unavailable here.
+  let x=visitorMode?await loadCloudLesson(id):null;
+  if(!x){let items=await dbAll();x=items.find(v=>v.id===id)}
+  if(!x)return;
+  activeLessonId=x.id||id;slides=structuredClone(x.slides||[]);cur=0;if(x.grade)document.getElementById('gradeSelect').value=x.grade;applyLP(x.lessonPlan);render();buildQR();
+  if(q.get('view')==='plan'||location.hash==='#lesson-plan'){document.getElementById('lpModal').classList.add('open');autoLessonPlan()}else if(q.get('present')==='1'){setTimeout(()=>openPresentation(),150)}
+ }catch(e){console.error('Lesson URL load failed',e)}
 }
 setTimeout(loadLessonFromUrl,300);
 
