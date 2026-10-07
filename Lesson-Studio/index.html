@@ -981,7 +981,19 @@ async function loadCloudLesson(id){
  let assets={};
  Object.entries(grouped).forEach(([key,rows])=>{assets[key]=rows.sort((a,b)=>(a.part_no||0)-(b.part_no||0)).map(p=>p.data||'').join('')});
  const missing=new Set();
- const get=v=>{if(typeof v!=='string'||!v.startsWith('@asset:'))return v;let key=v.slice(7),media=assets[key];if(!media){missing.add(key);return null}return media};
+ const mediaUrlCache={};
+ const dataToBlobUrl=(key,media)=>{
+  if(mediaUrlCache[key])return mediaUrlCache[key];
+  if(typeof media!=='string'||!media.startsWith('data:'))return media;
+  try{
+   const comma=media.indexOf(','),meta=media.slice(5,comma),payload=media.slice(comma+1),mime=(meta.split(';')[0]||'application/octet-stream');
+   if(!/;base64/i.test(meta))return media;
+   const bin=atob(payload),bytes=new Uint8Array(bin.length);
+   for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+   return mediaUrlCache[key]=URL.createObjectURL(new Blob([bytes],{type:mime}));
+  }catch(e){console.warn('Could not prepare visitor media',key,e);return media}
+ };
+ const get=v=>{if(typeof v!=='string'||!v.startsWith('@asset:'))return v;let key=v.slice(7),media=assets[key];if(!media){missing.add(key);return null}return dataToBlobUrl(key,media)};
  (lesson.slides||[]).forEach(sl=>{sl.img=get(sl.img)||'';sl.aud=get(sl.aud)||'';if(Array.isArray(sl.images))sl.images=sl.images.map(get).filter(Boolean)});
  if(missing.size)console.warn('Visitor lesson is missing cloud media assets:',[...missing]);
  return lesson;
