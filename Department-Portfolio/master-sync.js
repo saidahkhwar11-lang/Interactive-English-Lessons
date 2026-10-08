@@ -16,6 +16,16 @@
     }
     return copy;
   }
+  function normalizeTeacherName(data){
+    if(!data||!Array.isArray(data.teachers))return false;
+    let changed=false;
+    for(const teacher of data.teachers){
+      if(String(teacher.name||'').trim().toLowerCase()==='saba al manaee'){
+        teacher.name='Saba Al manaei';changed=true;
+      }
+    }
+    return changed;
+  }
   function hasMasterData(data){return !!(data&&typeof data==='object'&&Object.keys(data).length);}
   async function profile(){
     const client=parent.portfolioSupabase,user=parent.PORTFOLIO_USER;
@@ -33,6 +43,7 @@
   function loadTeacherMaster(master){
     /* Teacher receives coordinator's shared structure without gaining write access. */
     state=JSON.parse(JSON.stringify(master));
+    normalizeTeacherName(state);
     localStorage.setItem(MAIN_KEY,JSON.stringify(state));
     renderAll();
     document.documentElement.setAttribute('data-portfolio-role','teacher');
@@ -52,6 +63,16 @@
         return;
       }
       if(p.role!=='admin')return;
+      if(hasMasterData(row.data)){
+        const corrected=JSON.parse(JSON.stringify(row.data));
+        if(normalizeTeacherName(corrected)){
+          const {error:renameError}=await client.from('portfolio_state').update({data:corrected,updated_at:new Date().toISOString()}).eq('id','main');
+          if(renameError)console.error('Portfolio teacher name correction could not be saved:',renameError);
+        }
+        normalizeTeacherName(state);
+        localStorage.setItem(MAIN_KEY,JSON.stringify(state));
+        renderAll();
+      }
       if(!hasMasterData(row.data)){
         const existing=localStorage.getItem(MAIN_KEY);if(existing&&!localStorage.getItem(BACKUP_KEY))localStorage.setItem(BACKUP_KEY,existing);
         const {error:seedError}=await client.from('portfolio_state').update({data:serverSafe(state),updated_at:new Date().toISOString()}).eq('id','main');if(seedError)throw seedError;
