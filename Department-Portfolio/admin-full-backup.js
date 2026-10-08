@@ -56,7 +56,13 @@ async function backup(){
   for(let i=0;i<paths.length;i++){
    const path=paths[i];status('Downloading files '+(i+1)+' / '+paths.length);
    try{const {data,error}=await client.storage.from(BUCKET).download(path);if(error||!data)throw Error(error?.message||'No file returned');
-    files.file(safePath(path),await data.arrayBuffer());manifest.files.push({storage_path:path,backup_path:'uploaded-files/'+safePath(path),bytes:data.size});
+    const buffer=await data.arrayBuffer();
+    // JSZip 3.x reliably accepts Uint8Array; passing an ArrayBuffer from
+    // another browser realm can fail only when generateAsync() is called.
+    const bytes=new Uint8Array(buffer);
+    if(bytes.byteLength!==data.size)throw Error('Downloaded file size mismatch');
+    files.file(safePath(path),bytes,{binary:true});
+    manifest.files.push({storage_path:path,backup_path:'uploaded-files/'+safePath(path),bytes:bytes.byteLength});
    }catch(e){errors.push(path+': '+e.message)}
   }
   manifest.errors=errors;manifest.complete=errors.length===0;
