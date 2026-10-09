@@ -900,13 +900,50 @@ function autoLessonPlan(){
  if(/creative writing|story|write|draft|notebook/.test(lessonContext))skills.push('Creativity','Reflection','Independent Writing');
  if(procedureSlides.some(sl=>/group|partner|pair|discuss|team/i.test((sl.mission||'')+' '+(sl.title||''))))skills.push('Collaboration','Positive Interactions');
  setLP('lpSkills',[...new Set(skills)].join('; ')+'.');
- let realWorld='Students connect the lesson skill to authentic communication and situations they may experience outside the classroom.';
- let cross='English Language Arts: reading, speaking and writing skills are integrated across the lesson.';
- let uae='Students connect learning to familiar UAE contexts and demonstrate positive values that support responsible participation in their community.';
- if(/creative writing|story|writing today|baseline/.test(lessonContext)){realWorld='Students use personal experiences and real-life situations as inspiration for meaningful creative writing and reflect on lessons learned from everyday experiences.';cross='Arabic Language: shared creative-writing process and story development. Moral Education: reflection on experiences, choices and lessons learned.';uae='Students develop their voice as young writers in the UAE and connect personal experiences, positive values and responsible citizenship to their writing.'}
- else if(/direction|map|zoo/.test(lessonContext)){realWorld='Students use direction language to navigate real places, explain routes and help others reach a destination clearly.';cross='Geography: maps, routes, landmarks and location language.';uae='Students apply direction language to familiar UAE places, streets and landmarks.'}
- else if(/shopping|online|product|customer|e-commerce/.test(lessonContext)){realWorld='Students connect reading to real online-shopping choices by evaluating products, information and responsible purchasing decisions.';cross='Digital Literacy and Mathematics: online information, prices, choices and responsible consumer decisions.';uae='Students connect responsible digital shopping and informed decision-making to daily life in the UAE.'}
- else if(/animal|habitat|wildlife/.test(lessonContext)){realWorld='Students connect reading and vocabulary to animal care, habitats and responsible treatment of living things.';cross='Science: animals, habitats, diet and behavior.';uae='Students connect animal learning to UAE wildlife, conservation and respect for the environment.'}
+ // Topic-aware, concise classroom connections; use only connections supported by lesson context.
+ let realWorld='',cross='',uae='';
+ const ctx=lessonContext;
+ if(/creative writing|story|writing today|baseline|narrative|draft|edit.*writing/.test(ctx)){
+ realWorld='Students write about a real experience or a realistic challenge, describing what happened and the lesson learned.';
+ cross='Arabic: story planning, sequencing and descriptive language; Moral Education: choices, consequences and values.';
+ uae='Students may draw on everyday UAE family or community experiences to show respect, kindness or perseverance, supporting the Forward Society pillar of We the UAE 2031.';
+ }else if(/direction|route|map|turn left|turn right|roundabout/.test(ctx)){
+ realWorld='Students give practical directions to help someone reach a familiar destination.';
+ cross='Geography: interpreting maps, routes and landmarks.';
+ uae='Students practise routes using familiar UAE streets or landmarks, linking communication to accessible, connected communities.';
+ }else if(/online shopping|e-commerce|customer|shopping|purchase/.test(ctx)){
+ realWorld='Students compare product details and prices before making a safe online purchase.';
+ cross='Mathematics: prices and comparison; Digital Literacy: online safety and evaluating information.';
+ uae='Students practise responsible digital shopping in the UAE, connecting to digital readiness under the Forward Ecosystem pillar of We the UAE 2031.';
+ }else if(/animal|habitat|wildlife|giraffe|hyena|bear/.test(ctx)){
+ realWorld='Students explain how animals’ habitats and needs influence their care and protection.';
+ cross='Science: habitats, diets, adaptation and conservation.';
+ uae='Students relate animal conservation to UAE wildlife such as the Arabian oryx and responsible environmental care.';
+ }else if(/health|under the weather|illness|exercise|nutrition/.test(ctx)){
+ realWorld='Students use health-related English to explain symptoms or make sensible wellbeing choices.';
+ cross='Science and Health Education: body systems, health and wellbeing.';
+ uae='Students connect healthy daily habits with wellbeing and quality of life in UAE communities.';
+ }else if(/campus|school life|friendship|introduc|nice to meet|sharing things/.test(ctx)){
+ realWorld='Students use the target language to communicate clearly with classmates and new people.';
+ cross='Moral Education: respectful communication, cooperation and inclusion.';
+ uae='Students practise respect and inclusion in the UAE’s diverse school community, reflecting the Forward Society pillar.';
+ }else if(/email|letter|message|formal writing/.test(ctx)){
+ realWorld='Students write a clear message for a real audience and purpose.';
+ cross='Digital Literacy: safe and appropriate online communication.';
+ uae='Students practise respectful written communication in UAE school and community settings.';
+ }else if(/vocabulary|context clue|word meaning|spelling/.test(ctx)){
+ realWorld='Students use unfamiliar words in everyday reading and communication.';
+ cross='Library and Information Literacy: using context to interpret information.';
+ uae='Students apply accurate English communication when reading information about familiar UAE places and experiences.';
+ }else if(/reading|main idea|summari|comprehension|text/.test(ctx)){
+ realWorld='Students identify important information in texts they encounter in daily life.';
+ cross='Media Literacy: distinguishing main ideas from supporting details.';
+ uae='Students apply reading skills to age-appropriate texts about UAE life and community.';
+ }else{
+ realWorld='Students apply the lesson’s communication skill to a realistic situation connected to the topic.';
+ cross='Communication and Literacy: using the lesson skill to interpret or share information.';
+ uae='Where relevant, students connect the topic to familiar UAE community experiences and responsible citizenship.';
+ }
  setLP('lpRealWorld',realWorld);setLP('lpCross',cross);setLP('lpUAE',uae);
  buildQR();
 }
