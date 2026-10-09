@@ -356,7 +356,7 @@ body.visitorMode .right,body.visitorMode #add,body.visitorMode #saveLesson,body.
 </div></div></div></div>
 <div class="presentation" id="presentation">
 <aside class="presentNav"><div class="presentBrand">✨ Lesson Agenda</div><div class="presentNavList" id="presentNavList"></div></aside>
-<main class="presentMain"><div class="presentTop" id="presentTop"><div class="presentThemeIcon" id="presentThemeIcon">🛒</div><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" title="Scan or click to open Lesson Plan" style="cursor:pointer;"display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:58px;height:58px"></div></div><div class="presentActions"><button id="presentFullscreen">⛶ Full Screen</button><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
+<main class="presentMain"><div class="presentTop" id="presentTop"><div class="presentThemeIcon" id="presentThemeIcon">🛒</div><div><h1 id="presentLessonTitle">Lesson</h1><p id="presentSub"></p></div><div id="presentQRWrap" title="Scan or click to open Lesson Plan" style="cursor:pointer;"display:flex;align-items:center;gap:7px;background:#fff;padding:5px 8px;border-radius:12px"><div id="presentQR" style="width:112px;height:112px"></div></div><div class="presentActions"><button id="presentFullscreen">⛶ Full Screen</button><button id="presentPlan">📋 Lesson Plan</button><button class="presentClose" id="presentClose">✕ Exit Presentation</button></div></div><div id="presentSlide"></div></main>
 </div>
 <div class="zoom" id="zoom"><button class="close" id="close">×</button><div class="zoomBox"><img id="zoomImg"></div></div>
 <script>
@@ -694,7 +694,7 @@ function renderQRInto(el,link,size){
  if(!el)return;el.innerHTML='';
  if(!link){el.innerHTML='<div style="font-size:10px;font-weight:900;color:#647d8d">Save lesson<br>for QR</div>';return}
  const img=document.createElement('img');img.alt='Lesson Plan QR';img.width=size;img.height=size;
- img.src='https://quickchart.io/qr?size='+Math.max(220,size*4)+'&margin=2&text='+encodeURIComponent(link);
+ img.src='https://quickchart.io/qr?size='+Math.max(320,size*4)+'&margin=4&ecLevel=H&text='+encodeURIComponent(link);
  img.style.cssText='display:block;width:'+size+'px;height:'+size+'px;background:#fff';
  img.onerror=()=>{el.innerHTML='<a href="'+link+'" target="_blank" style="font-size:10px;font-weight:900;color:#123e66">Open Plan</a>'};
  el.appendChild(img);
@@ -707,7 +707,7 @@ function buildQR(){
  let link=canonicalLessonPlanLink();
  if($('lpLink'))$('lpLink').value=link;
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
- if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,58);
+ if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,112);
 }
 function procedureDetailFor(sl,pictureText){
  const title=(sl.title||'').trim(),mission=(sl.mission||'').trim();
@@ -1115,7 +1115,7 @@ $('openLibrary').onclick=()=>{$('libraryModal').classList.add('open');showLibrar
 
 
 let presentIndex=0,presentTimerId=null,presentRemaining=300;
-function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,canonicalLessonPlanLink(),58)}
+function buildPresentQR(){let el=document.getElementById('presentQR');if(!el)return;renderQRInto(el,canonicalLessonPlanLink(),112)}
 function openPresentation(){slides.forEach(x=>{if(x.type==='Focus'&&(!x.objectives||!x.objectives.length)){x.objectives=['Introduce the lesson topic, learning objectives, and key vocabulary.'];x.obj=x.objectives[0]}});if(!activeLessonId){activeLessonId=(slides[0]&&slides[0]._savedLessonId)||localStorage.getItem('LessonStudioActiveId')||null}presentIndex=cur;document.getElementById('presentation').classList.add('open');renderPresentation()}
 async function closePresentation(){
  document.getElementById('presentation').classList.remove('open');
