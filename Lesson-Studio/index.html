@@ -709,7 +709,7 @@ function buildQR(){
  ['miniQR','bigQR'].forEach(id=>renderQRInto($(id),link,id==='miniQR'?64:120));
  if(document.getElementById('presentQR'))renderQRInto(document.getElementById('presentQR'),link,112);
 }
-function procedureDetailFor(sl,pictureText){
+function procedureDetailFor(sl,pictureText,grade){
  const title=(sl.title||'').trim(),mission=(sl.mission||'').trim();
  const questions=(sl.questions||[]).map(q=>typeof q==='string'?q:(q.q||q.question||'')).filter(Boolean);
  const answers=(sl.questions||[]).map(q=>typeof q==='object'?(q.a||q.answer||''):'').filter(Boolean);
@@ -732,8 +732,8 @@ function procedureDetailFor(sl,pictureText){
    student='Recall the main story elements shown on the slide and explain the role of the character, setting, events/problem and solution using prior knowledge.';
    teacher='Elicit the story elements from students first, reveal or confirm them from the slide, and use short questions to check that students can distinguish each part before moving to the writing task.';
  }else if(sl.type==='Reading'){
-   student='Read silently for '+(sl.time||5)+' minutes and focus on key details.';
-   teacher='Set the silent-reading routine, ensure students are ready, monitor reading engagement and support students who need help accessing the text.';
+   student=grade==='6'?'Read the teacher-provided text silently for 5 minutes, then write one interesting piece of information learned from the text in the notebook.':'Read the assigned Alef Pathway text silently for 5 minutes and focus on key details.';
+   teacher=grade==='6'?'Provide the reading text, set the 5-minute silent reading timer, monitor quiet independent reading, then ask students to record one interesting fact in their notebooks.':'Direct students to the assigned Alef Pathway text, set the 5-minute timer and monitor independent reading.';
  }else if(/favorite animal|talk to your partner|speaking|discuss|partner/.test(low)){
    student='Discuss the prompts with a partner: name a favorite animal, describe what it looks like, say where it lives, what it can do, and explain why you like it.';
    teacher='Display the speaking prompts, model one complete response using the sentence starters, give partner-talk time, then invite students to share and extend answers with reasons.';
@@ -777,9 +777,10 @@ function cleanActivityImageText(raw){
  if(t.length>420)t=t.slice(0,420).replace(/\s+\S*$/,'')+'…';
  return t;
 }
-function supportChallengeFor(sl){
+function supportChallengeFor(sl,grade){
  let skill=(sl.skill||'').toLowerCase(),title=(sl.title||'').toLowerCase(),mission=(sl.mission||'').toLowerCase(),text=title+' '+mission;
  if(sl.type==='Reading'){
+   if(grade==='6')return 'Support: Provide an accessible teacher-selected text and help students locate one interesting detail.\nChallenge: Ask confident readers to explain why their selected information is interesting.';
    return 'Support: Check that all students can access Alef and locate the assigned story. Assign one student in each group as a reading-tech helper to support classmates in finding the story.\nChallenge: Ask confident readers to identify one new word and one interesting idea to share after reading.';
  }
  if(sl.type==='Focus'){
@@ -854,7 +855,7 @@ function autoLessonPlan(){
  if(slides.some(x=>x.img))resources.push('textbook/activity images');
  if(slides.some(x=>x.aud))resources.push('audio');
  if(slides.some(x=>(x.questions||[]).length))resources.push('interactive Q&A');
- if(realSlides.some(x=>x.type==='Reading'))resources.push($('gradeSelect').value==='6'?'Kutubi / reading routine':'Alef Library / reading routine');
+ if(realSlides.some(x=>x.type==='Reading'))resources.push($('gradeSelect').value==='6'?'Teacher-provided reading text; student notebook':'Alef Pathway / reading routine');
  if(realSlides.some(x=>x.page&&x.page!=='—'))resources.push('textbook / workbook pages');
  resources.push('timer');
  setLP('lpResources',resources.join('; ')+'.');
@@ -875,7 +876,7 @@ function autoLessonPlan(){
    mission=activityDetail;
    template=false;
    // Build distinct procedures from the activity title, typed instructions and validated picture text.
-   let pd=procedureDetailFor(sl,pictureText);
+   let pd=procedureDetailFor(sl,pictureText,$('gradeSelect').value);
    let student=pd.student,teacher=pd.teacher;
    let qCount=(sl.questions||[]).length,procLow=((sl.title||'')+' '+mission).toLowerCase();
    let afl=qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.'
@@ -885,7 +886,7 @@ function autoLessonPlan(){
      :/sort|sorting/.test(procLow)?'AFL: Monitor group sorting decisions and ask students to justify selected categories.'
      :'AFL: Check responses during the task and use targeted questioning to identify misconceptions.');
    let main='<b>'+esc2(sl.title)+'</b><br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
-   let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
+   let diff=supportChallengeFor(sl,$('gradeSelect').value).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
    let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(i===procedureSlides.length-1?'Plenary / Exit Ticket':'Main Activity '+i));
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(stage)+'<br><small>'+esc2(sl.title)+'</small></td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
