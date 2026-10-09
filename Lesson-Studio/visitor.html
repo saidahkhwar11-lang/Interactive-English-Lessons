@@ -20,6 +20,7 @@ async function load(){
     crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
   };
   if(!String(d.plenary||'').trim()&&Array.isArray(d.flow)&&d.flow.length){const last=d.flow[d.flow.length-1];d.plenary='Exit Ticket — '+(last.stage||'Final Activity')+': '+(last.activity||last.students||'Students complete the final task.')+' Teacher checks responses to assess the lesson objective.';}
+  d.date=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date());
   let flowRows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
   app.innerHTML='<div class="lpShell" style="background:#fff;border-radius:24px;overflow:hidden"><section class="head"><div class="logo">📋</div><div><h1>'+esc(d.school)+' · Lesson Plan</h1><p>Read Only · Same Lesson Plan as Lesson Studio</p></div></section>'+
 '<div class="lpContent" style="padding:18px"><div class="meta"><div><small>Teacher</small>'+esc(d.teacher)+'</div><div><small>Grade / Section</small>'+esc(d.grade)+'</div><div><small>Date / Day</small>'+esc(d.date||'—')+'</div><div><small>Lesson Title</small>'+esc(d.title)+'</div></div>'+
