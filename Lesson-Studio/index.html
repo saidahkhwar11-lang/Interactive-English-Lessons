@@ -885,16 +885,16 @@ function autoLessonPlan(){
    let main='<b>'+esc2(sl.title)+'</b><br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
    let diff=supportChallengeFor(sl).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
-   let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(/exit|plenary/i.test(sl.title||'')?'Plenary / Exit Ticket':'Main Activity '+i));
+   let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(i===procedureSlides.length-1?'Plenary / Exit Ticket':'Main Activity '+i));
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(stage)+'<br><small>'+esc2(sl.title)+'</small></td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
    if(body)body.appendChild(tr);
  });
  let last=procedureSlides[procedureSlides.length-1];
- let lessonContext=(topicText+' '+procedureSlides.map(sl=>(sl.title||'')+' '+(sl.mission||'')+' '+(sl.objectives||[]).join(' ')).join(' ')).toLowerCase();
- let assess=last?'Exit Ticket: '+((last.mission||'').trim()||'Students complete a final check to show what they learned.'):'Exit Ticket: Students complete a final check against the lesson objectives.';
- if(/creative writing|story|writing today|baseline/.test(lessonContext))assess='Exit Ticket: Students submit their independent writing sample and identify one part of their writing they are proud of. Teacher keeps the sample as baseline evidence for later comparison.';
- else if(/vocab|new word|context clue/.test(lessonContext))assess='Exit Ticket: Students use one new word correctly in context and explain the clue that helped them understand its meaning.';
- else if(/main idea|read|paragraph/.test(lessonContext))assess='Exit Ticket: Students state the main idea or one key detail from the text and support the response with evidence.';
+ let lessonContext=(topicText+' '+procedureSlides.map(sl=>(sl.title||'')+' '+(sl.mission||'')).join(' ')).toLowerCase();
+ // The final actual slide is the exit ticket, irrespective of its title or activity type.
+ let lastQuestions=(last?.questions||[]).map(q=>typeof q==='string'?q:(q.q||q.question||'')).filter(Boolean);
+ let lastMission=(last?.mission||'').trim();
+ let assess=last?'Exit Ticket — '+(last.title||'Final Activity')+' ('+(last.time||5)+' minutes): '+(lastMission&&!['Add student instructions.','Complete the activity.'].includes(lastMission)?lastMission:'Students complete the final task shown on the slide.')+(lastQuestions.length?' Questions: '+lastQuestions.join(' | '):'')+' Teacher checks responses against the lesson objective and uses them to identify next steps.':'Exit Ticket: Teacher checks understanding of the lesson objectives.';
  setLP('lpAssess',assess);
  let skills=['Critical Thinking','Self-Learning','Clear Communication'];
  if(/creative writing|story|write|draft|notebook/.test(lessonContext))skills.push('Creativity','Reflection','Independent Writing');
