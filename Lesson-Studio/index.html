@@ -825,6 +825,7 @@ function successCriterionFor(obj){
  if(/^write /.test(l))return 'I can '+l+'.';
  return 'I can '+l+'.';
 }
+function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
 function autoLessonPlan(){
  const setLP=(id,value)=>{const el=$(id);if(el)el.value=value==null?'':value};
  // Editor inputs already save through their oninput handlers.
@@ -834,6 +835,7 @@ function autoLessonPlan(){
  // Procedures should include every created activity slide except Focus.
  // Reading Routine is included too because it is part of the created lesson.
  let procedureSlides=realSlides.filter(sl=>sl&&sl.title);
+ setLP('lpDate',currentLessonPlanDate());
  setLP('lpGrade','Grade '+$('gradeSelect').value);
  setLP('lpTitle',slides[0]?.lesson||focusData.focus?.lesson||'');
  setLP('lpTopic',($('lpTitle')?.value||'')||focusData.focus?.title||'Lesson');
