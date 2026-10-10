@@ -1151,13 +1151,16 @@ async function saveCurrent(){
  if(!secret){secret=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('LessonPlanSecret:'+id,secret)}
  slides.forEach(x=>x._savedLessonId=id);localStorage.setItem('LessonStudioActiveId',id);
  try{
+   let snap=snapshot(id);snap.planUrl=lessonPlanLink(id);
+   await dbPut(snap);
+   await publishCloudLesson(snap);
    await publishVisitorPlan(id,secret);
-   let snap=snapshot(id);snap.planUrl=lessonPlanLink(id);snap.published=true;await dbPut(snap);
-   buildQR();buildPresentQR();setSaveStatus('✓ Auto-saved');
+   snap.published=true;await dbPut(snap);
+   buildQR();buildPresentQR();setSaveStatus('✓ Saved & shared online');
    $('saveLesson').textContent='💾 Update Saved Lesson';
-   toast('Lesson saved safely ✓');
+   toast('Lesson and plan published for other devices ✓');
  }catch(e){
-   console.error(e);let snap=snapshot(id);await dbPut(snap);setSaveStatus('✓ Saved locally');$('saveLesson').textContent='💾 Update Saved Lesson';toast('Lesson saved locally ✓')
+   console.error(e);let snap=snapshot(id);await dbPut(snap);setSaveStatus('✓ Saved locally');$('saveLesson').textContent='💾 Update Saved Lesson';toast('Saved on this device only — online sharing failed. Please try saving again.')
  }
 }
 async function refreshAllExistingLessonPlans(){
@@ -1224,7 +1227,7 @@ function visitorPlanData(){
 }
 function visitorPlanToken(){try{return encodeURIComponent(JSON.stringify(visitorPlanData()))}catch(e){console.error('Visitor plan token error',e);return''}}
 function lessonPlanLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('/Lesson-Studio/')[0]+'/Lesson-Studio/visitor.html?id='+encodeURIComponent(lid):''}
-function interactiveLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('?')[0].split('#')[0]+'?lesson='+encodeURIComponent(lid)+'&present=1':''}
+function interactiveLessonLink(id){let lid=id||activeLessonId||(slides[0]&&slides[0]._savedLessonId);return lid?location.href.split('?')[0].split('#')[0]+'?mode=visitor&lesson='+encodeURIComponent(lid)+'&present=1':''}
 
 async function loadLessonFromUrl(){
  const q=new URLSearchParams(location.search),publicLesson=q.get('publicLesson'),id=q.get('lesson');
@@ -1234,8 +1237,8 @@ async function loadLessonFromUrl(){
   // Visitor links must load the published cloud copy; the creator's IndexedDB
   // exists only in the admin browser and is intentionally unavailable here.
   let x=visitorMode?await loadCloudLesson(id):null;
-  if(!x){let items=await dbAll();x=items.find(v=>v.id===id)}
-  if(!x)return;
+  if(!x&&!visitorMode){let items=await dbAll();x=items.find(v=>v.id===id)}
+  if(!x){if(visitorMode){document.getElementById('presentation').classList.add('open');document.getElementById('presentSlide').innerHTML='<div style="max-width:650px;margin:40px auto;background:#fff;border:1px solid #dbe5ef;border-radius:16px;padding:26px;text-align:center"><h2>Shared lesson not available yet</h2><p>The lesson may not have finished publishing. Please ask the teacher to open the lesson in Lesson Studio and click Save New Lesson / Update Saved Lesson again.</p></div>';}return;}
   activeLessonId=x.id||id;slides=structuredClone(x.slides||[]);cur=0;if(x.grade)document.getElementById('gradeSelect').value=x.grade;applyLP(x.lessonPlan);render();buildQR();
   if(q.get('view')==='plan'||location.hash==='#lesson-plan'){document.getElementById('lpModal').classList.add('open');autoLessonPlan()}else if(q.get('present')==='1'){setTimeout(()=>openPresentation(),150)}
  }catch(e){console.error('Lesson URL load failed',e)}
