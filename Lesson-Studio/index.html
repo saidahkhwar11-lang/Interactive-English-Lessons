@@ -496,6 +496,11 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .animalReviewActions button{border:0;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:800}
 .animalReviewActions .approveReview{background:#167d68;color:white}
 @media(max-width:700px){.animalReviewGrid{grid-template-columns:1fr 1fr}}
+
+/* Keep teacher-edited answer coordinates relative to the real displayed poster. */
+#presentation .presentImageStage{position:relative!important;display:inline-block!important;width:fit-content!important;height:fit-content!important;max-width:100%!important;line-height:0!important;}
+#presentation .presentImageStage>.presentGalleryImg{display:block!important;width:auto!important;height:auto!important;max-width:100%!important;object-fit:contain!important;}
+#presentation .presentImageStage>.presentSavedAnswer{transform:none!important;box-sizing:border-box!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -655,7 +660,7 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
  let selected=null,adding=false,preview=false;
  const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>(x.kind||'text')==='text');
- const choose=a=>{selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);paint()};
+ const choose=a=>{selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);stage.querySelectorAll('.designAnswerBox').forEach((el,i)=>el.classList.toggle('selectedAnswer',answers()[i]===a))};
  const paint=()=>{
   stage.querySelectorAll('.designAnswerBox').forEach(x=>x.remove());
   answers().forEach((a,i)=>{
@@ -763,17 +768,14 @@ function fitSavedAnswerFont(box,a){
   box.style.setProperty('--answer-font',fit+'px');
  };
  requestAnimationFrame(apply);
- if(!box._answerResizeObserver&&typeof ResizeObserver!=='undefined'){
-  box._answerResizeObserver=new ResizeObserver(()=>requestAnimationFrame(apply));
-  box._answerResizeObserver.observe(box);
- }
+ // Fit once per edit or presentation layout update; avoid costly observer loops.
 }
 
 function setupSavedAnswerReveal(sl,host){
  let arr=normaliseAnswerBoxes(sl);if(!arr.length)return;let cards=[...host.querySelectorAll('.presentImageCard')];if(!cards.length)return;
  arr.slice().sort((a,b)=>(a.order||0)-(b.order||0)).forEach((a,i)=>{let card=cards[Math.min(a.imageIndex||0,cards.length-1)],stage=card.querySelector('.presentImageStage')||card,img=stage.querySelector('.presentGalleryImg'),box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.dataset.savedAnswer=i;box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':a.text;
- const place=()=>{let sw=stage.clientWidth,sh=stage.clientHeight;if(!sw||!sh||!img||!img.naturalWidth||!img.naturalHeight){box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';return}let ir=img.getBoundingClientRect(),sr=stage.getBoundingClientRect(),iw=ir.width,ih=ir.height,ox=ir.left-sr.left,oy=ir.top-sr.top;box.style.left=(ox+iw*a.x/100)+'px';box.style.top=(oy+ih*a.y/100)+'px';box.style.width=(iw*a.w/100)+'px';box.style.height=(ih*a.h/100)+'px';fitSavedAnswerFont(box,a)};
- stage.appendChild(box);if(img&&img.complete)requestAnimationFrame(place);else if(img)img.addEventListener('load',place,{once:true});box._placeAnswer=place});
+ const place=()=>{if(!img||!img.getBoundingClientRect)return;const ir=img.getBoundingClientRect(),sr=stage.getBoundingClientRect();if(ir.width<1||ir.height<1)return;box.style.left=(ir.left-sr.left+ir.width*a.x/100)+'px';box.style.top=(ir.top-sr.top+ir.height*a.y/100)+'px';box.style.width=(ir.width*a.w/100)+'px';box.style.height=(ir.height*a.h/100)+'px';fitSavedAnswerFont(box,a)};
+ stage.appendChild(box);if(img&&img.complete)requestAnimationFrame(place);else if(img)img.addEventListener('load',place,{once:true});box._placeAnswer=place;stage.addEventListener('transitionend',place);if(typeof ResizeObserver!=='undefined'){const ro=new ResizeObserver(()=>requestAnimationFrame(place));ro.observe(img);box._layoutObserver=ro}});
  let controls=document.createElement('div');controls.className='savedAnswerControls';let next=0,ordered=[...host.querySelectorAll('.presentSavedAnswer')];
  let reveal=document.createElement('button');reveal.textContent='✓ Reveal Answer';reveal.onclick=e=>{e.stopPropagation();if(next<ordered.length){ordered[next++].classList.add('show');reveal.textContent=next<ordered.length?'✓ Reveal Next':'✓ All Answers Shown';reveal.disabled=next>=ordered.length}};
  let hide=document.createElement('button');hide.className='hideSavedAnswers';hide.textContent='↻ Hide Answers';hide.onclick=e=>{e.stopPropagation();ordered.forEach(x=>x.classList.remove('show'));next=0;reveal.disabled=false;reveal.textContent='✓ Reveal Answer'};controls.append(reveal,hide);(host.querySelector('.presentVisual')||host).appendChild(controls);
