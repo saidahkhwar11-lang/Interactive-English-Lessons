@@ -657,7 +657,7 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
- modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="generateAnimalAnswers" style="background:#ffedbd;color:#634200" title="Only for the Animal Sorting worksheet; not automatic AI analysis">🦁 Animal Sorting Template</button><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
  let selected=null,adding=false,preview=false;
@@ -676,34 +676,6 @@ function openAnswerZoomEditor(sl,imageIndex=0){
    stage.appendChild(box);fitSavedAnswerFont(box,a);
   });
   list.innerHTML='';answers().forEach((a,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+(a.text||'New answer');btn.className=a===selected?'selectedAnswer':'';btn.onclick=()=>choose(a);list.appendChild(btn)});
- };
- modal.querySelector('.generateAnimalAnswers').onclick=()=>{
-  if(!confirm('This is ONLY the Animal Sorting template (lion, penguin, turtle, zebra). It does not read the uploaded image. For Matching Games, click Cancel and use Add Answer. Continue with Animal Sorting?'))return;
-  const existing=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex);
-  if(existing.length&&!confirm('This activity already has '+existing.length+' saved answers. Add the Animal Sorting template without deleting them?'))return;
-  const rows=[
-   ['Lion','savannah','meat','roars'],
-   ['Penguin','Antarctica','fish','swims'],
-   ['Turtle','ocean','plants','swims'],
-   ['Zebra','grassland','grass','runs']
-  ];
-  const proposed=[];
-  // Approximate worksheet grid only; teacher must review alignment before saving.
-  const colX=[43,60,77],rowY=[37,49,61,73];
-  rows.forEach((row,ri)=>row.slice(1).forEach((value,ci)=>{
-   proposed.push({kind:'text',imageIndex,x:colX[ci],y:rowY[ri],w:13,h:4.5,text:value,fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length+proposed.length});
-  }));
-  const review=document.createElement('div');review.className='animalAnswerReview';
-  review.innerHTML='<div class="animalAnswerReviewPanel"><h2>✨ Animal Sorting — Review 12 Answers</h2><p>These are suggested answers for the lion, penguin, turtle and zebra table. Edit any wording. The positions are estimates; adjust them in Answer Studio before presenting.</p><div class="animalReviewGrid"></div><div class="animalReviewActions"><button class="cancelReview">Cancel</button><button class="approveReview">Add 12 Answers</button></div></div>';
-  const grid=review.querySelector('.animalReviewGrid');
-  proposed.forEach((a,i)=>{const label=document.createElement('label');label.textContent=rows[Math.floor(i/3)][0]+' — '+['Habitat','Diet','Behavior'][i%3];const input=document.createElement('input');input.value=a.text;input.oninput=()=>a.text=input.value;label.appendChild(input);grid.appendChild(label)});
-  modal.appendChild(review);
-  review.querySelector('.cancelReview').onclick=()=>review.remove();
-  review.querySelector('.approveReview').onclick=()=>{
-   normaliseAnswerBoxes(sl).push(...proposed);
-   review.remove();preview=false;selected=proposed[0];ta.value=selected.text;paint();markChanged();
-   toast('12 suggested answers added — review positions before saving');
-  };
  };
  modal.querySelector('.newMatch').onclick=()=>{
  const overlay=document.createElement('div');overlay.className='animalAnswerReview';
