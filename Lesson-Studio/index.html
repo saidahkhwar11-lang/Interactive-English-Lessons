@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lesson Studio</title><!-- pages-refresh-supabase-20261003 -->
-<style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#eef5f8;color:#123e66}button,input,textarea{font:inherit}.top{padding:15px 20px;background:linear-gradient(105deg,#eaf9ef,#e4f6ff 55%,#fff5d2);display:flex;align-items:center;gap:12px}.top h1{margin:0}.top small{color:#648095}.top button{margin-left:auto}.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;background:#123e66;color:white}.layout{display:grid;grid-template-columns:270px 1fr 320px;min-height:calc(100vh - 76px)}.left,.right{padding:16px;background:#f9fcfe;border-right:1px solid #dbe9ef}.right{border-right:0;border-left:1px solid #dbe9ef}.add{width:100%;background:#1689c4}.list{display:grid;gap:7px;margin-top:12px}.item{background:white;border:1px solid #dbe9ef;border-radius:14px;padding:11px;cursor:pointer}.item.active{background:#eaf9f0;border-color:#9fd7b4;box-shadow:inset 4px 0 #4fbd82}.item small{display:block;color:#648095}.slideOrderControls{float:right;display:flex;gap:3px;margin-left:5px}.slideMove{border:0;border-radius:7px;background:#eef5f8;color:#315d77;width:25px;height:25px;padding:0;font-weight:900;cursor:pointer;line-height:25px}.slideMove:hover{background:#d9edf5}.slideMove:disabled{opacity:.28;cursor:not-allowed}.stageWrap{padding:20px}.stage{background:white;border-radius:25px;overflow:hidden;min-height:650px}.banner{padding:17px 23px;background:linear-gradient(105deg,#eaf9ef,#e5f7ff 58%,#fff4cc);display:flex;gap:14px;align-items:center}.banner .ico{font-size:38px}.banner h2{margin:0;font-size:29px;color:#3b2a20}.banner p{margin:4px 0;color:#59768e}.body{padding:20px;display:grid;grid-template-columns:1fr 300px;gap:17px}.canvas{min-height:500px;border:2px dashed #cfe0e8;border-radius:20px;display:flex;align-items:center;justify-content:center;background:#fbfdfe;padding:15px}.canvas img{max-width:100%;max-height:520px;object-fit:contain;border-radius:14px;cursor:zoom-in}.empty{text-align:center;color:#7890a1}.empty b{display:block;color:#49687d;font-size:19px;margin-bottom:5px}.details{border:1px solid #efd78a;border-radius:24px;padding:20px;background:linear-gradient(160deg,#fff7d8,#fffdf7)}.kicker{display:inline-block;background:#ffe58a;padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900;color:#934c19}.details h3{font-size:25px;color:#a55216}.mission{font-size:17px;font-weight:700;line-height:1.45}.badges{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}.badge{background:#fff;border:1px solid #dce8ed;border-radius:11px;padding:7px 9px;font-size:12px;font-weight:800}.audio{margin-top:18px;padding:12px;border-radius:16px;background:linear-gradient(135deg,#fde5f0,#eee8fb)}.audio strong{display:block;margin-bottom:8px}.audio audio{width:100%}.editor{display:grid;gap:10px}.field label{display:block;font-size:11px;font-weight:900;color:#567287;margin-bottom:4px;text-transform:uppercase}.field input,.field textarea{width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px}.field textarea{min-height:72px}.upload{display:block;text-align:center;padding:10px;border:1px dashed #9fc3d4;border-radius:11px;background:#eef8fc;cursor:pointer;font-weight:800}.upload input{display:none}.modal,.zoom{position:fixed;inset:0;background:#092131bb;display:none;align-items:center;justify-content:center;z-index:20;padding:25px}.modal.open,.zoom.open{display:flex}.modalCard{width:min(580px,94vw);background:white;border-radius:22px;padding:20px}.types{display:grid;grid-template-columns:1fr 1fr;gap:8px}.type{padding:13px;text-align:left;border:1px solid #dbe9ef;border-radius:13px;background:#f8fbfd;cursor:pointer}.zoomBox{width:min(950px,86vw);max-height:82vh;overflow:auto;background:white;padding:12px;border-radius:20px}.zoomBox img{width:100%;height:auto}.close{position:absolute;right:5vw;top:4vh;border:0;border-radius:50%;width:44px;height:44px;font-size:24px}@media(max-width:1000px){.layout{grid-template-columns:220px 1fr}.right{grid-column:1/-1}.body{grid-template-columns:1fr}}
 
 .reading-fixed{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:center}
@@ -384,6 +384,48 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .stage .banner #sub{font-family:'Fredoka','Trebuchet MS',Arial,sans-serif!important;color:#597b9c!important}
 @media(max-width:1100px){#presentation .presentTop>div:nth-child(2){padding:12px 18px!important;margin:4px!important;flex-basis:260px!important}#presentation #presentLessonTitle{font-size:clamp(22px,2.4vw,31px)!important}}
 @media(max-width:700px){#presentation .presentTop>div:nth-child(2){min-width:160px!important;padding:9px 13px!important}#presentation #presentLessonTitle{font-size:21px!important}.stage .banner .bannerTitleWrap{padding:8px 12px!important}}
+
+/* True scalloped cloud — no elliptical border or cropped decorative image */
+#presentation .presentTop>div:nth-child(2){
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  padding:30px 56px 29px!important;min-height:135px!important;max-width:770px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
+  position:relative!important;isolation:isolate!important;overflow:visible!important;
+}
+#presentation .presentTop>div:nth-child(2)::before{
+  content:""!important;position:absolute!important;inset:-10px -8px!important;z-index:-1!important;
+  height:auto!important;border:0!important;border-radius:0!important;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201000%20250%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M126%20199%20C55%20204%2034%20169%2069%20135%20C48%2097%2090%2065%20150%2078%20C166%2035%20241%2028%20281%2056%20C316%208%20407%207%20449%2043%20C494%201%20592%206%20631%2048%20C684%2011%20765%2027%20787%2066%20C852%2046%20920%2075%20919%20112%20C978%20120%20978%20177%20916%20193%20C890%20231%20818%20230%20775%20210%20C722%20242%20651%20241%20611%20216%20C557%20244%20480%20243%20441%20215%20C389%20243%20323%20238%20290%20209%20C227%20236%20160%20227%20126%20199%20Z%22%20fill%3D%22%23fffdfd%22%20stroke%3D%22%23aedaff%22%20stroke-width%3D%229%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M145%20207%20C267%20227%20378%20214%20489%20220%20C634%20226%20755%20226%20886%20204%22%20stroke%3D%22%23eaf6ff%22%20stroke-width%3D%229%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E")!important;
+  background-repeat:no-repeat!important;background-position:center!important;background-size:100% 100%!important;
+}
+#presentation .presentTop>div:nth-child(2)::after{content:"✦"!important;right:20px!important;top:13px!important;color:#f7bc43!important}
+#presentation #presentLessonTitle{
+  font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif!important;
+  font-size:clamp(28px,2.65vw,43px)!important;font-weight:700!important;
+  letter-spacing:.15px!important;line-height:1.05!important;color:#113b72!important;
+  text-shadow:1px 2px 0 #d7ebff!important;text-align:center!important;
+}
+#presentation #presentSub{
+  background:#ffebf4!important;border-radius:999px!important;padding:4px 17px!important;
+  color:#446e9b!important;font-weight:600!important;margin:5px 0 0!important;
+}
+.stage .banner .bannerTitleWrap{
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  position:relative!important;isolation:isolate!important;padding:25px 45px!important;
+}
+.stage .banner .bannerTitleWrap::before{
+  content:"";position:absolute;inset:0 -5px;z-index:-1;
+  background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201000%20250%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M126%20199%20C55%20204%2034%20169%2069%20135%20C48%2097%2090%2065%20150%2078%20C166%2035%20241%2028%20281%2056%20C316%208%20407%207%20449%2043%20C494%201%20592%206%20631%2048%20C684%2011%20765%2027%20787%2066%20C852%2046%20920%2075%20919%20112%20C978%20120%20978%20177%20916%20193%20C890%20231%20818%20230%20775%20210%20C722%20242%20651%20241%20611%20216%20C557%20244%20480%20243%20441%20215%20C389%20243%20323%20238%20290%20209%20C227%20236%20160%20227%20126%20199%20Z%22%20fill%3D%22%23fffdfd%22%20stroke%3D%22%23aedaff%22%20stroke-width%3D%229%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M145%20207%20C267%20227%20378%20214%20489%20220%20C634%20226%20755%20226%20886%20204%22%20stroke%3D%22%23eaf6ff%22%20stroke-width%3D%229%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat;
+}
+.stage .banner #lessonTitle{font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif!important;font-weight:700!important}
+@media(max-width:1100px){
+  #presentation .presentTop>div:nth-child(2){padding:23px 38px!important;min-height:105px!important}
+  #presentation #presentLessonTitle{font-size:clamp(24px,2.4vw,34px)!important}
+}
+@media(max-width:700px){
+  #presentation .presentTop>div:nth-child(2){padding:20px 25px!important;min-height:95px!important}
+  #presentation #presentLessonTitle{font-size:22px!important}
+  .stage .banner .bannerTitleWrap{padding:17px 22px!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
