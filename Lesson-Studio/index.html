@@ -819,16 +819,23 @@ function focusLessonData(){
  return {focus,objectives:objectives.slice(0,3),keywords};
 }
 function successCriterionFor(obj){
- let x=(obj||'').replace(/[.]$/,'').trim(),l=x.toLowerCase();
- if(/^discuss /.test(l))return 'I can '+l.replace(/^discuss /,'discuss ') + '.';
- if(/^use /.test(l))return 'I can '+l+'.';
- if(/^identify /.test(l))return 'I can '+l+'.';
- if(/^describe /.test(l))return 'I can '+l+'.';
- if(/^make /.test(l))return 'I can '+l+'.';
- if(/^read /.test(l))return 'I can '+l+'.';
- if(/^listen /.test(l))return 'I can '+l+'.';
- if(/^write /.test(l))return 'I can '+l+'.';
- return 'I can '+l+'.';
+ const l=String(obj||'').trim().replace(/[.!]+$/,'').toLowerCase();
+ if(/main idea|supporting detail|key detail/.test(l))return 'I can explain what the text is mainly about and point to details that support my answer.';
+ if(/summari|summary/.test(l))return 'I can write a short summary with the most important information in my own words.';
+ if(/context clue|infer.*mean|meaning.*word/.test(l))return 'I can use clues around an unfamiliar word to explain what it means.';
+ if(/vocab|new words|key words/.test(l))return 'I can explain new words from the lesson and use them correctly in my work.';
+ if(/predict/.test(l))return 'I can use clues from pictures or the text to explain what I think will happen or what the topic might be.';
+ if(/specific information|find information|locate information/.test(l))return 'I can find the information I need and show where it appears in the text.';
+ if(/listen/.test(l))return 'I can listen carefully and give accurate answers using what I heard.';
+ if(/direction|route/.test(l))return 'I can help someone follow a route by giving clear, ordered directions.';
+ if(/creative writ|story|narrative/.test(l))return 'I can share my ideas in writing and organise them so my reader can follow.';
+ if(/paragraph|write|email/.test(l))return 'I can organise my ideas clearly and write for the intended reader.';
+ if(/spea|discuss|ask and answer/.test(l))return 'I can share an idea clearly and respond to someone else.';
+ if(/describ/.test(l))return 'I can give clear details so another person understands what I am describing.';
+ if(/compar/.test(l))return 'I can explain how two things are similar and different using examples.';
+ if(/identif|recognis|recogniz/.test(l))return 'I can recognise the important information and show an example from the activity.';
+ if(/understand|comprehen/.test(l))return 'I can explain the important information and answer questions about it.';
+ return 'I can show what I learned by completing the activity and explaining my answer.';
 }
 function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
 function autoLessonPlan(){
