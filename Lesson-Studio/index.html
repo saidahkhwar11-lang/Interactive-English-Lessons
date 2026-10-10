@@ -492,7 +492,7 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 </select></label><button class="btn" id="saveLesson" style="background:#167d68">💾 Save New Lesson</button><span id="autoSaveStatus" style="font-size:11px;font-weight:900;color:#5d7789;min-width:92px">Not saved yet</span><button class="btn" type="button" onclick="openThinkingEditor()" style="background:#7367a8">💡 Thinking & Connections</button><button class="btn" id="openLibrary" style="background:#496f9b">📚 My Library</button><button class="btn" id="exportLesson" style="background:#7b6aa8">⬇ Backup</button><label class="btn" style="background:#8a6a45;cursor:pointer">⬆ Import<input id="importLesson" type="file" accept=".json,application/json" style="display:none"></label><span class="visitorBadge">👩‍🏫 Visitor Mode</span><button class="btn" id="presentLesson" style="background:#d46b3c">▶ Present Lesson</button><button class="btn" id="openLP" style="background:#4f8b72">📋 Lesson Plan</button><button class="btn" id="new" style="margin-left:0">New Lesson</button></div>
 <div class="layout"><aside class="left"><button class="btn add" id="add">＋ Add Slide</button><h3>Lesson Agenda</h3><div style="font-size:11px;color:#648095;margin:-6px 2px 10px">📌 Reading Routine is saved automatically for every new lesson.</div><div id="list" class="list"></div></aside>
 <main class="stageWrap"><div class="stage"><div class="banner"><div class="lessonThemeIcon" id="ico">🛒</div><div class="bannerTitleWrap"><h2 id="lessonTitle">Untitled Lesson</h2><p id="sub">Grade · Unit · Lesson</p></div><button id="qrSlideBtn" title="Open lesson plan" style="margin-left:auto;border:0;background:white;border-radius:14px;padding:8px;cursor:pointer;text-align:center"><div id="miniQR" style="width:64px;height:64px"></div><small style="font-weight:800;color:#123e66">Lesson Plan</small></button></div>
-<div class="body"><div class="canvas" id="canvas"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
+<div class="body"><div class="canvas" id="canvas" tabindex="0" title="Click here then press Ctrl+V"><div class="empty"><b>Upload an activity picture</b>Click it during the lesson for a controlled zoom.</div></div>
 <aside class="details"><span class="kicker" id="type">ACTIVITY</span><h3 id="title">Your Mission</h3><div class="mission" id="mission">Add student instructions.</div><div class="badges"><span class="badge" id="page">📖 Page —</span><span class="badge" id="time">⏱ 5 min</span><span class="badge" id="obj">🎯 Objective</span></div><div class="audio"><strong>🎧 Activity Audio</strong><div id="audio">No audio added.</div></div></aside></div></div></main>
 <aside class="right"><h3>Edit Current Slide</h3><div class="editor">
 <div class="field"><label>Slide title</label><input id="eTitle"></div><div class="field"><label>Lesson banner title <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eLesson"></div><div class="field"><label>Grade / Unit / Lesson <small style="text-transform:none;color:#7890a1">· applies to all slides</small></label><input id="eSub"></div><div class="field"><label>Time</label><input id="eTime" type="number" min="1"></div><div class="field"><label>Page</label><input id="ePage"></div><div class="field"><label>Skill</label><select id="eSkill" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Vocabulary</option><option>Grammar</option></select></div><div class="field"><label>Objective</label><select id="eObjective" style="width:100%;padding:9px;border:1px solid #cedfe7;border-radius:10px;background:white"></select></div><button class="btn" id="addObjective" type="button">＋ Add Objective</button><div class="field"><label>Or write your own objective</label><div style="display:flex;gap:6px"><textarea id="customObjective" placeholder="Type or paste lesson objective…" style="flex:1;min-height:58px;padding:9px;border:1px solid #cedfe7;border-radius:10px;resize:vertical"></textarea><button class="btn" id="addCustomObjective" type="button">＋ Add</button></div></div><div class="field"><label>Selected objectives (max 3)</label><div id="selectedObjectives" style="display:grid;gap:6px"></div></div><div class="field"><label>Student instructions</label><textarea id="eMission"></textarea><label class="instructionVisibility"><input type="checkbox" id="showInstructions" checked> 👁 Show instructions in Presentation Mode</label><label class="instructionVisibility"><input type="checkbox" id="revealPicturesSetting"> 🖼 Reveal pictures one by one (click slide)</label></div>
@@ -1486,6 +1486,31 @@ document.getElementById('presentFullscreen').onclick=async()=>{try{const p=docum
 document.addEventListener('fullscreenchange',()=>{let b=document.getElementById('presentFullscreen');if(b)b.textContent=document.fullscreenElement?'⛶ Exit Full Screen':'⛶ Full Screen';setTimeout(()=>{let sl=slides[presentIndex];if(!sl)return;let boxes=[...document.querySelectorAll('#presentation .presentSavedAnswer')],arr=normaliseAnswerBoxes(sl);boxes.forEach((box,i)=>{if(box._placeAnswer)box._placeAnswer();else{let a=arr[i];if(a)fitSavedAnswerFont(box,a)}})},180)});
 document.getElementById('presentQRWrap').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};document.getElementById('presentLesson').onclick=openPresentation;document.getElementById('presentClose').onclick=closePresentation;document.getElementById('presentPlan').onclick=()=>{document.getElementById('lpModal').classList.add('open');autoLessonPlan()};
 
+async function pastePictureFromClipboard(){
+ try{
+  if(!navigator.clipboard?.read){toast('Clipboard reading is not supported here. Try Ctrl+V on the slide.');return}
+  const items=await navigator.clipboard.read();
+  for(const item of items){
+   const type=item.types.find(t=>t.startsWith('image/'));
+   if(!type)continue;
+   const blob=await item.getType(type);
+   const reader=new FileReader();
+   reader.onload=()=>{const slide=slides[cur];if(!slide||typeof reader.result!=='string')return;slide.images=slide.images||[];slide.images.push(reader.result);slide.img=slide.images[0];slide.imageName='Pasted image';render();markChanged();toast('Picture pasted ✓')};
+   reader.onerror=()=>toast('Unable to read the copied picture');
+   reader.readAsDataURL(blob);return;
+  }
+  toast('No picture found in clipboard. Copy an image first.');
+ }catch(err){toast('Clipboard permission blocked. Click the slide and press Ctrl+V.')}
+}
+function attachPastePictureButton(){
+ const canvas=document.getElementById('canvas');
+ if(!canvas||document.getElementById('pastePictureButton'))return;
+ const btn=document.createElement('button');btn.id='pastePictureButton';btn.type='button';btn.className='btn';btn.textContent='📋 Paste Picture';btn.style.cssText='margin:8px 0;background:#1689c4';
+ btn.onclick=pastePictureFromClipboard;
+ canvas.parentElement.insertBefore(btn,canvas);
+}
+document.addEventListener('DOMContentLoaded',attachPastePictureButton);
+if(document.readyState!=='loading')attachPastePictureButton();
 document.addEventListener('paste',e=>{
  if(e.defaultPrevented||document.querySelector('.answerZoomEditor'))return;
  const focused=document.activeElement;
