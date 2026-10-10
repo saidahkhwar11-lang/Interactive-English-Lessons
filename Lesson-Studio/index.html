@@ -472,6 +472,19 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 /* Worksheet reveal labels: use the teacher's saved rectangle, not inflated pill dimensions. */
 .presentSavedAnswer.kind-text{padding:1px 3px!important;border-radius:5px!important;min-height:0!important;min-width:0!important;max-height:none!important;max-width:none!important;transform:none!important;line-height:1.05!important;}
 .presentImageViewer .presentSavedAnswer.kind-text{padding:1px 3px!important;}
+
+.answerStudioNew .answerZoomTop{background:#123e66}
+.answerStudioNew .newAdd{background:#bceee3;color:#124e46}
+.answerStudioNew .newPreview{background:#e8dfff;color:#493579}
+.answerStudioNew .answerZoomSide{background:#f8fcff;padding:18px}
+.answerStudioNew .answerZoomSide textarea{font-size:18px;border:2px solid #b7d9ed;min-height:90px;margin:12px 0}
+.answerStudioNew .answerZoomSide label{display:grid;gap:8px;font-weight:700}
+.answerStudioNew .newFont{width:100%}
+.answerStudioNew .deleteSel{background:#fff0f2;color:#8d3150;width:100%;margin:8px 0 16px}
+.answerStudioNew .answerZoomList{max-height:28vh;overflow:auto}
+.answerStudioNew .answerZoomList button{width:100%;margin-bottom:5px}
+.answerStudioNew .answerZoomStage .designAnswerBox.kind-text{cursor:move;touch-action:none}
+.answerStudioNew .answerZoomStage .ansResize{cursor:nwse-resize}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -625,32 +638,39 @@ function applyLessonTheme(){
 }
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
- const modal=document.createElement('div');modal.className='answerZoomEditor';
- modal.innerHTML='<div class="answerZoomTop"><b>Answer Editor · Zoom View</b><button data-tool="text">T Text</button><button data-tool="tick">✓ Tick</button><button data-tool="circle">○ Circle</button><button data-tool="cross">✕ Cross</button><button data-tool="arrow">→ Arrow</button><button data-tool="highlight">🖍 Highlight</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img></div></div><aside class="answerZoomSide"><h3>Selected Answer</h3><textarea placeholder="Type the selected text answer here…"></textarea><div class="fontRow"><button class="fontDown">A−</button><button class="fontUp">A＋</button></div><button class="deleteSel" style="width:100%;background:#f7dce4;color:#8d3150">Delete Selected</button><p class="answerZoomHint">Choose a tool, then drag on the picture. Move or resize saved answers. Use A− / A+ to change the selected text size. Text answers can be typed here.</p><div class="answerZoomList"></div></aside></div>';
+ const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
- const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList');
- let selected=null,activeTool=null,drawStart=null,temp=null;
- const symbol=a=>a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':(a.text||'Answer');
- const refreshList=()=>{list.innerHTML='';answerBoxesForImage(sl,imageIndex).forEach((a,i)=>{let b=document.createElement('button');b.textContent=(i+1)+'. '+(a.kind==='text'?(a.text||'Text'):(a.kind==='highlight'?'Highlight':a.kind));b.onclick=()=>{selected=a;ta.value=a.text||'';paint()};list.appendChild(b)})};
- const selectBox=(a,box)=>{selected=a;ta.value=a.text||'';stage.querySelectorAll('.designAnswerBox').forEach(x=>x.classList.remove('selectedAnswer'));box.classList.add('selectedAnswer')};
- const paint=()=>{stage.querySelectorAll('.designAnswerBox').forEach(x=>x.remove());answerBoxesForImage(sl,imageIndex).forEach(a=>{let box=document.createElement('div');box.className='designAnswerBox kind-'+(a.kind||'text');box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';fitSavedAnswerFont(box,a);box.textContent=symbol(a);let rh=document.createElement('span');rh.className='ansResize';box.appendChild(rh);
-   box.onclick=e=>{e.stopPropagation();selectBox(a,box)};
-   box.onpointerdown=e=>{if(e.target===rh||activeTool)return;e.preventDefault();e.stopPropagation();selectBox(a,box);let r=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,ox=a.x,oy=a.y;const move=ev=>{a.x=Math.max(0,Math.min(100-a.w,ox+(ev.clientX-sx)/r.width*100));a.y=Math.max(0,Math.min(100-a.h,oy+(ev.clientY-sy)/r.height*100));box.style.left=a.x+'%';box.style.top=a.y+'%'};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
-   rh.onpointerdown=e=>{e.preventDefault();e.stopPropagation();selectBox(a,box);let r=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,ow=a.w,oh=a.h;document.body.style.userSelect='none';const move=ev=>{ev.preventDefault();let dx=(ev.clientX-sx)/r.width*100,dy=(ev.clientY-sy)/r.height*100;a.w=Math.max(2,Math.min(100-a.x,ow+dx));a.h=Math.max(2,Math.min(100-a.y,oh+dy));box.style.width=a.w+'%';box.style.height=a.h+'%';fitSavedAnswerFont(box,a)};const up=()=>{document.body.style.userSelect='';document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged();paint()};document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',up)};
-   stage.appendChild(box);fitSavedAnswerFont(box,a);if(a===selected)box.classList.add('selectedAnswer');
- });refreshList()};
- const setTool=kind=>{activeTool=kind;modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline=b.dataset.tool===kind?'3px solid #ffd25a':'');stage.style.cursor='crosshair';toast('Drag on the picture to add '+kind)};
- modal.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
- stage.onpointerdown=e=>{if(!activeTool||e.target.closest('.designAnswerBox'))return;e.preventDefault();let r=stage.getBoundingClientRect();drawStart={x:e.clientX,y:e.clientY,r};temp=document.createElement('div');temp.className='designAnswerBox kind-'+activeTool;temp.textContent=activeTool==='tick'?'✓':activeTool==='cross'?'✕':activeTool==='arrow'?'➜':'';stage.appendChild(temp)};
- stage.onpointermove=e=>{if(!drawStart||!temp)return;let r=drawStart.r,x1=Math.max(r.left,Math.min(r.right,drawStart.x)),y1=Math.max(r.top,Math.min(r.bottom,drawStart.y)),x2=Math.max(r.left,Math.min(r.right,e.clientX)),y2=Math.max(r.top,Math.min(r.bottom,e.clientY));temp.style.left=((Math.min(x1,x2)-r.left)/r.width*100)+'%';temp.style.top=((Math.min(y1,y2)-r.top)/r.height*100)+'%';temp.style.width=(Math.abs(x2-x1)/r.width*100)+'%';temp.style.height=(Math.abs(y2-y1)/r.height*100)+'%'};
- stage.onpointerup=e=>{if(!drawStart||!temp)return;let r=drawStart.r,br=temp.getBoundingClientRect(),w=Math.max(2,br.width/r.width*100),h=Math.max(2,br.height/r.height*100),x=(br.left-r.left)/r.width*100,y=(br.top-r.top)/r.height*100,kind=activeTool;temp.remove();temp=null;drawStart=null;activeTool=null;stage.style.cursor='';modal.querySelectorAll('[data-tool]').forEach(b=>b.style.outline='');selected={kind,imageIndex,x,y,w,h,text:'',fontPct:kind==='text'?55:70,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(selected);paint();if(kind==='text')ta.focus();markChanged()};
- ta.oninput=()=>{if(selected&&selected.kind==='text'){selected.text=ta.value;paint();markChanged()}};
- modal.querySelector('.fontDown').onclick=()=>{if(selected&&selected.kind==='text'){selected.fontScale=Math.max(.45,(selected.fontScale||1)-.1);paint();markChanged()}};
- modal.querySelector('.fontUp').onclick=()=>{if(selected&&selected.kind==='text'){selected.fontScale=Math.min(2,(selected.fontScale||1)+.1);paint();markChanged()}};
- modal.querySelector('.deleteSel').onclick=()=>{if(!selected)return;let all=normaliseAnswerBoxes(sl),i=all.indexOf(selected);if(i>=0)all.splice(i,1);selected=null;ta.value='';paint();markChanged()};
+ const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
+ let selected=null,adding=false,preview=false;
+ const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>(x.kind||'text')==='text');
+ const choose=a=>{selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);paint()};
+ const paint=()=>{
+  stage.querySelectorAll('.designAnswerBox').forEach(x=>x.remove());
+  answers().forEach((a,i)=>{
+   const box=document.createElement('div');box.className='designAnswerBox kind-text'+(selected===a?' selectedAnswer':'');
+   box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';
+   box.textContent=a.text||'Type answer';
+   if(!preview){const handle=document.createElement('span');handle.className='ansResize';box.appendChild(handle);
+    handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();choose(a);let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,w=a.w,h=a.h;const move=ev=>{a.w=Math.max(3,Math.min(100-a.x,w+(ev.clientX-sx)/rect.width*100));a.h=Math.max(2,Math.min(100-a.y,h+(ev.clientY-sy)/rect.height*100));box.style.width=a.w+'%';box.style.height=a.h+'%';fitSavedAnswerFont(box,a)};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
+    box.onpointerdown=e=>{if(e.target===handle)return;e.preventDefault();e.stopPropagation();selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);stage.querySelectorAll('.designAnswerBox').forEach(x=>x.classList.remove('selectedAnswer'));box.classList.add('selectedAnswer');let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,x=a.x,y=a.y;const move=ev=>{a.x=Math.max(0,Math.min(100-a.w,x+(ev.clientX-sx)/rect.width*100));a.y=Math.max(0,Math.min(100-a.h,y+(ev.clientY-sy)/rect.height*100));box.style.left=a.x+'%';box.style.top=a.y+'%'};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
+   }
+   stage.appendChild(box);fitSavedAnswerFont(box,a);
+  });
+  list.innerHTML='';answers().forEach((a,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+(a.text||'New answer');btn.className=a===selected?'selectedAnswer':'';btn.onclick=()=>choose(a);list.appendChild(btn)});
+ };
+ modal.querySelector('.newAdd').onclick=()=>{adding=true;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
+ stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:'text',imageIndex,x,y,w:12,h:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';choose(a);ta.focus();markChanged()};
+ ta.oninput=()=>{if(!selected)return;selected.text=ta.value;paint();markChanged()};
+ font.oninput=()=>{if(!selected)return;selected.fontScale=Number(font.value)/65;paint();markChanged()};
+ modal.querySelector('.newSmaller').onclick=()=>{font.value=Math.max(35,Number(font.value)-10);font.oninput()};
+ modal.querySelector('.newBigger').onclick=()=>{font.value=Math.min(130,Number(font.value)+10);font.oninput()};
+ modal.querySelector('.newPreview').onclick=()=>{preview=!preview;adding=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newPreview').textContent=preview?'✎ Edit Answers':'👁 Preview';paint()};
+ modal.querySelector('.deleteSel').onclick=()=>{if(!selected)return;const arr=normaliseAnswerBoxes(sl),i=arr.indexOf(selected);if(i>=0)arr.splice(i,1);selected=null;ta.value='';paint();markChanged()};
  modal.querySelector('.done').onclick=()=>{markChanged();modal.remove();render()};
  img.onload=paint;img.src=imgs[imageIndex];if(img.complete)paint();
 }
+
 function normaliseAnswerBoxes(sl){
  sl.answerBoxes=sl.answerBoxes||[];
  sl.answerBoxes.forEach(a=>{a.kind=a.kind||'text';if(a.fontScale==null)a.fontScale=1;
