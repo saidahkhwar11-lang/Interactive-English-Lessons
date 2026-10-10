@@ -1512,13 +1512,13 @@ function attachPastePictureButton(){
 document.addEventListener('DOMContentLoaded',attachPastePictureButton);
 if(document.readyState!=='loading')attachPastePictureButton();
 document.addEventListener('paste',e=>{
- if(e.defaultPrevented||document.querySelector('.answerZoomEditor'))return;
+ if(document.querySelector('.answerZoomEditor'))return;
  const focused=document.activeElement;
  if(focused&&(focused.matches('input,textarea,[contenteditable="true"]')||focused.closest('[contenteditable="true"]')))return;
  const clipboard=e.clipboardData;
  const item=[...(clipboard?.items||[])].find(x=>x.type?.startsWith('image/'));
  const blob=item?.getAsFile()||[...(clipboard?.files||[])].find(f=>f.type?.startsWith('image/'));
- if(!blob)return;
+ if(!blob){toast('No image detected in clipboard. Copy the picture itself, not its web link.');return;}
  e.preventDefault();
  const slide=slides[cur];
  if(!slide){toast('Select a slide before pasting');return}
