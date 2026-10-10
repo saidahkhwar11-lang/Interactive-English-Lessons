@@ -743,13 +743,15 @@ function fitSavedAnswerFont(box,a){
   const w=box.clientWidth,h=box.clientHeight;
   if(w<8||h<8)return;
   const scale=Math.max(.45,Math.min(2,Number(a.fontScale)||1));
-  const preferred=Math.max(7,Math.min(26,h*.52,w*.14,h*(Number(a.fontPct)||55)/100*scale));
+  const shortAnswer=text.length<=3;
+  const preferred=Math.max(9,Math.min(64,h*(shortAnswer?.82:.62)*scale));
+  box.style.setProperty('--answer-font',preferred+'px');
   box.style.fontFamily="'Fredoka',Arial,sans-serif";
   box.style.fontWeight='700';box.style.lineHeight='1.16';
   box.style.padding='3px 5px';box.style.whiteSpace='normal';
   box.style.overflowWrap='anywhere';box.style.wordBreak='normal';box.style.overflow='hidden';
   // Measure the actual rendered text, then shrink only when necessary.
-  let low=6,high=preferred,fit=6;
+  let low=8,high=preferred,fit=8;
   for(let n=0;n<11;n++){
    const mid=(low+high)/2;
    box.style.setProperty('--answer-font',mid+'px');
