@@ -468,6 +468,10 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .presentSavedAnswer.kind-text:nth-of-type(4n+3){background:#ecfbe9!important;border-color:#8dd5a0!important}
 .presentSavedAnswer.kind-text:nth-of-type(4n+4){background:#fff7dd!important;border-color:#edc86d!important}
 .answerZoomEditor .designAnswerBox.selectedAnswer{outline:2px dashed #087ebd!important;outline-offset:2px}
+
+/* Worksheet reveal labels: use the teacher's saved rectangle, not inflated pill dimensions. */
+.presentSavedAnswer.kind-text{padding:1px 3px!important;border-radius:5px!important;min-height:0!important;min-width:0!important;max-height:none!important;max-width:none!important;transform:none!important;line-height:1.05!important;}
+.presentImageViewer .presentSavedAnswer.kind-text{padding:1px 3px!important;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -686,7 +690,7 @@ function fitSavedAnswerFont(box,a){
   const w=box.clientWidth,h=box.clientHeight;
   if(w<8||h<8)return;
   const scale=Math.max(.45,Math.min(2,Number(a.fontScale)||1));
-  const preferred=Math.max(8,Math.min(42,h*.46,w*.19,h*(Number(a.fontPct)||55)/100*scale));
+  const preferred=Math.max(7,Math.min(26,h*.52,w*.14,h*(Number(a.fontPct)||55)/100*scale));
   box.style.fontFamily="'Fredoka',Arial,sans-serif";
   box.style.fontWeight='700';box.style.lineHeight='1.16';
   box.style.padding='3px 5px';box.style.whiteSpace='normal';
