@@ -653,6 +653,7 @@ $('gradeSelect').onchange=()=>{
 };$('add').onclick=()=> $('modal').classList.add('open');$('cancel').onclick=()=> $('modal').classList.remove('open');T.forEach(t=>{let b=document.createElement('button');b.className='type';b.innerHTML='<b>'+t[0]+' '+t[1]+'</b><br><small>Editable template</small>';b.onclick=()=>{let n=mk(t[1],t[2]);if(t[2]==='Focus'){n.objectives=[];n.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';}n.lesson=slides[0].lesson||$('eLesson').value;n.sub=slides[0].sub||$('eSub').value;slides.push(n);cur=slides.length-1;$('modal').classList.remove('open');render();markChanged()};$('types').appendChild(b)});
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
 $('showInstructions').onchange=e=>{slides[cur].showInstructions=e.target.checked;render();markChanged()};
+$('revealPicturesSetting').onchange=e=>{slides[cur].revealPictures=e.target.checked;markChanged();toast(e.target.checked?'Pictures will reveal one by one ✓':'Pictures will show together ✓')};
 $('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);markChanged()};
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
