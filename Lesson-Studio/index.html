@@ -504,6 +504,9 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 
 .matchStage{position:relative;display:table;margin:14px auto;max-width:100%;max-height:60vh}.matchStage img{display:block;max-width:100%;max-height:60vh}.matchStage svg{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.presentMatchSvg{position:absolute;pointer-events:none;z-index:24;overflow:visible}.presentMatchSvg line{stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}.animalAnswerReviewPanel .addMatch,.animalAnswerReviewPanel .clearMatch,.animalAnswerReviewPanel .doneMatch{padding:10px;border:0;border-radius:9px;background:#e6f3fc;color:#164a6d;font-weight:800;cursor:pointer}.animalAnswerReviewPanel .doneMatch{background:#167d68;color:white}
 
+
+/* Teacher-drawn transparent answer circle */
+.answerStudioNew .answerZoomStage .designAnswerBox.kind-circle,#presentation .presentSavedAnswer.kind-circle,.presentImageViewer .presentSavedAnswer.kind-circle{background:transparent!important;border:3px solid #ed8b20!important;border-radius:50%!important;box-shadow:none!important;padding:0!important;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -658,18 +661,18 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
- modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newCircle" style="background:#fff0db;color:#9a560b">⭕ Circle Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
- let selected=null,adding=false,preview=false;
- const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>(x.kind||'text')==='text');
+ let selected=null,adding=false,addingCircle=false,preview=false;
+ const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>['text','circle'].includes(x.kind||'text'));
  const choose=a=>{selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);stage.querySelectorAll('.designAnswerBox').forEach((el,i)=>el.classList.toggle('selectedAnswer',answers()[i]===a))};
  const paint=()=>{
   stage.querySelectorAll('.designAnswerBox').forEach(x=>x.remove());
   answers().forEach((a,i)=>{
-   const box=document.createElement('div');box.className='designAnswerBox kind-text'+(selected===a?' selectedAnswer':'');
+   const box=document.createElement('div');box.className='designAnswerBox kind-'+(a.kind||'text')+(selected===a?' selectedAnswer':'');
    box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';
-   box.textContent=a.text||'Type answer';
+   box.textContent=a.kind==='circle'?'':(a.text||'Type answer');
    if(!preview){const handle=document.createElement('span');handle.className='ansResize';box.appendChild(handle);
     handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();choose(a);let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,w=a.w,h=a.h;const move=ev=>{a.w=Math.max(3,Math.min(100-a.x,w+(ev.clientX-sx)/rect.width*100));a.h=Math.max(2,Math.min(100-a.y,h+(ev.clientY-sy)/rect.height*100));box.style.width=a.w+'%';box.style.height=a.h+'%';fitSavedAnswerFont(box,a)};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
     box.onpointerdown=e=>{if(e.target===handle)return;e.preventDefault();e.stopPropagation();selected=a;ta.value=a.text||'';font.value=Math.round((a.fontScale||1)*65);stage.querySelectorAll('.designAnswerBox').forEach(x=>x.classList.remove('selectedAnswer'));box.classList.add('selectedAnswer');let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,x=a.x,y=a.y;const move=ev=>{a.x=Math.max(0,Math.min(100-a.w,x+(ev.clientX-sx)/rect.width*100));a.y=Math.max(0,Math.min(100-a.h,y+(ev.clientY-sy)/rect.height*100));box.style.left=a.x+'%';box.style.top=a.y+'%'};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
@@ -692,13 +695,14 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  overlay.querySelector('.clearMatch').onclick=()=>{if(!confirm('Clear matching lines on this image?'))return;sl.matchLines=sl.matchLines.filter(a=>(a.imageIndex||0)!==imageIndex);draw();markChanged()};
  overlay.querySelector('.doneMatch').onclick=()=>{overlay.remove();markChanged();toast('Matching lines saved ✓')};draw();
  };
- modal.querySelector('.newAdd').onclick=()=>{adding=true;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
- stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:'text',imageIndex,x,y,w:12,h:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';choose(a);ta.focus();markChanged()};
- ta.oninput=()=>{if(!selected)return;selected.text=ta.value;paint();markChanged()};
+ modal.querySelector('.newCircle').onclick=()=>{adding=true;addingCircle=true;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newCircle').textContent='Click to circle…';paint()};
+ modal.querySelector('.newAdd').onclick=()=>{adding=true;addingCircle=false;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
+ stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:addingCircle?'circle':'text',imageIndex,x,y,w:addingCircle?10:12,h:addingCircle?7:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;addingCircle=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newCircle').textContent='⭕ Circle Answer';choose(a);if(a.kind==='text')ta.focus();markChanged()};
+ ta.oninput=()=>{if(!selected||selected.kind==='circle')return;selected.text=ta.value;paint();markChanged()};
  font.oninput=()=>{if(!selected)return;selected.fontScale=Number(font.value)/65;paint();markChanged()};
  modal.querySelector('.newSmaller').onclick=()=>{font.value=Math.max(35,Number(font.value)-10);font.oninput()};
  modal.querySelector('.newBigger').onclick=()=>{font.value=Math.min(130,Number(font.value)+10);font.oninput()};
- modal.querySelector('.newPreview').onclick=()=>{preview=!preview;adding=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newPreview').textContent=preview?'✎ Edit Answers':'👁 Preview';paint()};
+ modal.querySelector('.newPreview').onclick=()=>{preview=!preview;adding=false;addingCircle=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newPreview').textContent=preview?'✎ Edit Answers':'👁 Preview';paint()};
  modal.querySelector('.deleteSel').onclick=()=>{if(!selected)return;const arr=normaliseAnswerBoxes(sl),i=arr.indexOf(selected);if(i>=0)arr.splice(i,1);selected=null;ta.value='';paint();markChanged()};
  modal.querySelector('.done').onclick=()=>{markChanged();modal.remove();render()};
  img.onload=paint;img.src=imgs[imageIndex];if(img.complete)paint();
