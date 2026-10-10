@@ -485,6 +485,17 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .answerStudioNew .answerZoomList button{width:100%;margin-bottom:5px}
 .answerStudioNew .answerZoomStage .designAnswerBox.kind-text{cursor:move;touch-action:none}
 .answerStudioNew .answerZoomStage .ansResize{cursor:nwse-resize}
+
+.animalAnswerReview{position:absolute;inset:0;z-index:100001;background:rgba(10,37,59,.65);display:grid;place-items:center;padding:20px}
+.animalAnswerReviewPanel{background:#fff;border-radius:20px;padding:24px;width:min(760px,96vw);max-height:90vh;overflow:auto;color:#153c57;box-shadow:0 15px 45px #123e6655}
+.animalAnswerReviewPanel h2{margin:0 0 8px}.animalAnswerReviewPanel p{line-height:1.5;color:#4b6576}
+.animalReviewGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.animalReviewGrid label{display:grid;gap:5px;font-weight:700;font-size:13px}
+.animalReviewGrid input{width:100%;padding:9px;border:1px solid #bed5e3;border-radius:9px}
+.animalReviewActions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.animalReviewActions button{border:0;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:800}
+.animalReviewActions .approveReview{background:#167d68;color:white}
+@media(max-width:700px){.animalReviewGrid{grid-template-columns:1fr 1fr}}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -639,7 +650,7 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
- modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="generateAnimalAnswers" style="background:#ffedbd;color:#634200">✨ Generate Answers</button><button class="newAdd">＋ Add Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label>Text size <input class="newFont" type="range" min="35" max="130" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
  let selected=null,adding=false,preview=false;
@@ -658,6 +669,33 @@ function openAnswerZoomEditor(sl,imageIndex=0){
    stage.appendChild(box);fitSavedAnswerFont(box,a);
   });
   list.innerHTML='';answers().forEach((a,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+(a.text||'New answer');btn.className=a===selected?'selectedAnswer':'';btn.onclick=()=>choose(a);list.appendChild(btn)});
+ };
+ modal.querySelector('.generateAnimalAnswers').onclick=()=>{
+  const existing=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex);
+  if(existing.length&&!confirm('This activity already has '+existing.length+' saved answers. Add the Animal Sorting template without deleting them?'))return;
+  const rows=[
+   ['Lion','savannah','meat','roars'],
+   ['Penguin','Antarctica','fish','swims'],
+   ['Turtle','ocean','plants','swims'],
+   ['Zebra','grassland','grass','runs']
+  ];
+  const proposed=[];
+  // Approximate worksheet grid only; teacher must review alignment before saving.
+  const colX=[43,60,77],rowY=[37,49,61,73];
+  rows.forEach((row,ri)=>row.slice(1).forEach((value,ci)=>{
+   proposed.push({kind:'text',imageIndex,x:colX[ci],y:rowY[ri],w:13,h:4.5,text:value,fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length+proposed.length});
+  }));
+  const review=document.createElement('div');review.className='animalAnswerReview';
+  review.innerHTML='<div class="animalAnswerReviewPanel"><h2>✨ Animal Sorting — Review 12 Answers</h2><p>These are suggested answers for the lion, penguin, turtle and zebra table. Edit any wording. The positions are estimates; adjust them in Answer Studio before presenting.</p><div class="animalReviewGrid"></div><div class="animalReviewActions"><button class="cancelReview">Cancel</button><button class="approveReview">Add 12 Answers</button></div></div>';
+  const grid=review.querySelector('.animalReviewGrid');
+  proposed.forEach((a,i)=>{const label=document.createElement('label');label.textContent=rows[Math.floor(i/3)][0]+' — '+['Habitat','Diet','Behavior'][i%3];const input=document.createElement('input');input.value=a.text;input.oninput=()=>a.text=input.value;label.appendChild(input);grid.appendChild(label)});
+  modal.appendChild(review);
+  review.querySelector('.cancelReview').onclick=()=>review.remove();
+  review.querySelector('.approveReview').onclick=()=>{
+   normaliseAnswerBoxes(sl).push(...proposed);
+   review.remove();preview=false;selected=proposed[0];ta.value=selected.text;paint();markChanged();
+   toast('12 suggested answers added — review positions before saving');
+  };
  };
  modal.querySelector('.newAdd').onclick=()=>{adding=true;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
  stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:'text',imageIndex,x,y,w:12,h:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';choose(a);ta.focus();markChanged()};
