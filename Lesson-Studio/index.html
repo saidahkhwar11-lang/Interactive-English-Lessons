@@ -341,6 +341,16 @@ body.visitorMode .right,body.visitorMode #add,body.visitorMode #saveLesson,body.
 #presentation .presentActions #presentClose{flex:0 0 100%!important;justify-self:auto!important;text-align:right!important;background:transparent!important;color:#607a99!important;min-height:20px!important;padding:2px 7px!important;font-size:10px!important}
 #presentation #presentPlan{display:none!important}
 @media(max-width:1050px){#presentation .presentTop{gap:6px!important;padding:7px!important}#presentation .presentTop>div:nth-child(2){padding:8px 10px!important}#presentation .presentActions{max-width:235px!important}#presentation .presentActions button{font-size:10px!important;padding:6px!important}#presentation #presentQRWrap{flex-basis:86px!important;width:86px!important;min-width:86px!important;height:86px!important;min-height:86px!important}#presentation #presentQR,#presentation #presentQR img{width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important}}
+
+/* Centered pastel cloud presentation header */
+#presentation .presentTop>div:nth-child(2){text-align:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;border:3px solid #d2e9ff!important;background:radial-gradient(ellipse at 18% 35%,#fff 0 26%,transparent 27%),radial-gradient(ellipse at 45% 15%,#fff 0 31%,transparent 32%),radial-gradient(ellipse at 76% 35%,#fff 0 28%,transparent 29%),linear-gradient(120deg,#f5fbff,#fff,#f2f9ff)!important;border-radius:48% 45% 44% 47% / 42% 44% 45% 46%!important;padding:11px 18px!important;box-shadow:0 5px 16px #90bee43b!important}
+#presentation #presentLessonTitle{width:100%!important;text-align:center!important;font-size:clamp(18px,1.6vw,28px)!important;line-height:1.16!important;color:#123e73!important;margin:0 0 7px!important;letter-spacing:-.35px!important}
+#presentation #presentSub{text-align:center!important;display:inline-block!important;width:auto!important;max-width:100%!important;padding:4px 14px!important;background:#ffeaf5!important;border-radius:999px!important;color:#315a85!important;font-size:clamp(11px,1vw,14px)!important}
+#presentation .presentThemeIcon{background:linear-gradient(140deg,#e8f5ff,#fff)!important;border-radius:18px!important;box-shadow:0 3px 12px #90bee444!important}
+#presentation .presentTop{background:linear-gradient(90deg,#f9fcff,#fff,#f9fcff)!important}
+#presentation .presentActions .miniLessonTool{border-radius:13px!important}
+#presentation .presentActions .miniLessonTool:nth-child(1){background:#e7f7ee!important;color:#236b51!important}
+#presentation .presentActions .miniLessonTool:nth-child(2){background:#f2eafe!important;color:#7351a2!important}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
