@@ -442,6 +442,32 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 /* Consistent clean answer cards: preserve teacher-selected coordinates and dimensions. */
 .presentSavedAnswer.kind-text,.designAnswerBox.kind-text{border-radius:10px!important;background:rgba(255,255,255,.97)!important;color:#163c59!important;border:1.5px solid #8ab9d1!important;box-shadow:0 3px 12px rgba(17,56,79,.16)!important;text-align:center!important;box-sizing:border-box!important;min-width:0!important;min-height:0!important;}
 .presentSavedAnswer.kind-text{transition:opacity .16s ease!important;}
+
+/* Classroom worksheet answer design: light, friendly, compact, and readable. */
+.answerZoomEditor .designAnswerBox.kind-text,
+.designGalleryItem .designAnswerBox.kind-text,
+.presentSavedAnswer.kind-text {
+ background:#e9f7ff!important;
+ border:1.5px solid #66b9ec!important;
+ color:#103d69!important;
+ border-radius:9px!important;
+ box-shadow:0 2px 5px rgba(28,102,155,.13)!important;
+ font-family:'Fredoka',Arial,sans-serif!important;
+ font-weight:600!important;
+ letter-spacing:0!important;
+ text-align:center!important;
+ justify-content:center!important;
+ align-items:center!important;
+ padding:2px 5px!important;
+ min-width:0!important;
+ min-height:0!important;
+ max-width:none!important;
+ box-sizing:border-box!important;
+}
+.presentSavedAnswer.kind-text:nth-of-type(4n+2){background:#fff1f8!important;border-color:#ee9fc7!important}
+.presentSavedAnswer.kind-text:nth-of-type(4n+3){background:#ecfbe9!important;border-color:#8dd5a0!important}
+.presentSavedAnswer.kind-text:nth-of-type(4n+4){background:#fff7dd!important;border-color:#edc86d!important}
+.answerZoomEditor .designAnswerBox.selectedAnswer{outline:2px dashed #087ebd!important;outline-offset:2px}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -661,7 +687,7 @@ function fitSavedAnswerFont(box,a){
   if(w<8||h<8)return;
   const scale=Math.max(.45,Math.min(2,Number(a.fontScale)||1));
   const preferred=Math.max(8,Math.min(42,h*.46,w*.19,h*(Number(a.fontPct)||55)/100*scale));
-  box.style.fontFamily="'Arial',sans-serif";
+  box.style.fontFamily="'Fredoka',Arial,sans-serif";
   box.style.fontWeight='700';box.style.lineHeight='1.16';
   box.style.padding='3px 5px';box.style.whiteSpace='normal';
   box.style.overflowWrap='anywhere';box.style.wordBreak='normal';box.style.overflow='hidden';
