@@ -436,6 +436,10 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 #presentation .realLessonCloudWrap #presentSub{font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif!important}
 @media(max-width:1100px){#presentation .presentTop>.realLessonCloudWrap{min-height:128px!important;padding:30px 39px!important}}
 @media(max-width:700px){#presentation .presentTop>.realLessonCloudWrap{min-height:110px!important;padding:25px 30px!important}#presentation .realLessonCloudWrap #presentLessonTitle{font-size:22px!important}}
+
+/* Consistent clean answer cards: preserve teacher-selected coordinates and dimensions. */
+.presentSavedAnswer.kind-text,.designAnswerBox.kind-text{border-radius:10px!important;background:rgba(255,255,255,.97)!important;color:#163c59!important;border:1.5px solid #8ab9d1!important;box-shadow:0 3px 12px rgba(17,56,79,.16)!important;text-align:center!important;box-sizing:border-box!important;min-width:0!important;min-height:0!important;}
+.presentSavedAnswer.kind-text{transition:opacity .16s ease!important;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -647,23 +651,34 @@ function startDrawAnswerBox(sl,item,imageIndex){
  };item.addEventListener('pointerdown',down,{once:true});
 }
 function fitSavedAnswerFont(box,a){
- requestAnimationFrame(()=>{
-   if((a.kind||'text')!=='text')return;
-   const text=(a.text||'').trim();if(!text)return;
-   const boxW=Math.max(20,box.clientWidth),boxH=Math.max(16,box.clientHeight);
-   // Fill the visible answer box, not an off-screen measuring box.
-   // Long answers may wrap, but they keep a strong classroom-readable minimum.
-   let px=Math.max(18,boxH*.34);
-   if(text.length<=22)px=Math.max(px,boxH*.82);
-   else if(text.length<=55)px=Math.max(px,boxH*.48);
-   else px=Math.max(px,boxH*.32);
-   px=Math.min(px,72);
-   px*=Math.max(.45,Math.min(2,a.fontScale||1));
-   box.style.setProperty('--answer-font',px+'px');
-   box.style.fontFamily='Arial, sans-serif';box.style.fontWeight='900';box.style.lineHeight='1.08';
-   box.style.padding='5% 6%';box.style.whiteSpace='normal';box.style.overflowWrap='break-word';box.style.wordBreak='normal';box.style.overflow='hidden';
- });
+ if((a.kind||'text')!=='text')return;
+ const text=(a.text||'').trim();if(!text)return;
+ const apply=()=>{
+  if(!box.isConnected)return;
+  const w=box.clientWidth,h=box.clientHeight;
+  if(w<8||h<8)return;
+  const scale=Math.max(.45,Math.min(2,Number(a.fontScale)||1));
+  const preferred=Math.max(10,Math.min(96,h*(Number(a.fontPct)||55)/100*scale));
+  box.style.fontFamily="'Arial',sans-serif";
+  box.style.fontWeight='700';box.style.lineHeight='1.16';
+  box.style.padding='3px 5px';box.style.whiteSpace='normal';
+  box.style.overflowWrap='anywhere';box.style.wordBreak='normal';box.style.overflow='hidden';
+  // Measure the actual rendered text, then shrink only when necessary.
+  let low=7,high=preferred,fit=7;
+  for(let n=0;n<11;n++){
+   const mid=(low+high)/2;
+   box.style.setProperty('--answer-font',mid+'px');
+   if(box.scrollWidth<=box.clientWidth+1&&box.scrollHeight<=box.clientHeight+1){fit=mid;low=mid}else high=mid;
+  }
+  box.style.setProperty('--answer-font',fit+'px');
+ };
+ requestAnimationFrame(apply);
+ if(!box._answerResizeObserver&&typeof ResizeObserver!=='undefined'){
+  box._answerResizeObserver=new ResizeObserver(()=>requestAnimationFrame(apply));
+  box._answerResizeObserver.observe(box);
+ }
 }
+
 function setupSavedAnswerReveal(sl,host){
  let arr=normaliseAnswerBoxes(sl);if(!arr.length)return;let cards=[...host.querySelectorAll('.presentImageCard')];if(!cards.length)return;
  arr.slice().sort((a,b)=>(a.order||0)-(b.order||0)).forEach((a,i)=>{let card=cards[Math.min(a.imageIndex||0,cards.length-1)],stage=card.querySelector('.presentImageStage')||card,img=stage.querySelector('.presentGalleryImg'),box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.dataset.savedAnswer=i;box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':a.text;
