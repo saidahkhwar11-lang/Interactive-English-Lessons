@@ -437,6 +437,8 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 @media(max-width:1100px){#presentation .presentTop>.realLessonCloudWrap{min-height:128px!important;padding:30px 39px!important}}
 @media(max-width:700px){#presentation .presentTop>.realLessonCloudWrap{min-height:110px!important;padding:25px 30px!important}#presentation .realLessonCloudWrap #presentLessonTitle{font-size:22px!important}}
 
+/* Compact answers stay within worksheet cells and avoid oversized pill labels. */
+.presentSavedAnswer.kind-text,.designAnswerBox.kind-text{border-radius:5px!important;border:1px solid rgba(41,93,125,.55)!important;box-shadow:0 1px 4px rgba(17,56,79,.12)!important;padding:2px 4px!important;letter-spacing:0!important;font-weight:700!important;}
 /* Consistent clean answer cards: preserve teacher-selected coordinates and dimensions. */
 .presentSavedAnswer.kind-text,.designAnswerBox.kind-text{border-radius:10px!important;background:rgba(255,255,255,.97)!important;color:#163c59!important;border:1.5px solid #8ab9d1!important;box-shadow:0 3px 12px rgba(17,56,79,.16)!important;text-align:center!important;box-sizing:border-box!important;min-width:0!important;min-height:0!important;}
 .presentSavedAnswer.kind-text{transition:opacity .16s ease!important;}
@@ -658,13 +660,13 @@ function fitSavedAnswerFont(box,a){
   const w=box.clientWidth,h=box.clientHeight;
   if(w<8||h<8)return;
   const scale=Math.max(.45,Math.min(2,Number(a.fontScale)||1));
-  const preferred=Math.max(10,Math.min(96,h*(Number(a.fontPct)||55)/100*scale));
+  const preferred=Math.max(8,Math.min(42,h*.46,w*.19,h*(Number(a.fontPct)||55)/100*scale));
   box.style.fontFamily="'Arial',sans-serif";
   box.style.fontWeight='700';box.style.lineHeight='1.16';
   box.style.padding='3px 5px';box.style.whiteSpace='normal';
   box.style.overflowWrap='anywhere';box.style.wordBreak='normal';box.style.overflow='hidden';
   // Measure the actual rendered text, then shrink only when necessary.
-  let low=7,high=preferred,fit=7;
+  let low=6,high=preferred,fit=6;
   for(let n=0;n<11;n++){
    const mid=(low+high)/2;
    box.style.setProperty('--answer-font',mid+'px');
@@ -682,7 +684,7 @@ function fitSavedAnswerFont(box,a){
 function setupSavedAnswerReveal(sl,host){
  let arr=normaliseAnswerBoxes(sl);if(!arr.length)return;let cards=[...host.querySelectorAll('.presentImageCard')];if(!cards.length)return;
  arr.slice().sort((a,b)=>(a.order||0)-(b.order||0)).forEach((a,i)=>{let card=cards[Math.min(a.imageIndex||0,cards.length-1)],stage=card.querySelector('.presentImageStage')||card,img=stage.querySelector('.presentGalleryImg'),box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.dataset.savedAnswer=i;box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':a.text;
- const place=()=>{let sw=stage.clientWidth,sh=stage.clientHeight;if(!sw||!sh||!img||!img.naturalWidth||!img.naturalHeight){box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';return}let scale=Math.min(sw/img.naturalWidth,sh/img.naturalHeight),iw=img.naturalWidth*scale,ih=img.naturalHeight*scale,ox=(sw-iw)/2,oy=(sh-ih)/2;box.style.left=(ox+iw*a.x/100)+'px';box.style.top=(oy+ih*a.y/100)+'px';box.style.width=(iw*a.w/100)+'px';box.style.height=(ih*a.h/100)+'px';fitSavedAnswerFont(box,a)};
+ const place=()=>{let sw=stage.clientWidth,sh=stage.clientHeight;if(!sw||!sh||!img||!img.naturalWidth||!img.naturalHeight){box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';return}let ir=img.getBoundingClientRect(),sr=stage.getBoundingClientRect(),iw=ir.width,ih=ir.height,ox=ir.left-sr.left,oy=ir.top-sr.top;box.style.left=(ox+iw*a.x/100)+'px';box.style.top=(oy+ih*a.y/100)+'px';box.style.width=(iw*a.w/100)+'px';box.style.height=(ih*a.h/100)+'px';fitSavedAnswerFont(box,a)};
  stage.appendChild(box);if(img&&img.complete)requestAnimationFrame(place);else if(img)img.addEventListener('load',place,{once:true});box._placeAnswer=place});
  let controls=document.createElement('div');controls.className='savedAnswerControls';let next=0,ordered=[...host.querySelectorAll('.presentSavedAnswer')];
  let reveal=document.createElement('button');reveal.textContent='✓ Reveal Answer';reveal.onclick=e=>{e.stopPropagation();if(next<ordered.length){ordered[next++].classList.add('show');reveal.textContent=next<ordered.length?'✓ Reveal Next':'✓ All Answers Shown';reveal.disabled=next>=ordered.length}};
