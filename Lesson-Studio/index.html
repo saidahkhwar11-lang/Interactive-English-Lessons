@@ -602,6 +602,8 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .detectiveBookGateway button{background:#1679aa;color:#fff;border:0;border-radius:13px;padding:13px 28px;font-size:clamp(16px,1.6vw,23px);font-weight:850;cursor:pointer;box-shadow:0 4px 12px #18476b30;flex-shrink:0}
 .detectiveActions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 #detectiveBackBook{background:#f0f5fb;color:#194d75;border:1px solid #a9c5da}
+
+.detectiveClueHighlight{background:#ffe36d!important;color:#16384f!important;padding:2px 4px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1645,10 +1647,17 @@ function renderDetectiveChallenge(sl,host,backToBook){
   host.querySelectorAll('[data-case]').forEach(b=>b.onclick=()=>{active=Number(b.dataset.case);showClue=false;showMeaning=false;showCase()});
   host.querySelector('#detectiveReset').onclick=()=>{solved.clear();draw()};const back=host.querySelector('#detectiveBackBook');if(back)back.onclick=()=>{active=-1;backToBook()};
  };
+ const highlightClue=(sentence,clue)=>{
+  const full=String(sentence||''),phrase=String(clue||'').trim();
+  if(!phrase)return esc2(full);
+  const pos=full.toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase());
+  if(pos<0)return esc2(full);
+  return esc2(full.slice(0,pos))+'<mark class="detectiveClueHighlight">'+esc2(full.slice(pos,pos+phrase.length))+'</mark>'+esc2(full.slice(pos+phrase.length));
+ };
  const showCase=()=>{
   const c=items[active];if(!c)return;draw();
   const overlay=document.createElement('div');overlay.className='detectiveOverlay';
-  overlay.innerHTML='<section class="detectivePanel"><h2>🔎 Case '+(active+1)+'</h2><p class="detectiveSentence">'+esc2(c.sentence)+'</p><p>What does <strong>'+esc2(c.word)+'</strong> mean?</p><div class="detectiveResult">'+(showClue?'<div><b>Context Clue:</b> '+esc2(c.clue||'Discuss the words around it.')+'</div>':'')+(showMeaning?'<div><b>Meaning:</b> '+esc2(c.meaning||'')+'</div>':'')+'</div><nav><button id="detectiveClue">'+(showClue?'Hide Clue':'Show Clue')+'</button><button id="detectiveMeaning">'+(showMeaning?'Hide Meaning':'Reveal Meaning')+'</button><button id="detectiveClose">Close Case</button></nav></section>';
+  overlay.innerHTML='<section class="detectivePanel"><h2>🔎 Case '+(active+1)+'</h2><p class="detectiveSentence">'+(showClue?highlightClue(c.sentence,c.clue):esc2(c.sentence))+'</p><p>What does <strong>'+esc2(c.word)+'</strong> mean?</p><div class="detectiveResult">'+(showMeaning?'<div><b>Meaning:</b> '+esc2(c.meaning||'')+'</div>':'')+'</div><nav><button id="detectiveClue">'+(showClue?'Hide Clue':'Show Clue')+'</button><button id="detectiveMeaning">'+(showMeaning?'Hide Meaning':'Reveal Meaning')+'</button><button id="detectiveClose">Close Case</button></nav></section>';
   host.appendChild(overlay);
   overlay.querySelector('#detectiveClue').onclick=()=>{showClue=!showClue;showCase()};
   overlay.querySelector('#detectiveMeaning').onclick=()=>{showMeaning=!showMeaning;if(showMeaning)solved.add(active);showCase()};
