@@ -613,6 +613,12 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .detectiveSlideToolbar #detectiveTimeStart{background:#1689c4;color:white}
 .detectiveSlidePage{font-size:14px;padding-right:7px;border-right:1px solid #b9d1e1}
 @media(max-width:700px){.detectiveSlideToolbar{right:8px;top:110px;gap:3px;padding:5px}.detectiveSlideToolbar button{padding:6px}}
+
+/* Tick answers: hidden until individually revealed, including after resize/zoom. */
+.presentSavedAnswer.kind-tick:not(.show){display:none!important;visibility:hidden!important}
+.presentSavedAnswer.kind-tick.show{display:flex!important;visibility:visible!important}
+.presentSavedAnswer.kind-tick{font-family:Arial,sans-serif!important;font-weight:800!important;text-shadow:none!important;box-shadow:none!important;line-height:1!important}
+.designAnswerBox.kind-tick{font-family:Arial,sans-serif!important;font-weight:800!important}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -848,10 +854,11 @@ function startDrawAnswerBox(sl,item,imageIndex){
 }
 function fitSavedAnswerFont(box,a){
  if((a.kind||'text')==='tick'){
-  const scale=Math.max(.4,Math.min(3,Number(a.fontScale)||1));
+  const scale=Math.max(.5,Math.min(1.65,Number(a.fontScale)||1));
   const h=box.clientHeight||24,w=box.clientWidth||24;
-  box.style.setProperty('font-size',Math.max(12,Math.min(180,Math.min(h*1.05,w*1.25)*scale))+'px','important');
-  box.style.lineHeight='1';box.style.display='flex';box.style.alignItems='center';box.style.justifyContent='center';
+  box.style.setProperty('font-size',Math.max(9,Math.min(90,Math.min(h*.72,w*.82)*scale))+'px','important');
+  box.style.lineHeight='1';box.style.alignItems='center';box.style.justifyContent='center';
+  // Never set display here: it must remain hidden until a classroom click reveals it.
   return;
  }
  if((a.kind||'text')!=='text')return;
