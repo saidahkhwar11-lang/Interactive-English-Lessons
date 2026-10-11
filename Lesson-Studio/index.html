@@ -526,6 +526,29 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .mysteryPrompt{font-size:clamp(16px,2vw,25px);font-weight:800;color:#346788;margin:20px 0}.mysteryExplain{font-size:clamp(15px,1.5vw,22px);color:#506b7f}
 
 .cwGame{height:100%;overflow:auto;background:#fbfcff;color:#163d5b;padding:18px 22px;border-radius:20px;box-sizing:border-box}.cwTop{display:flex;align-items:center;justify-content:space-between;gap:12px}.cwTop h2{margin:0;font-size:clamp(22px,2.2vw,35px)}.cwTop span{font-weight:800}.cwHint{margin:6px 0 12px}.cwBank{border:2px solid #91c4df;background:#eaf7ff;border-radius:16px;padding:10px 14px}.cwBank strong{display:block;margin-bottom:7px}.cwBank>div{display:flex;flex-wrap:wrap;gap:7px 16px}.cwBank span{font-size:clamp(12px,1vw,17px);font-weight:700}.cwBank span.used{text-decoration:line-through;color:#8b9ca8;opacity:.6}.cwBody{display:grid;grid-template-columns:minmax(130px,20%) minmax(0,1fr) minmax(200px,25%);gap:14px;margin-top:14px;align-items:start}.cwClues section{background:#f0f5fa;border-radius:12px;padding:10px;margin-bottom:9px}.cwClues h3{margin:0 0 8px}.cwClues section>div{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.cwClues button{border:1px solid #91b7cc;border-radius:8px;background:white;min-height:35px;font-weight:800;cursor:pointer;color:#163d5b}.cwClues button.active{background:#b9ddf5;border-color:#2189c5}.cwClues button.solved{background:#d5efdf}.cwGridWrap{overflow:auto;max-height:58vh;display:flex;justify-content:center;align-items:start}.cwGrid{display:grid;grid-template-columns:repeat(var(--cw-cols),minmax(17px,25px));grid-template-rows:repeat(var(--cw-rows),25px);gap:0;margin:4px auto;min-width:max-content}.cwCell{border:1px solid #45617a;background:white;position:relative;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#164f86}.cwCell small{position:absolute;top:0;left:1px;font-size:7px;color:#334e61;line-height:1}.cwQuestion{border:1px solid #c5dfea;border-radius:16px;background:#f1f9ff;padding:16px;display:grid;gap:10px}.cwQuestion h3{margin:0}.cwQuestion p{font-size:clamp(16px,1.6vw,24px);font-weight:750;line-height:1.35;margin:8px 0}.cwQuestion button{background:#167eb6;color:white;border:0;border-radius:9px;padding:11px;font-weight:800;cursor:pointer}.cwQuestion button:disabled{opacity:.5}.cwQuestion .cwReset{background:white;color:#16557e;border:1px solid #87b3cd}@media(max-width:850px){.cwBody{grid-template-columns:1fr 1fr}.cwGridWrap{grid-column:1/3;grid-row:1}.cwQuestion{grid-column:2;grid-row:2}.cwClues{grid-column:1;grid-row:2}}
+
+/* Crossword classroom layout: word bank and complete grid get priority. */
+#presentation .cwGame{padding:10px 14px!important;overflow:auto!important}
+#presentation .cwTop h2{font-size:clamp(21px,2vw,30px)!important}
+#presentation .cwHint{margin:3px 0 7px!important;font-size:14px}
+#presentation .cwBank{padding:8px 12px!important}
+#presentation .cwBank>div{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr));gap:7px 10px!important}
+#presentation .cwBank span{font-size:clamp(12px,1vw,16px)!important;overflow-wrap:anywhere}
+#presentation .cwBody{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(185px,20%)!important;gap:9px!important;margin-top:9px!important;align-items:start!important}
+#presentation .cwClues{grid-column:1 / -1!important;grid-row:1!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+#presentation .cwClues section{display:flex!important;align-items:center!important;gap:10px!important;margin:0!important;padding:6px 10px!important;min-width:0}
+#presentation .cwClues h3{white-space:nowrap;margin:0!important;font-size:17px!important}
+#presentation .cwClues section>div{display:flex!important;flex-wrap:wrap!important;gap:5px!important}
+#presentation .cwClues button{min-height:30px!important;min-width:34px!important;padding:3px 6px!important}
+#presentation .cwGridWrap{grid-column:1!important;grid-row:2!important;max-height:none!important;min-width:0!important;overflow:visible!important;justify-content:center!important}
+#presentation .cwGrid{grid-template-columns:repeat(var(--cw-cols),var(--cw-cell,23px))!important;grid-template-rows:repeat(var(--cw-rows),var(--cw-cell,23px))!important;min-width:0!important;margin:0 auto!important}
+#presentation .cwCell{font-size:clamp(9px,1vw,18px)!important;min-width:0;min-height:0}
+#presentation .cwCell small{font-size:7px!important}
+#presentation .cwQuestion{grid-column:2!important;grid-row:2!important;padding:10px!important;gap:6px!important}
+#presentation .cwQuestion h3{font-size:18px!important}
+#presentation .cwQuestion p{font-size:clamp(14px,1.3vw,20px)!important;margin:2px 0!important}
+#presentation .cwQuestion button{padding:9px!important}
+@media(max-width:720px){#presentation .cwBank>div{grid-template-columns:repeat(4,minmax(0,1fr))}#presentation .cwBody{grid-template-columns:minmax(0,1fr) 160px!important}#presentation .cwClues{grid-template-columns:1fr!important}}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1507,6 +1530,13 @@ function renderCrosswordChallenge(sl,host){
   host.querySelectorAll('[data-cw]').forEach(b=>b.onclick=()=>{active=Number(b.dataset.cw);render()});
   const reveal=host.querySelector('#cwReveal');if(reveal)reveal.onclick=()=>{const e=entries[active];solved.add(e.direction+e.number);render()};
   host.querySelector('#cwReset').onclick=()=>{solved.clear();active=0;render()};
+  const wrap=host.querySelector('.cwGridWrap'),grid=host.querySelector('.cwGrid');
+  if(wrap&&grid&&layout.width&&layout.height){
+   const availableW=wrap.clientWidth-14;
+   const availableH=Math.max(250,Math.min(window.innerHeight*.62,host.clientHeight*.72||window.innerHeight*.62));
+   const cell=Math.max(10,Math.min(34,Math.floor(Math.min(availableW/layout.width,availableH/layout.height))));
+   grid.style.setProperty('--cw-cell',cell+'px');
+  }
  };
  render();
 }
