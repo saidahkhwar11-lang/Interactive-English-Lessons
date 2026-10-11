@@ -1290,8 +1290,11 @@ function successCriterionFor(obj){
  if(/predict.*(?:picture|visual|topic)/.test(l))return 'I can use visual clues to predict the topic and explain my prediction.';
  if(/predict/.test(l))return 'I can make a prediction and support it with a reason.';
  if(/main idea|supporting detail|key detail|reading.*specific|specific.*reading/.test(l))return 'I can identify the main idea and support it with details from the reading text.';
- if(/(?:direction|route|map)/.test(l))return 'I can give clear, sequenced directions using appropriate phrases.';
- if(/creative writ|story|narrative|character|setting|plot/.test(l))return 'I can plan and write a story with characters, a setting and a clear sequence.';
+ if(/(?:mind map|storyboard|outline|graphic organi[sz]er)/.test(l))return 'I can organize my story ideas using a mind map or storyboard.';
+ if(/(?:generat|develop|brainstorm).*(?:idea|story)|(?:idea).*(?:creative story)/.test(l))return 'I can develop an original idea for my story.';
+ if(/(?:plan|choos|select).*(?:character|setting|story|event|plot)/.test(l))return 'I can choose characters, a setting, a problem, and a solution for my story.';
+ if(/(?:direction|route|giving directions|street map)/.test(l))return 'I can give clear, sequenced directions using appropriate phrases.';
+ if(/creative writ|story|narrative|character|setting|plot/.test(l))return 'I can develop a clear story plan with characters, a setting, a problem and a solution.';
  if(/email/.test(l))return 'I can write an email with a suitable greeting, clear message and closing.';
  if(/paragraph|writ/.test(l))return 'I can organise my ideas and write clear sentences for the task.';
  if(/vocab|new words|key words|word meaning/.test(l))return 'I can explain and use the lesson vocabulary correctly.';
@@ -1320,7 +1323,9 @@ function autoLessonPlan(){
  setLP('lpTitle',slides[0]?.lesson||focusData.focus?.lesson||'');
  setLP('lpTopic',($('lpTitle')?.value||'')||focusData.focus?.title||'Lesson');
  setLP('lpObjectives',overall.map(o=>'• '+o).join('\n'));
- setLP('lpSuccess',overall.map(o=>successCriterionFor(o)).filter(Boolean).map(c=>'✅ '+c).join('\n'));
+ const successList=[...new Set(overall.map(o=>successCriterionFor(o)).filter(Boolean))];
+ setLP('lpSuccess',successList.map(c=>'✅ '+c).join('\n'));
+ if(successList.length<overall.length)toast('Review success criteria: some objectives could not be matched uniquely.');
  if(overall.some(o=>!successCriterionFor(o)))toast('Some objectives need clearer wording before success criteria can be generated. Please review the Lesson Plan.');
  setLP('lpVocab',focusData.keywords.join(', '));
  let topicText=((($('lpTitle')?.value||'')||'')+' '+overall.join(' ')).toLowerCase();
