@@ -650,6 +650,8 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 @media(max-width:540px){.sortPieces,.sortTargets{grid-template-columns:1fr!important}}
 
 .scrambleGame{height:100%;overflow:auto;padding:clamp(16px,3vw,36px);background:linear-gradient(135deg,#f8f3ff,#f4faff 65%,#fff9ed);color:#173d5a;border-radius:18px}.scrambleGame header{display:flex;align-items:center;justify-content:space-between;gap:15px}.scrambleGame header h2{font-size:clamp(24px,2.5vw,38px);margin:0}.scrambleGame header strong{background:white;border-radius:40px;padding:10px 17px;white-space:nowrap}.scrambleGame>p{font-size:clamp(15px,1.4vw,21px)}.scrambleArea{background:white;border:2px solid #e0d8f1;border-radius:24px;padding:clamp(14px,2.5vw,28px);box-shadow:0 10px 25px #2c3b5b12}.scrambleArea h3{font-size:clamp(18px,1.6vw,25px);margin:9px 0}.scrambleAnswer,.scrambleTiles{display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-height:80px;padding:15px;border-radius:16px}.scrambleAnswer{border:2px dashed #aac7df;background:#f0f8ff}.scrambleAnswer span{color:#7a92a5}.scrambleTiles{background:#f9f4ff;margin-bottom:8px}.scrambleTiles button,.scrambleAnswer button{font-size:clamp(16px,1.6vw,24px);font-weight:800;padding:12px 19px;border:2px solid #d7c6ed;border-radius:14px;background:#fff;cursor:pointer;color:#193e61;box-shadow:0 3px 0 #d7c6ed}.scrambleAnswer button{border-color:#9fcde5;box-shadow:0 3px 0 #9fcde5}.scrambleTiles button:hover,.scrambleAnswer button:hover{transform:translateY(-2px)}.scrambleFeedback{margin:14px 0;border-radius:14px;padding:13px 18px;font-size:20px;font-weight:800}.scrambleFeedback.good{background:#e0f5e7;color:#1d7245}.scrambleFeedback.retry{background:#fff0e3;color:#975320}.scrambleGame footer{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.scrambleGame footer button{padding:12px 19px;border:0;border-radius:12px;background:#276da0;color:white;font-weight:800;cursor:pointer}.scrambleGame footer button:disabled{opacity:.4;cursor:not-allowed}
+
+.gameTextbookGateway{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;overflow:hidden;background:#f8fbff}.gameTextbookGateway img{max-width:100%;max-height:calc(100% - 65px);object-fit:contain;border-radius:12px;box-shadow:0 5px 18px #153d5a20}.gameTextbookGateway button,.gameTextbookBack{background:#176eab;color:white;border:0;border-radius:13px;padding:12px 22px;font-size:18px;font-weight:850;cursor:pointer}.gameTextbookBack{position:absolute;z-index:6;top:12px;right:16px;padding:9px 15px;font-size:14px;box-shadow:0 3px 12px #173d5a25}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1859,8 +1861,14 @@ function renderPresentation(){
   }else renderDetectiveChallenge(sl,host);
   return;
  }
- if(sl.type==='SentenceScramble'){renderSentenceScramble(sl,host);return;}
- if(sl.type==='StorySort'){renderStorySortingGame(sl,host);return;}
+ if(['SentenceScramble','StorySort'].includes(sl.type)){
+  const source=(sl.images&&sl.images[0])||sl.img;
+  const play=()=>{if(sl.type==='SentenceScramble')renderSentenceScramble(sl,host);else renderStorySortingGame(sl,host);
+   if(source){const back=document.createElement('button');back.type='button';back.className='gameTextbookBack';back.textContent='📖 Back to Textbook';back.onclick=showBook;host.prepend(back);}
+  };
+  const showBook=()=>{host.innerHTML='';const gateway=document.createElement('div');gateway.className='gameTextbookGateway';const img=document.createElement('img');img.src=source;img.alt='Textbook activity';const btn=document.createElement('button');btn.type='button';btn.textContent='🎮 Play Game';btn.onclick=play;gateway.append(img,btn);host.appendChild(gateway)};
+  if(source)showBook();else play();return;
+ }
  if(sl.type==='Crossword'){renderCrosswordChallenge(sl,host);return;}
  if(sl.type==='Mystery'){
   const items=(sl.mysteryCards||[]).filter(Boolean).slice(0,9);
