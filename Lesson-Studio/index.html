@@ -1246,26 +1246,32 @@ function focusLessonData(){
 }
 function successCriterionFor(obj){
  const l=String(obj||'').trim().replace(/[.!]+$/,'').toLowerCase();
- // Match the specific skill and task before general keywords such as "key details".
- if(/(?:advantage|disadvantage|benefit|drawback|evaluat).*(?:shop|method)|(?:shop|method).*(?:advantage|disadvantage|benefit|drawback)/.test(l))return 'I can list and explain the advantages and disadvantages of both shopping methods.';
- if(/(?:online|in.store|shopping).*(?:compar|shop)|compar.*(?:online|in.store|shop)/.test(l))return 'I can compare online and in-store shopping and explain my preferences.';
- if(/listen|listening|audio|spoken|conversation/.test(l)&&/detail|information|identif|find/.test(l))return 'I can identify key details from a listening conversation.';
- if(/main idea|supporting detail|key detail/.test(l))return 'I can explain what the text is mainly about and point to details that support my answer.';
- if(/summari|summary/.test(l))return 'I can write a short summary with the most important information in my own words.';
- if(/context clue|infer.*mean|meaning.*word/.test(l))return 'I can use clues around an unfamiliar word to explain what it means.';
- if(/vocab|new words|key words/.test(l))return 'I can explain new words from the lesson and use them correctly in my work.';
- if(/predict/.test(l))return 'I can write a prediction about the future and share my idea with others.';
- if(/specific information|find information|locate information/.test(l))return 'I can find the information I need and show where it appears in the text.';
- if(/listen/.test(l))return 'I can listen carefully and give accurate answers using what I heard.';
- if(/direction|route/.test(l))return 'I can help someone follow a route by giving clear, ordered directions.';
- if(/creative writ|story|narrative/.test(l))return 'I can share my ideas in writing and organise them so my reader can follow.';
- if(/paragraph|write|email/.test(l))return 'I can organise my ideas clearly and write for the intended reader.';
- if(/spea|discuss|ask and answer/.test(l))return 'I can share an idea clearly and respond to someone else.';
- if(/describ/.test(l))return 'I can give clear details so another person understands what I am describing.';
- if(/compar/.test(l))return 'I can explain how two things are similar and different using examples.';
- if(/identif|recognis|recogniz/.test(l))return 'I can recognise the important information and show an example from the activity.';
- if(/understand|comprehen/.test(l))return 'I can explain the important information and answer questions about it.';
- return 'I can show what I learned by completing the activity and explaining my answer.';
+ if(!l)return '';
+ // Order matters: identify the exact task before broad terms such as "details" or "speaking".
+ if(/advantage|disadvantage|benefit|drawback|pros and cons/.test(l))return 'I can list and explain the advantages and disadvantages of the options studied.';
+ if(/(?:compar|contrast).*(?:online|store|shopping)|(?:online|store|shopping).*(?:compar|contrast)/.test(l))return 'I can compare online and in-store shopping and explain my preferences.';
+ if(/(?:listen|audio|spoken|conversation).*(?:detail|specific|information|main idea)|(?:detail|specific information).*(?:listen|audio|conversation)/.test(l))return 'I can identify key details from a listening conversation.';
+ if(/(?:listen|pronunc|hear).*(?:stress|reduc|sound)|(?:stress|reduc).*(?:word|form|speech)/.test(l))return 'I can recognise and practise stressed or reduced forms in spoken English.';
+ if(/(?:true|false|t\/f)/.test(l))return 'I can decide whether statements are true or false using evidence from the activity.';
+ if(/context clue|infer.*mean|meaning.*word/.test(l))return 'I can use clues in a sentence to work out the meaning of unfamiliar words.';
+ if(/summari|summary/.test(l))return 'I can summarise the main points in my own words.';
+ if(/predict.*(?:picture|visual|topic)/.test(l))return 'I can use visual clues to predict the topic and explain my prediction.';
+ if(/predict/.test(l))return 'I can make a prediction and support it with a reason.';
+ if(/main idea|supporting detail|key detail|reading.*specific|specific.*reading/.test(l))return 'I can identify the main idea and support it with details from the reading text.';
+ if(/(?:direction|route|map)/.test(l))return 'I can give clear, sequenced directions using appropriate phrases.';
+ if(/creative writ|story|narrative|character|setting|plot/.test(l))return 'I can plan and write a story with characters, a setting and a clear sequence.';
+ if(/email/.test(l))return 'I can write an email with a suitable greeting, clear message and closing.';
+ if(/paragraph|writ/.test(l))return 'I can organise my ideas and write clear sentences for the task.';
+ if(/vocab|new words|key words|word meaning/.test(l))return 'I can explain and use the lesson vocabulary correctly.';
+ if(/role.play|act out|introduc|greet/.test(l))return 'I can take part in a short conversation using suitable expressions.';
+ if(/(?:compar|contrast)/.test(l))return 'I can explain similarities and differences using examples.';
+ if(/(?:listen|audio)/.test(l))return 'I can answer questions using information I heard.';
+ if(/(?:read|comprehen)/.test(l))return 'I can answer questions and support my answers with evidence from the text.';
+ if(/(?:speak|discuss|communicat|opinion)/.test(l))return 'I can express my ideas clearly and respond to others.';
+ if(/describ/.test(l))return 'I can describe the subject using clear, relevant details.';
+ if(/(?:identif|recognis|recogniz)/.test(l))return 'I can identify the requested information and give an accurate example.';
+ // Do not invent a criterion when the objective is too vague to interpret.
+ return '';
 }
 function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
 function autoLessonPlan(){
@@ -1282,7 +1288,8 @@ function autoLessonPlan(){
  setLP('lpTitle',slides[0]?.lesson||focusData.focus?.lesson||'');
  setLP('lpTopic',($('lpTitle')?.value||'')||focusData.focus?.title||'Lesson');
  setLP('lpObjectives',overall.map(o=>'• '+o).join('\n'));
- setLP('lpSuccess',overall.map((o,i)=>'✅ '+successCriterionFor(o)).join('\n'));
+ setLP('lpSuccess',overall.map(o=>successCriterionFor(o)).filter(Boolean).map(c=>'✅ '+c).join('\n'));
+ if(overall.some(o=>!successCriterionFor(o)))toast('Some objectives need clearer wording before success criteria can be generated. Please review the Lesson Plan.');
  setLP('lpVocab',focusData.keywords.join(', '));
  let topicText=((($('lpTitle')?.value||'')||'')+' '+overall.join(' ')).toLowerCase();
  // H.O.T. question: connect the lesson topic to critical thinking and real life.
