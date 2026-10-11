@@ -596,6 +596,12 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .detectivePanel h2{color:#173d5a}.detectiveSentence{font-size:clamp(20px,2.4vw,36px);font-weight:800;color:#173d5a}
 .detectivePanel>p{font-size:clamp(18px,1.7vw,25px)}.detectiveResult{display:grid;gap:10px;font-size:clamp(18px,1.7vw,24px);color:#235d76}.detectiveResult>div{padding:13px;background:#eaf5ff;border-radius:12px}
 .detectivePanel nav{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:20px}
+
+.detectiveBookGateway{width:100%;height:100%;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:10px;box-sizing:border-box;overflow:auto;background:#fff}
+.detectiveBookGateway img{display:block;max-width:100%;max-height:calc(100% - 70px);min-height:0;object-fit:contain;border-radius:8px}
+.detectiveBookGateway button{background:#1679aa;color:#fff;border:0;border-radius:13px;padding:13px 28px;font-size:clamp(16px,1.6vw,23px);font-weight:850;cursor:pointer;box-shadow:0 4px 12px #18476b30;flex-shrink:0}
+.detectiveActions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+#detectiveBackBook{background:#f0f5fb;color:#194d75;border:1px solid #a9c5da}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1630,14 +1636,14 @@ function crosswordLayout(items){
  const cells=[...occupied.entries()].map(([k,v])=>{const [x,y]=k.split(',').map(Number);return{x:x-minX,y:y-minY,letter:v.letter}});
  return{placed:placed.map(p=>({...p,x:p.x-minX,y:p.y-minY})),cells,width:maxX-minX,height:maxY2-minY};
 }
-function renderDetectiveChallenge(sl,host){
+function renderDetectiveChallenge(sl,host,backToBook){
  const items=(sl.detectiveCases||[]).filter(c=>c.word&&c.sentence);
  const solved=new Set();let active=-1,showClue=false,showMeaning=false;
  const colors=['#e4f2ff','#f9e7ef','#e9f5e9','#f7ead8','#ede7fa','#e4f5f5','#fff1d9','#fce9e4','#e7eaf7'];
  const draw=()=>{
-  host.innerHTML='<div class="detectiveGame"><header><h2>🔎 '+esc2(sl.title||'Context Clue Detectives')+'</h2><span>'+solved.size+' / '+items.length+' solved</span></header><p>Choose a case. Find the clue. Solve the mystery!</p><div class="detectiveTiles">'+items.map((c,i)=>'<button type="button" data-case="'+i+'" style="background:'+colors[i%colors.length]+'"><strong>'+(solved.has(i)?'✓':'🔍')+'</strong><b>Case '+(i+1)+'</b><small>'+(solved.has(i)?'Solved':'Open case')+'</small></button>').join('')+'</div><div class="detectiveActions"><button id="detectiveReset">↻ Reset Cases</button></div></div>';
+  host.innerHTML='<div class="detectiveGame"><header><h2>🔎 '+esc2(sl.title||'Context Clue Detectives')+'</h2><span>'+solved.size+' / '+items.length+' solved</span></header><p>Choose a case. Find the clue. Solve the mystery!</p><div class="detectiveTiles">'+items.map((c,i)=>'<button type="button" data-case="'+i+'" style="background:'+colors[i%colors.length]+'"><strong>'+(solved.has(i)?'✓':'🔍')+'</strong><b>Case '+(i+1)+'</b><small>'+(solved.has(i)?'Solved':'Open case')+'</small></button>').join('')+'</div><div class="detectiveActions">'+(backToBook?'<button id="detectiveBackBook">← Back to Textbook</button>':'')+'<button id="detectiveReset">↻ Reset Cases</button></div></div>';
   host.querySelectorAll('[data-case]').forEach(b=>b.onclick=()=>{active=Number(b.dataset.case);showClue=false;showMeaning=false;showCase()});
-  host.querySelector('#detectiveReset').onclick=()=>{solved.clear();draw()};
+  host.querySelector('#detectiveReset').onclick=()=>{solved.clear();draw()};const back=host.querySelector('#detectiveBackBook');if(back)back.onclick=()=>{active=-1;backToBook()};
  };
  const showCase=()=>{
   const c=items[active];if(!c)return;draw();
@@ -1686,7 +1692,21 @@ function renderPresentation(){
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<div class="navObjective"><span>🎯</span><strong>'+esc2(chosen)+'</strong></div>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
  const host=document.getElementById('presentSlide');
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
- if(sl.type==='Detective'){renderDetectiveChallenge(sl,host);return;}
+ if(sl.type==='Detective'){
+  const source=(sl.images&&sl.images[0])||sl.img;
+  if(source){
+   const showBook=()=>{
+    host.innerHTML='';
+    const gateway=document.createElement('div');gateway.className='detectiveBookGateway';
+    const pic=document.createElement('img');pic.alt='Textbook activity';pic.src=source;
+    const btn=document.createElement('button');btn.type='button';btn.textContent='🔎 Start Detective Game';
+    btn.onclick=()=>renderDetectiveChallenge(sl,host,showBook);
+    gateway.append(pic,btn);host.appendChild(gateway);
+   };
+   showBook();
+  }else renderDetectiveChallenge(sl,host);
+  return;
+ }
  if(sl.type==='Crossword'){renderCrosswordChallenge(sl,host);return;}
  if(sl.type==='Mystery'){
   const items=(sl.mysteryCards||[]).filter(Boolean).slice(0,9);
