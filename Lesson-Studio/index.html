@@ -561,6 +561,19 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 #presentation .cwCell.cwStart small{font-size:clamp(8px,.65vw,11px)!important;font-weight:950}
 #presentation .cwPickHint{background:#fce7f2;color:#63334c;border-radius:10px;padding:9px;font-weight:800;font-size:14px}
 @media(max-width:900px){#presentation .cwBank>div{grid-template-columns:repeat(5,minmax(0,1fr))!important}#presentation .cwBody{grid-template-columns:minmax(0,1fr) 210px!important}}
+
+#presentation .cwTopTools{display:flex;align-items:center;gap:12px}
+#presentation #cwMaximize{background:#166b9e;color:white;border:0;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer}
+#presentation .cwSeparator{font-weight:700;color:#66839a;padding:0 2px}
+#presentation .cwZoomed{position:relative;min-height:100%;overflow:auto!important}
+#presentation .cwZoomed .cwBody{grid-template-columns:minmax(0,1fr) minmax(220px,24%)!important}
+#presentation .cwZoomed .cwGridWrap{max-height:calc(100vh - 245px)!important;min-height:400px;overflow:auto!important;justify-content:flex-start!important;align-items:flex-start!important}
+#presentation .cwZoomed .cwGrid{margin:6px auto!important}
+#presentation .cwZoomed .cwCell{font-size:clamp(15px,1.6vw,25px)!important}
+#presentation .cwZoomed .cwCell small{font-size:10px!important}
+#presentation .cwZoomed .cwHint{display:none}
+#presentation .cwZoomed .cwBank{padding:5px 10px!important}
+#presentation .cwZoomed .cwBank span{font-size:clamp(14px,1.15vw,19px)!important}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1533,23 +1546,27 @@ function crosswordLayout(items){
 }
 function renderCrosswordChallenge(sl,host){
  const entries=(sl.crosswordEntries||[]).filter(e=>e.answer&&e.clue&&['Across','Down'].includes(e.direction)&&/^[A-Z]+$/.test(e.answer.toUpperCase())).map(e=>({...e,answer:e.answer.toUpperCase()}));
- const layout=crosswordLayout(entries),solved=new Set();let active=0;
+ const layout=crosswordLayout(entries),solved=new Set();let active=0,zoomed=false,zoomLevel=1;
  const esc=esc2;
  const render=()=>{
   const wordBank=[...new Set(entries.map(e=>e.answer))].sort();
   const activeEntry=entries[active];
-  host.innerHTML='<div class="cwGame"><div class="cwTop"><h2>🧩 '+esc(sl.title||'Crossword Challenge')+'</h2><span>'+solved.size+' / '+entries.length+' solved</span></div><p class="cwHint">Use the words in the box to complete the crossword. Click a numbered square for its clue.</p><div class="cwBank"><strong>Word Box</strong><div>'+wordBank.map(w=>'<span class="'+(entries.filter(e=>e.answer===w).every(e=>solved.has(e.direction+e.number))?'used':'')+'">'+esc(w.toLowerCase())+'</span>').join('')+'</div></div><div class="cwBody"><div class="cwGridWrap"><div class="cwGrid" style="--cw-cols:'+layout.width+';--cw-rows:'+layout.height+'">'+layout.cells.map(c=>{const covering=layout.placed.filter(p=>p.direction==='Across'?c.y===p.y&&c.x>=p.x&&c.x<p.x+p.answer.length:c.x===p.x&&c.y>=p.y&&c.y<p.y+p.answer.length);const show=covering.some(p=>solved.has(p.direction+p.number));const starts=layout.placed.filter(p=>p.x===c.x&&p.y===c.y).map(p=>({number:p.number,direction:p.direction}));return'<div class="cwCell'+(starts.length?' cwStart':'')+'" style="grid-column:'+(c.x+1)+';grid-row:'+(c.y+1)+'" '+(starts.length?'data-cw-start="'+c.x+','+c.y+'" role="button" tabindex="0" title="Click for clue"':'')+'>'+(starts.length?'<small>'+starts.map(p=>p.number).join('/')+'</small>':'')+(show?esc(c.letter):'')+'</div>'}).join('')+'</div></div><div class="cwQuestion"><div class="cwPickHint">☝ Click a number on the crossword to see its clue.</div>'+(activeEntry?'<h3>'+activeEntry.number+' '+activeEntry.direction+'</h3><p>'+esc(activeEntry.clue)+'</p><small>'+activeEntry.answer.length+' letters</small><button id="cwReveal" '+(solved.has(activeEntry.direction+activeEntry.number)?'disabled':'')+'>'+(solved.has(activeEntry.direction+activeEntry.number)?'✓ Revealed':'👁 Reveal Answer')+'</button>':'<p>Add crossword clues in the editor.</p>')+'<button id="cwReset" class="cwReset">↻ Reset Game</button></div></div></div>';
+  host.innerHTML='<div class="cwGame'+(zoomed?' cwZoomed':'')+'"><div class="cwTop"><h2>🧩 '+esc(sl.title||'Crossword Challenge')+'</h2><div class="cwTopTools"><span>'+solved.size+' / '+entries.length+' solved</span><button type="button" id="cwMaximize">'+(zoomed?'↙ Normal View':'⛶ Maximize Crossword')+'</button></div></div><p class="cwHint">Use the words in the box to complete the crossword. Click a numbered square for its clue.</p><div class="cwBank"><strong>Word Box</strong><div>'+wordBank.map(w=>'<span class="'+(entries.filter(e=>e.answer===w).every(e=>solved.has(e.direction+e.number))?'used':'')+'">'+esc(w.toLowerCase())+'</span>').join('<b class="cwSeparator"> - </b>')+'</div></div><div class="cwBody"><div class="cwGridWrap"><div class="cwGrid" style="--cw-cols:'+layout.width+';--cw-rows:'+layout.height+'">'+layout.cells.map(c=>{const covering=layout.placed.filter(p=>p.direction==='Across'?c.y===p.y&&c.x>=p.x&&c.x<p.x+p.answer.length:c.x===p.x&&c.y>=p.y&&c.y<p.y+p.answer.length);const show=covering.some(p=>solved.has(p.direction+p.number));const starts=layout.placed.filter(p=>p.x===c.x&&p.y===c.y).map(p=>({number:p.number,direction:p.direction}));return'<div class="cwCell'+(starts.length?' cwStart':'')+'" style="grid-column:'+(c.x+1)+';grid-row:'+(c.y+1)+'" '+(starts.length?'data-cw-start="'+c.x+','+c.y+'" role="button" tabindex="0" title="Click for clue"':'')+'>'+(starts.length?'<small>'+starts.map(p=>p.number).join('/')+'</small>':'')+(show?esc(c.letter):'')+'</div>'}).join('')+'</div></div><div class="cwQuestion"><div class="cwPickHint">☝ Click a number on the crossword to see its clue.</div>'+(activeEntry?'<h3>'+activeEntry.number+' '+activeEntry.direction+'</h3><p>'+esc(activeEntry.clue)+'</p><small>'+activeEntry.answer.length+' letters</small><button id="cwReveal" '+(solved.has(activeEntry.direction+activeEntry.number)?'disabled':'')+'>'+(solved.has(activeEntry.direction+activeEntry.number)?'✓ Revealed':'👁 Reveal Answer')+'</button>':'<p>Add crossword clues in the editor.</p>')+'<button id="cwReset" class="cwReset">↻ Reset Game</button></div></div></div>';
   host.querySelectorAll('[data-cw-start]').forEach(cell=>{
    const select=()=>{const [x,y]=cell.dataset.cwStart.split(',').map(Number);const possibilities=layout.placed.filter(p=>p.x===x&&p.y===y);if(!possibilities.length)return;let target=possibilities[0];if(possibilities.length>1){const current=entries[active];target=possibilities.find(p=>p.number===current?.number&&p.direction===current?.direction)===possibilities[0]?possibilities[1]:possibilities[0]}const idx=entries.findIndex(e=>e.number===target.number&&e.direction===target.direction);if(idx>=0){active=idx;render()}};
    cell.onclick=select;cell.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select()}};
   });
   const reveal=host.querySelector('#cwReveal');if(reveal)reveal.onclick=()=>{const e=entries[active];solved.add(e.direction+e.number);render()};
   host.querySelector('#cwReset').onclick=()=>{solved.clear();active=0;render()};
+  host.querySelector('#cwMaximize').onclick=()=>{zoomed=!zoomed;zoomLevel=1;render()};
+  const wrapZoom=host.querySelector('.cwGridWrap');
+  if(zoomed&&wrapZoom){wrapZoom.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();zoomLevel=Math.max(.7,Math.min(2.5,zoomLevel+(e.deltaY<0?.1:-.1)));const g=host.querySelector('.cwGrid');if(g)g.style.setProperty('--cw-cell',Math.round(zoomLevel*36)+'px')},{passive:false})}
+
   const wrap=host.querySelector('.cwGridWrap'),grid=host.querySelector('.cwGrid');
   if(wrap&&grid&&layout.width&&layout.height){
    const availableW=wrap.clientWidth-14;
    const availableH=Math.max(250,Math.min(window.innerHeight*.62,host.clientHeight*.72||window.innerHeight*.62));
-   const cell=Math.max(10,Math.min(34,Math.floor(Math.min(availableW/layout.width,availableH/layout.height))));
+   const cell=zoomed?Math.round(36*zoomLevel):Math.max(10,Math.min(34,Math.floor(Math.min(availableW/layout.width,availableH/layout.height))));
    grid.style.setProperty('--cw-cell',cell+'px');
   }
  };
