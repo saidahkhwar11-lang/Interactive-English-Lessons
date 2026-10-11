@@ -1039,6 +1039,34 @@ function procedureDetailFor(sl,pictureText,grade){
  const objectives=(sl.objectives||[]).filter(Boolean);
  const source=(mission+' '+pictureText+' '+questions.join(' ')).replace(/\s+/g,' ').trim();
  const low=(title+' '+source+' '+objectives.join(' ')).toLowerCase();
+
+ // Ground procedures in THIS slide, never in fixed textbook examples.
+ const isPlaceholder=/^(|add student instructions\.?|complete the activity\.?|practise the main lesson skill\.?)$/i.test(mission);
+ const explicit=!isPlaceholder?mission:'';
+ const currentGame=sl.type==='Crossword'?'Crossword Challenge':sl.type==='Mystery'?'Color Mystery Cards':sl.type==='Game'?'Interactive Quiz':'';
+ const crosswordItems=(sl.crosswordEntries||[]).filter(x=>x.clue&&x.answer);
+ const mysteryItems=(sl.mysteryCards||[]).filter(Boolean);
+ const quizItems=(sl.gameQuestions||[]).filter(x=>x.q);
+ const meaningfulObjectives=objectives.filter(x=>!/^objective$/i.test(x));
+ const actualDetails=[explicit,questions.length?'Questions: '+questions.join(' | '):'',crosswordItems.length?'Crossword clues: '+crosswordItems.map(x=>x.clue).join(' | '):'',mysteryItems.length?'Discussion prompts: '+mysteryItems.join(' | '):'',quizItems.length?'Quiz questions: '+quizItems.map(x=>x.q).join(' | '):''].filter(Boolean);
+ if(sl.type==='Reading'){
+  const student=grade==='6'?'Read the teacher-provided text silently for five minutes.':'Read the assigned Alef Library text silently for five minutes.';
+  const teacher='Set the five-minute silent reading timer and monitor independent reading.';
+  return{student,teacher};
+ }
+ if(currentGame){
+  const topic=actualDetails.length?actualDetails.join(' '):'the prompts saved on this slide';
+  const action=sl.type==='Crossword'?'select numbered crossword clues, discuss possible words, and reveal answers in the grid':sl.type==='Mystery'?'choose colored cards, discuss each prompt, and share reasons': 'answer the saved multiple-choice questions and review feedback';
+  return{student:'Use the '+currentGame+' to '+action+'. Focus on: '+topic+'.',teacher:'Introduce the '+currentGame+', explain the rules, guide students through the actual saved prompts, and check understanding as answers are revealed.'};
+ }
+ if(explicit){
+  return{student:explicit+(questions.length?' Respond to the saved questions: '+questions.join(' | ')+'.':''),teacher:'Present the task for '+(title||'this slide')+(sl.page&&sl.page!=='—'?' (page '+sl.page+')':'')+'. Clarify these instructions: '+explicit+'. Monitor students and use their responses to check understanding.'};
+ }
+ if(questions.length){
+  return{student:'Respond to the questions on this slide: '+questions.join(' | ')+'.',teacher:'Display the saved questions, allow students to respond, then review their answers and evidence.'};
+ }
+ const objectiveText=meaningfulObjectives.length?' The intended learning is: '+meaningfulObjectives.join('; ')+'.':'';
+ return{student:'Complete the activity shown on the current slide'+(title?' ('+title+')':'')+'.'+objectiveText,teacher:'Explain the activity shown on this slide, monitor responses, and assess progress against its stated objective.'};
  const page=sl.page&&sl.page!=='—'?' on page '+sl.page:'';
  const qDetail=questions.length?' Saved checks: '+questions.join(' | '):'';
  let student='',teacher='';
@@ -1193,7 +1221,9 @@ function autoLessonPlan(){
  procedureSlides.forEach((sl,i)=>{
    let tr=document.createElement('tr'),g=inferActivity(sl.mission,sl.title,sl.type);
    let mission=(sl.mission||'').trim(),template=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.'].includes(mission);
-   let pictureText=cleanActivityImageText(sl.imageText);
+   // Avoid carrying OCR text from a previous worksheet into a new lesson.
+   // Typed current-slide instructions and saved interactive content are authoritative.
+   let pictureText='';
    // Activity picture text is a primary source because many worksheet/poster instructions live inside the image.
    let activityDetail=!template?mission:'';
    if(pictureText){
@@ -1209,7 +1239,10 @@ function autoLessonPlan(){
    let pd=procedureDetailFor(sl,pictureText,$('gradeSelect').value);
    let student=pd.student,teacher=pd.teacher;
    let qCount=(sl.questions||[]).length,procLow=((sl.title||'')+' '+mission).toLowerCase();
-   let afl=qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.'
+   let afl=sl.type==='Crossword'?'AFL: Check vocabulary choices as students reveal crossword answers and explain clue-word connections.'
+     :sl.type==='Mystery'?'AFL: Listen to students justify their responses to the saved discussion prompts.'
+     :sl.type==='Game'?'AFL: Check responses to the saved quiz questions and address misconceptions.'
+     :qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.'
      :(/partner|speaking|discuss/.test(procLow)?'AFL: Listen to partner responses and check use of the target language and supporting reasons.'
      :/vocab|habitat|diet|behavior|match/.test(procLow)?'AFL: Check matches and ask students to explain why each example belongs to habitat, diet or behavior.'
      :/read|bear|hyena|giraffe/.test(procLow)?'AFL: Check that students locate accurate details in the text and justify answers with textual evidence.'
