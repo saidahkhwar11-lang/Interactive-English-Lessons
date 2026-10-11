@@ -606,6 +606,13 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .detectiveClueHighlight{background:#ffe36d!important;color:#16384f!important;padding:2px 4px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
 
 .detectiveTargetWord{text-decoration:underline!important;text-decoration-thickness:3px!important;text-underline-offset:5px!important;font-weight:900!important;}
+
+.detectiveSlideToolbar{position:fixed;z-index:180;right:22px;top:136px;display:flex;align-items:center;gap:8px;background:#f7fbff;border:1px solid #c8dce9;box-shadow:0 5px 16px #123b5822;border-radius:14px;padding:8px 11px;color:#153d5e;font-weight:900}
+.detectiveSlideToolbar #detectiveTimeDisplay{font-size:clamp(19px,2vw,30px);font-variant-numeric:tabular-nums}
+.detectiveSlideToolbar button{border:0;border-radius:9px;padding:8px 11px;background:white;color:#174d73;font-weight:900;cursor:pointer}
+.detectiveSlideToolbar #detectiveTimeStart{background:#1689c4;color:white}
+.detectiveSlidePage{font-size:14px;padding-right:7px;border-right:1px solid #b9d1e1}
+@media(max-width:700px){.detectiveSlideToolbar{right:8px;top:110px;gap:3px;padding:5px}.detectiveSlideToolbar button{padding:6px}}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1640,6 +1647,18 @@ function crosswordLayout(items){
  const cells=[...occupied.entries()].map(([k,v])=>{const [x,y]=k.split(',').map(Number);return{x:x-minX,y:y-minY,letter:v.letter}});
  return{placed:placed.map(p=>({...p,x:p.x-minX,y:p.y-minY})),cells,width:maxX-minX,height:maxY2-minY};
 }
+function setupDetectiveSlideToolbar(sl){
+ const bar=document.createElement('div');bar.id='detectiveSlideToolbar';bar.className='detectiveSlideToolbar';
+ const page=sl.page&&String(sl.page).trim()!=='—'?'📖 Page '+esc2(String(sl.page)):'📖 Page not set';
+ bar.innerHTML='<span class="detectiveSlidePage">'+page+'</span><span id="detectiveTimeDisplay"></span><button id="detectiveTimeStart" title="Start timer">▶</button><button id="detectiveTimePause" title="Pause timer">Ⅱ</button><button id="detectiveTimeReset" title="Reset timer">↻</button>';
+ document.getElementById('presentation').appendChild(bar);
+ presentRemaining=(Number(sl.time)||5)*60;
+ const paint=()=>{const el=document.getElementById('detectiveTimeDisplay');if(el)el.textContent=String(Math.floor(presentRemaining/60)).padStart(2,'0')+':'+String(presentRemaining%60).padStart(2,'0')};
+ paint();
+ bar.querySelector('#detectiveTimeStart').onclick=()=>{if(presentTimerId)return;presentTimerId=setInterval(()=>{if(presentRemaining>0){presentRemaining--;paint()}else{clearInterval(presentTimerId);presentTimerId=null}},1000)};
+ bar.querySelector('#detectiveTimePause').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}};
+ bar.querySelector('#detectiveTimeReset').onclick=()=>{if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}presentRemaining=(Number(sl.time)||5)*60;paint()};
+}
 function renderDetectiveChallenge(sl,host,backToBook){
  const items=(sl.detectiveCases||[]).filter(c=>c.word&&c.sentence);
  const solved=new Set();let active=-1,showClue=false,showMeaning=false;
@@ -1716,7 +1735,10 @@ function renderPresentation(){
  document.getElementById('presentLessonTitle').textContent=sl.lesson||'Lesson';document.getElementById('presentSub').textContent=sl.sub||'';
  const nav=document.getElementById('presentNavList');nav.innerHTML='';
  slides.forEach((x,i)=>{const b=document.createElement('button');b.className='presentNavItem'+(i===presentIndex?' active':'');let chosen=(x.objectives&&x.objectives.length?x.objectives[0]:'');if(x.type==='Focus'&&!chosen)chosen='Introduce the lesson topic, learning objectives, and key vocabulary.';if(!chosen&&x.type==='Reading')chosen=(x.obj&&x.obj!=='Objective'?x.obj:'Build reading fluency.');b.innerHTML='<b>'+(i+1)+'. '+esc2(x.title)+'</b><small>'+x.time+' min</small>'+(i===presentIndex&&chosen?'<div class="navObjective"><span>🎯</span><strong>'+esc2(chosen)+'</strong></div>':'');b.onclick=()=>{presentIndex=i;renderPresentation()};nav.appendChild(b)});
+ const oldDetectiveToolbar=document.getElementById('detectiveSlideToolbar');if(oldDetectiveToolbar)oldDetectiveToolbar.remove();
+ if(presentTimerId){clearInterval(presentTimerId);presentTimerId=null}
  const host=document.getElementById('presentSlide');
+ if(sl.type==='Detective')setupDetectiveSlideToolbar(sl);
  if(sl.type==='Reading'){renderPresentReading(sl,host);return}
  if(sl.type==='Detective'){
   const source=(sl.images&&sl.images[0])||sl.img;
