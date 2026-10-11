@@ -1246,6 +1246,10 @@ function focusLessonData(){
 }
 function successCriterionFor(obj){
  const l=String(obj||'').trim().replace(/[.!]+$/,'').toLowerCase();
+ // Match the specific skill and task before general keywords such as "key details".
+ if(/(?:advantage|disadvantage|benefit|drawback|evaluat).*(?:shop|method)|(?:shop|method).*(?:advantage|disadvantage|benefit|drawback)/.test(l))return 'I can list and explain the advantages and disadvantages of both shopping methods.';
+ if(/(?:online|in.store|shopping).*(?:compar|shop)|compar.*(?:online|in.store|shop)/.test(l))return 'I can compare online and in-store shopping and explain my preferences.';
+ if(/listen|listening|audio|spoken|conversation/.test(l)&&/detail|information|identif|find/.test(l))return 'I can identify key details from a listening conversation.';
  if(/main idea|supporting detail|key detail/.test(l))return 'I can explain what the text is mainly about and point to details that support my answer.';
  if(/summari|summary/.test(l))return 'I can write a short summary with the most important information in my own words.';
  if(/context clue|infer.*mean|meaning.*word/.test(l))return 'I can use clues around an unfamiliar word to explain what it means.';
