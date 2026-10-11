@@ -507,6 +507,12 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 
 /* Teacher-drawn transparent answer circle */
 .answerStudioNew .answerZoomStage .designAnswerBox.kind-circle,#presentation .presentSavedAnswer.kind-circle,.presentImageViewer .presentSavedAnswer.kind-circle{background:transparent!important;border:3px solid #ed8b20!important;border-radius:50%!important;box-shadow:none!important;padding:0!important;}
+
+/* Book Activity uses the same image-relative answer coordinates as the editor. */
+.gameBookAnswerStage{position:relative;display:table;margin:0 auto;max-width:100%;line-height:0}
+.gameBookAnswerStage>img{display:block;max-width:100%;width:auto;height:auto}
+.gameBookAnswerStage>.presentSavedAnswer{z-index:5;line-height:1.15}
+.gameBookAnswerStage>.presentMatchSvg{z-index:4}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1444,7 +1450,7 @@ function renderPresentation(){
  if(sl.type==='Game'){
  const bookPictures=(sl.images&&sl.images.length?sl.images:(sl.img?[sl.img]:[])).filter(Boolean);
  const bookButton=bookPictures.length?'<button type="button" id="gameBookPicture" class="gameBookButton">📖 Show Book Activity</button>':'';
- const attachBook=()=>{let b=host.querySelector('#gameBookPicture');if(b)b.onclick=()=>{let old=document.getElementById('gameBookOverlay');if(old){old.remove();return}let overlay=document.createElement('div');overlay.id='gameBookOverlay';overlay.className='gameBookOverlay';overlay.innerHTML='<div class="gameBookPanel"><div class="gameBookHead"><strong>📖 Book Activity</strong><button type="button" id="gameBookClose">✕ Close & Return to Game</button></div><div class="gameBookImages"></div></div>';bookPictures.forEach(src=>{let img=document.createElement('img');img.src=src;img.alt='Book activity';overlay.querySelector('.gameBookImages').appendChild(img)});(document.fullscreenElement||document.body).appendChild(overlay);overlay.querySelector('#gameBookClose').onclick=()=>overlay.remove()}};
+ const attachBook=()=>{let b=host.querySelector('#gameBookPicture');if(b)b.onclick=()=>{let old=document.getElementById('gameBookOverlay');if(old){old.remove();return}let overlay=document.createElement('div');overlay.id='gameBookOverlay';overlay.className='gameBookOverlay';overlay.innerHTML='<div class="gameBookPanel"><div class="gameBookHead"><strong>📖 Book Activity</strong><button type="button" id="gameBookClose">✕ Close & Return to Game</button></div><div class="gameBookImages"></div></div>';bookPictures.forEach((src,i)=>{let stage=document.createElement('div');stage.className='gameBookAnswerStage';let img=document.createElement('img');img.src=src;img.alt='Book activity';stage.appendChild(img);overlay.querySelector('.gameBookImages').appendChild(stage);installClickRevealOnImage(sl,stage,img,i)});(document.fullscreenElement||document.body).appendChild(overlay);overlay.querySelector('#gameBookClose').onclick=()=>overlay.remove()}};
  const questions=(sl.gameQuestions||[]).filter(q=>q.q&&q.correct&&(q.wrong||[]).length>=2);
  let index=0,score=0,chosen=null,order=[];
  const draw=()=>{
@@ -1471,20 +1477,23 @@ function renderPresentation(){
  if(sl.aud)document.getElementById('presentAudioPlayer').src=sl.aud;setupSlideTimer(sl);
  cleanPresentationDefaults(sl);let qHost=host.querySelector('.presentVisual')||host.querySelector('.presentDetails');setupPresentQuestions(sl,qHost);setupSavedAnswerReveal(sl,host);
 }
+function installClickRevealOnImage(sl,stage,img,imageIndex){
+ const entries=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex).sort((a,b)=>(a.order||0)-(b.order||0));
+ const boxes=entries.map(a=>{const box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':(a.text||'');box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';stage.appendChild(box);return box});
+ const matching=addPresentationMatchLines(sl,stage,img,imageIndex);
+ let next=0;
+ stage.addEventListener('click',e=>{if(e.target.closest('button'))return;e.preventDefault();e.stopPropagation();if(next<boxes.length){boxes[next].classList.add('show');fitSavedAnswerFont(boxes[next],entries[next]);next++;return}if(matching)matching.reveal()});
+ stage.style.cursor='pointer';
+ const fit=()=>boxes.forEach((box,i)=>{if(box.classList.contains('show'))fitSavedAnswerFont(box,entries[i])});
+ if(img.complete&&img.naturalWidth)requestAnimationFrame(fit);else img.addEventListener('load',fit,{once:true});
+}
 function openPresentationImage(src,sl,imageIndex=0){
  let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;
  let viewer=document.createElement('div');viewer.className='presentImageViewer';
  viewer.innerHTML='<button class="presentImageClose">✕ Close</button><div class="zoomAnswerStage"><img alt="Maximized activity picture"></div>';
  let stage=viewer.querySelector('.zoomAnswerStage'),img=stage.querySelector('img');img.src=src;
- let arr=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex).sort((a,b)=>(a.order||0)-(b.order||0));
- let zoomPairs=[];
- arr.forEach((a,i)=>{let box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.dataset.savedAnswer=i;box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':a.text;stage.appendChild(box);zoomPairs.push([box,a])});
- const fitZoomAnswers=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{stage.style.width='';stage.style.height='';zoomPairs.forEach(([box,a])=>fitSavedAnswerFont(box,a))}));
- if(img.complete&&img.naturalWidth)fitZoomAnswers();else img.addEventListener('load',fitZoomAnswers,{once:true});
- let zoomNext=0;
- stage.addEventListener('click',e=>{e.stopPropagation();if(zoomNext>=zoomPairs.length)return;const [box,a]=zoomPairs[zoomNext++];box.classList.add('show');fitSavedAnswerFont(box,a)});
- stage.style.cursor='pointer';
-
+ installClickRevealOnImage(sl,stage,img,imageIndex);
+ const fitZoomAnswers=()=>{};
  parent.appendChild(viewer);
  const syncZoom=()=>{if(viewer.isConnected)fitZoomAnswers()};window.addEventListener('resize',syncZoom);
  const closeViewer=()=>{window.removeEventListener('resize',syncZoom);viewer.remove()};
