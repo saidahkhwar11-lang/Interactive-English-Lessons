@@ -621,6 +621,33 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .designAnswerBox.kind-tick{font-family:Arial,sans-serif!important;font-weight:800!important}
 
 .sortGame{height:100%;overflow:auto;padding:18px 24px;background:#fcfdff;color:#173d5a;border-radius:16px}.sortGame header{display:flex;align-items:center;justify-content:space-between;gap:12px}.sortGame h2{margin:0;font-size:clamp(22px,2.3vw,36px)}.sortGame h3{margin:10px 0}.sortBank{background:#f0f5fa;border-radius:14px;padding:12px}.sortPieces,.sortTargets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sortPieces button,.sortTargets button{border:2px solid #d5e4ee;background:white;border-radius:12px;padding:12px;text-align:left;cursor:pointer;display:flex;gap:8px;flex-direction:column;min-height:86px;font-size:clamp(14px,1.15vw,19px)}.sortPieces button.selected{border-color:#2784c6;background:#e5f3ff}.sortPieces button b{color:#2477a8}.sortTargets button b{font-size:clamp(17px,1.5vw,23px)}.sortTargets button span{background:white;border-radius:9px;padding:8px}.sortTargets button em{font-style:normal;font-weight:800}.sortGame footer{display:flex;justify-content:flex-end;gap:10px;margin:14px 0}.sortGame footer button{background:#1779ac;color:white;border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer}.sortGame footer button:disabled{opacity:.45;cursor:not-allowed}
+
+/* Sorting Game: reusable visual card board */
+.sortGame{background:linear-gradient(160deg,#f8fbff 0%,#fff 48%,#fdf8ff 100%)!important;padding:clamp(14px,2vw,26px)!important}
+.sortGame header{padding:7px 3px 11px;border-bottom:2px solid #dbe9f4}
+.sortGame header strong{background:#e4f4ff;color:#15466d;border-radius:40px;padding:9px 15px;white-space:nowrap}
+.sortGame>p{font-size:clamp(15px,1.3vw,20px);margin:11px 0 16px;color:#547087}
+.sortBank{background:#edf4fa!important;border:1px solid #d5e7f4;border-radius:20px!important;padding:clamp(12px,1.6vw,20px)!important}
+.sortBank h3{font-size:clamp(20px,1.8vw,28px);color:#153d5c}
+.sortBank h3 small{font-size:13px;font-weight:600;color:#678397;margin-left:8px}
+.sortPieces{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:13px!important}
+.sortPieces .sortPieceCard{background:white!important;border:2px solid #e0e9f2!important;border-top:8px solid var(--piece-accent)!important;border-radius:17px!important;padding:0!important;min-height:155px!important;overflow:hidden;box-shadow:0 5px 12px #123a5916;transition:transform .15s,border-color .15s,box-shadow .15s}
+.sortPieces .sortPieceCard:hover{transform:translateY(-3px);box-shadow:0 9px 20px #123a5926}
+.sortPieces .sortPieceCard.selected{border-color:#2388c4!important;box-shadow:0 0 0 4px #bde6ff,0 8px 20px #123a5928;transform:translateY(-3px)}
+.sortPieceHead{display:flex;align-items:center;justify-content:space-between;gap:5px;background:var(--piece-accent);padding:9px 13px}
+.sortPieceHead b{font-size:14px;letter-spacing:.5px}.sortPieceHead span{font-size:12px;font-weight:800}
+.sortPieces .sortPieceCard p{font-size:clamp(14px,1.1vw,18px);line-height:1.48;margin:0;padding:13px 15px 17px;color:#173d5a;font-weight:600}
+.sortGame .sortCategoryHeading{margin:18px 0 12px;font-size:clamp(20px,1.8vw,28px)}
+.sortTargets{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.sortTargets .sortTargetCard{background:var(--target-accent)!important;border:2px dashed #a9c5d7!important;border-radius:17px!important;min-height:122px!important;transition:box-shadow .15s,transform .15s}
+.sortTargets .sortTargetCard:hover{box-shadow:0 6px 15px #123a5920;transform:translateY(-2px)}
+.sortTargets .sortTargetCard.filled{border-style:solid!important;border-color:#8cb8d0!important}
+.sortTargets .sortTargetCard>b{display:flex;align-items:center;gap:8px;font-size:clamp(17px,1.4vw,23px)}
+.sortTargetIcon{display:inline-flex;align-items:center;justify-content:center;background:white;width:31px;height:31px;border-radius:50%;font-size:17px}
+.sortTargets .sortTargetCard small{border:2px dashed #b8cbd8;border-radius:10px;padding:13px;background:#ffffff99;color:#5c788d;font-size:14px}
+.sortTargets .sortTargetCard>span{line-height:1.45}
+@media(max-width:950px){.sortPieces,.sortTargets{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:540px){.sortPieces,.sortTargets{grid-template-columns:1fr!important}}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1699,7 +1726,7 @@ function renderStorySortingGame(sl,host){
  const colors=['#e6f3ff','#fce8f1','#e9f6e8','#fff0d8','#ede8fc','#e7f5f5'];
  const draw=()=>{
   const used=new Set(Object.values(assigned));
-  host.innerHTML='<div class="sortGame"><header><h2>🧩 '+esc2(sl.title||'Sorting Challenge')+'</h2><strong>'+used.size+' / '+pieces.length+' placed</strong></header><p>Choose an item, then click the matching category below.</p><section class="sortBank"><h3>Story Pieces</h3><div class="sortPieces">'+pieces.filter(p=>!used.has(p.id)).map((p,i)=>'<button type="button" data-piece="'+esc2(p.id)+'" class="'+(selected===p.id?'selected':'')+'"><b>'+esc2(p.id)+'</b><span>'+esc2(p.text)+'</span></button>').join('')+'</div></section><h3>Story Elements</h3><div class="sortTargets">'+categories.map((c,i)=>{const id=assigned[c],p=pieces.find(x=>x.id===id);return '<button type="button" data-category="'+esc2(c)+'" style="background:'+colors[i%colors.length]+'"><b>'+esc2(c)+'</b>'+(p?'<span><strong>'+esc2(p.id)+':</strong> '+esc2(p.text)+'</span>':'<small>Click to place a piece</small>')+(checked&&p?'<em>'+(p.correct===c?'✓ Correct':'✕ Try again')+'</em>':'')+'</button>'}).join('')+'</div><footer><button id="sortCheck" '+(used.size!==pieces.length?'disabled':'')+'>✓ Check Answers</button><button id="sortReset">↻ Reset</button></footer></div>';
+  host.innerHTML='<div class="sortGame"><header><h2>🧩 '+esc2(sl.title||'Sorting Challenge')+'</h2><strong>'+used.size+' / '+pieces.length+' placed</strong></header><p>Choose an item, then click the matching category below.</p><section class="sortBank"><h3>✨ Mystery Pieces <small>Pick a card to begin</small></h3><div class="sortPieces">'+pieces.filter(p=>!used.has(p.id)).map((p,i)=>'<button type="button" data-piece="'+esc2(p.id)+'" class="sortPieceCard '+(selected===p.id?'selected':'')+'" style="--piece-accent:'+colors[pieces.indexOf(p)%colors.length]+'"><div class="sortPieceHead"><b>PIECE '+esc2(p.id)+'</b><span>'+(selected===p.id?'✓ Selected':'✦ Choose me')+'</span></div><p>'+esc2(p.text)+'</p></button>').join('')+'</div></section><h3 class="sortCategoryHeading">🎯 Match to a Category</h3><div class="sortTargets">'+categories.map((c,i)=>{const id=assigned[c],p=pieces.find(x=>x.id===id);return '<button type="button" data-category="'+esc2(c)+'" class="sortTargetCard '+(p?'filled':'empty')+'" style="--target-accent:'+colors[i%colors.length]+'"><b><span class="sortTargetIcon">'+['✦','◈','✧','◆','★','✓'][i%6]+'</span> '+esc2(c)+'</b>'+(p?'<span><strong>'+esc2(p.id)+':</strong> '+esc2(p.text)+'</span>':'<small>＋ Place a piece here</small>')+(checked&&p?'<em>'+(p.correct===c?'✓ Correct':'✕ Try again')+'</em>':'')+'</button>'}).join('')+'</div><footer><button id="sortCheck" '+(used.size!==pieces.length?'disabled':'')+'>✓ Check Answers</button><button id="sortReset">↻ Reset</button></footer></div>';
   host.querySelectorAll('[data-piece]').forEach(b=>b.onclick=()=>{selected=b.dataset.piece;checked=false;draw()});
   host.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{const c=b.dataset.category;if(selected){for(const k of Object.keys(assigned))if(assigned[k]===selected)delete assigned[k];assigned[c]=selected;selected=null}else if(assigned[c]){selected=assigned[c];delete assigned[c]}checked=false;draw()});
   host.querySelector('#sortCheck').onclick=()=>{checked=true;draw()};
