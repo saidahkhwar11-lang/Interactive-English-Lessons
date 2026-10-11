@@ -669,6 +669,7 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 .scrambleGame .scrambleAnswer,.scrambleGame .scrambleTiles{min-height:58px!important;padding:10px!important;gap:8px!important}
 .scrambleGame .scrambleTiles button,.scrambleGame .scrambleAnswer button{font-size:clamp(16px,1.4vw,22px)!important;padding:9px 14px!important}
 .scrambleGame footer{margin-top:12px!important}
+.pictureZoomToolbar{position:absolute;top:14px;right:16px;z-index:20;display:flex;align-items:center;gap:8px;background:#fff;padding:8px;border-radius:14px;box-shadow:0 5px 20px #0004}.pictureZoomToolbar button{border:0;background:#e9f3fa;color:#153d5b;border-radius:9px;padding:8px 13px;font-size:17px;font-weight:800;cursor:pointer}.pictureZoomToolbar .presentImageClose{position:static;box-shadow:none;background:#173f67;color:white;font-size:14px}.pictureZoomToolbar span{min-width:48px;text-align:center;font-weight:800;color:#173f67}.pictureZoomViewport{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none}.pictureZoomViewport .zoomAnswerStage{transform-origin:center center;flex-shrink:0;max-width:100%;max-height:100%;will-change:transform}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1956,9 +1957,20 @@ function installClickRevealOnImage(sl,stage,img,imageIndex){
 function openPresentationImage(src,sl,imageIndex=0){
  let parent=document.fullscreenElement||document.getElementById('presentation')||document.body;
  let viewer=document.createElement('div');viewer.className='presentImageViewer';
- viewer.innerHTML='<button class="presentImageClose">✕ Close</button><div class="zoomAnswerStage"><img alt="Maximized activity picture"></div>';
+ viewer.innerHTML='<div class="pictureZoomToolbar"><button type="button" data-zoomout title="Zoom out">−</button><span data-zoomlabel>100%</span><button type="button" data-zoomin title="Zoom in">＋</button><button type="button" data-zoomreset>Fit Picture</button><button type="button" class="presentImageClose">✕ Close</button></div><div class="pictureZoomViewport"><div class="zoomAnswerStage"><img alt="Maximized activity picture"></div></div>';
  let stage=viewer.querySelector('.zoomAnswerStage'),img=stage.querySelector('img');img.src=src;
  installClickRevealOnImage(sl,stage,img,imageIndex);
+ let zoom=1;const viewport=viewer.querySelector('.pictureZoomViewport');
+ const updateZoom=()=>{stage.style.transform='translate('+(stage.dataset.panX||0)+'px,'+(stage.dataset.panY||0)+'px) scale('+zoom+')';viewer.querySelector('[data-zoomlabel]').textContent=Math.round(zoom*100)+'%';viewport.style.cursor=zoom>1?'grab':'default'};
+ viewer.querySelector('[data-zoomin]').onclick=()=>{zoom=Math.min(4,+(zoom+.25).toFixed(2));updateZoom()};
+ viewer.querySelector('[data-zoomout]').onclick=()=>{zoom=Math.max(1,+(zoom-.25).toFixed(2));updateZoom()};
+ viewer.querySelector('[data-zoomreset]').onclick=()=>{zoom=1;updateZoom()};
+ let dragging=false,lastX=0,lastY=0;
+ viewport.addEventListener('pointerdown',e=>{if(zoom<=1||e.target.closest('button'))return;dragging=true;lastX=e.clientX;lastY=e.clientY;viewport.setPointerCapture(e.pointerId);viewport.style.cursor='grabbing'});
+ viewport.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;const x=Number(stage.dataset.panX||0)+dx,y=Number(stage.dataset.panY||0)+dy;stage.dataset.panX=x;stage.dataset.panY=y;stage.style.transform='translate('+x+'px,'+y+'px) scale('+zoom+')'});
+ viewport.addEventListener('pointerup',()=>{dragging=false;viewport.style.cursor='grab'});
+ viewer.querySelector('[data-zoomin]').addEventListener('click',()=>{stage.dataset.panX='0';stage.dataset.panY='0'});
+ updateZoom();
  const fitZoomAnswers=()=>{};
  parent.appendChild(viewer);
  const syncZoom=()=>{if(viewer.isConnected)fitZoomAnswers()};window.addEventListener('resize',syncZoom);
