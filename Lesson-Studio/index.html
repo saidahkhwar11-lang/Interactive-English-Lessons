@@ -1783,10 +1783,10 @@ function renderPresentation(){
   const showCard=()=>{
    const panel=document.createElement('div');panel.className='mysteryPopup';
    const card=document.createElement('div');card.className='mysteryPopupCard';card.style.borderTop='12px solid '+colors[active];
-   const heading=document.createElement('h2');heading.textContent='Prediction '+(active+1);
+   const heading=document.createElement('h2');heading.textContent=/shop|store/i.test((sl.title||'')+' '+items.join(' '))?'Situation '+(active+1):'Card '+(active+1);
    const question=document.createElement('p');question.textContent=items[active];
-   const prompt=document.createElement('div');prompt.className='mysteryPrompt';prompt.textContent='Likely  •  Possible  •  Not likely';
-   const explain=document.createElement('p');explain.className='mysteryExplain';explain.textContent='I think it is ... because ...';
+   const prompt=document.createElement('div');prompt.className='mysteryPrompt';prompt.textContent=/shop|store/i.test((sl.title||'')+' '+items.join(' '))?'In-Store Shopping  •  Online Shopping':'Likely  •  Possible  •  Not likely';
+   const explain=document.createElement('p');explain.className='mysteryExplain';explain.textContent=/shop|store/i.test((sl.title||'')+' '+items.join(' '))?'I choose ... because ...':'I think it is ... because ...';
    const close=document.createElement('button');close.textContent='Close Card';close.onclick=()=>{panel.remove();draw()};
    card.append(heading,question,prompt,explain,close);panel.appendChild(card);host.appendChild(panel);
   };
