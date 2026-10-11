@@ -604,6 +604,8 @@ body.visitorMode #presentation .privateStudentTool,body.visitorMode #slideWheelP
 #detectiveBackBook{background:#f0f5fb;color:#194d75;border:1px solid #a9c5da}
 
 .detectiveClueHighlight{background:#ffe36d!important;color:#16384f!important;padding:2px 4px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+
+.detectiveTargetWord{text-decoration:underline!important;text-decoration-thickness:3px!important;text-underline-offset:5px!important;font-weight:900!important;}
 </style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script></head><body>
 <div class="top"><div style="font-size:34px">✨</div><div><h1>Lesson Studio</h1><small>Manual interactive lesson builder</small></div><label style="margin-left:auto;font-weight:800">Grade <select id="gradeSelect" style="padding:8px;border-radius:10px;border:1px solid #cbdde5">
 <option value="9" selected>Grade 9 · Alef Pathway</option>
@@ -1654,10 +1656,25 @@ function renderDetectiveChallenge(sl,host,backToBook){
   if(pos<0)return esc2(full);
   return esc2(full.slice(0,pos))+'<mark class="detectiveClueHighlight">'+esc2(full.slice(pos,pos+phrase.length))+'</mark>'+esc2(full.slice(pos+phrase.length));
  };
+ const formatSentence=(sentence,word,clue,highlight)=>{
+  const full=String(sentence||''),target=String(word||'').trim(),hint=String(clue||'').trim();
+  const ranges=[];
+  const find=(needle,type)=>{if(!needle)return;const pos=full.toLocaleLowerCase().indexOf(needle.toLocaleLowerCase());if(pos>=0)ranges.push({start:pos,end:pos+needle.length,type})};
+  find(target,'target');if(highlight)find(hint,'clue');
+  const boundaries=[...new Set([0,full.length,...ranges.flatMap(r=>[r.start,r.end])])].sort((a,b)=>a-b);
+  let result='';
+  for(let i=0;i<boundaries.length-1;i++){
+   const a=boundaries[i],b=boundaries[i+1],text=esc2(full.slice(a,b));
+   const targetOn=ranges.some(r=>r.type==='target'&&r.start<=a&&r.end>=b);
+   const clueOn=ranges.some(r=>r.type==='clue'&&r.start<=a&&r.end>=b);
+   result+=clueOn?'<mark class="detectiveClueHighlight">'+(targetOn?'<u class="detectiveTargetWord">'+text+'</u>':text)+'</mark>':targetOn?'<u class="detectiveTargetWord">'+text+'</u>':text;
+  }
+  return result;
+ };
  const showCase=()=>{
   const c=items[active];if(!c)return;draw();
   const overlay=document.createElement('div');overlay.className='detectiveOverlay';
-  overlay.innerHTML='<section class="detectivePanel"><h2>🔎 Case '+(active+1)+'</h2><p class="detectiveSentence">'+(showClue?highlightClue(c.sentence,c.clue):esc2(c.sentence))+'</p><p>What does <strong>'+esc2(c.word)+'</strong> mean?</p><div class="detectiveResult">'+(showMeaning?'<div><b>Meaning:</b> '+esc2(c.meaning||'')+'</div>':'')+'</div><nav><button id="detectiveClue">'+(showClue?'Hide Clue':'Show Clue')+'</button><button id="detectiveMeaning">'+(showMeaning?'Hide Meaning':'Reveal Meaning')+'</button><button id="detectiveClose">Close Case</button></nav></section>';
+  overlay.innerHTML='<section class="detectivePanel"><h2>🔎 Case '+(active+1)+'</h2><p class="detectiveSentence">'+formatSentence(c.sentence,c.word,c.clue,showClue)+'</p><p>What does <strong>'+esc2(c.word)+'</strong> mean?</p><div class="detectiveResult">'+(showMeaning?'<div><b>Meaning:</b> '+esc2(c.meaning||'')+'</div>':'')+'</div><nav><button id="detectiveClue">'+(showClue?'Hide Clue':'Show Clue')+'</button><button id="detectiveMeaning">'+(showMeaning?'Hide Meaning':'Reveal Meaning')+'</button><button id="detectiveClose">Close Case</button></nav></section>';
   host.appendChild(overlay);
   overlay.querySelector('#detectiveClue').onclick=()=>{showClue=!showClue;showCase()};
   overlay.querySelector('#detectiveMeaning').onclick=()=>{showMeaning=!showMeaning;if(showMeaning)solved.add(active);showCase()};
