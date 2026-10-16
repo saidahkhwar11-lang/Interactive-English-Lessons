@@ -2260,7 +2260,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 #gapDropEditor button,.gapDropGame button{cursor:pointer}
 #gapImagePositioner{position:relative;max-width:520px;margin:8px auto;border:1px solid #bdd2df}
 #gapImagePositioner img{display:block;width:100%}
-#gapImagePositioner .gapMarker{position:absolute;transform:translate(-50%,-50%);background:#fff;border:2px dashed #267ab2;border-radius:8px;padding:5px 10px;font-weight:bold;pointer-events:none}
+#gapImagePositioner .gapMarker{position:absolute;transform:translate(-50%,-50%);background:#fff;border:2px dashed #267ab2;border-radius:8px;padding:6px 9px;font-weight:bold;cursor:grab;touch-action:none;max-width:45%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 8px #234e6740;z-index:2}#gapImagePositioner .gapMarker:active{cursor:grabbing}
 .gapDropGame{background:#f7fbff;border-radius:16px;padding:16px;min-height:75vh;color:#173f5e}
 .gapDropGame h2{margin:0 0 8px}
 .gapDropGame .gapWordBank{display:flex;flex-wrap:wrap;gap:10px;padding:12px;background:#e8f1fb;border-radius:12px;justify-content:center;margin:12px 0}
@@ -2297,11 +2297,39 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const panel=document.getElementById('gapDropEditor');if(!panel||current()?.type!=='GapDrop')return;
   const sl=current(),box=panel.querySelector('#gapImagePositioner');
   const img=(sl.images&&sl.images[0])||sl.img;
-  box.innerHTML=img?'<img src="'+escapeGap(img)+'" alt="Click to add a gap">':'<p>Upload your textbook picture using Upload Activity Picture below, then click the picture here to position each gap.</p>';
-  if(!img)return;
-  const counter=panel.querySelector('#gapPositionCount');if(counter)counter.textContent=(sl.gapPositions||[]).length+' gap positions placed';
-  (sl.gapPositions||[]).forEach((pos,i)=>{let m=document.createElement('span');m.className='gapMarker';m.style.left=pos.x+'%';m.style.top=pos.y+'%';m.textContent='Gap '+(i+1);box.appendChild(m)});
-  box.onclick=e=>{if(e.target.classList.contains('gapMarker'))return;const r=box.querySelector('img').getBoundingClientRect();sl.gapPositions=sl.gapPositions||[];sl.gapPositions.push({x:Math.max(0,Math.min(100,Math.round((e.clientX-r.left)/r.width*1000)/10)),y:Math.max(0,Math.min(100,Math.round((e.clientY-r.top)/r.height*1000)/10))});markChanged();positionEditor()};
+  box.innerHTML='';
+  if(!img){box.textContent='Upload an activity picture first.';return;}
+  const picture=document.createElement('img');picture.src=img;picture.alt='Click an empty space to add a gap';picture.draggable=false;box.appendChild(picture);
+  const counter=panel.querySelector('#gapPositionCount');
+  if(counter)counter.textContent=(sl.gapPositions||[]).length+' gaps placed — drag a numbered marker to move it.';
+  const point=(event)=>{
+   const r=picture.getBoundingClientRect();
+   return {x:Math.max(4,Math.min(96,Math.round((event.clientX-r.left)/r.width*1000)/10)),y:Math.max(5,Math.min(95,Math.round((event.clientY-r.top)/r.height*1000)/10))};
+  };
+  (sl.gapPositions||[]).forEach((pos,i)=>{
+   const m=document.createElement('button');m.type='button';m.className='gapMarker';m.style.left=pos.x+'%';m.style.top=pos.y+'%';
+   const answer=(sl.gapAnswers||[])[i]||'';
+   m.textContent=(i+1)+(answer?' · '+answer:'');
+   m.title='Drag to reposition gap '+(i+1)+(answer?' — '+answer:'');
+   m.onpointerdown=e=>{
+    e.preventDefault();e.stopPropagation();m.setPointerCapture(e.pointerId);m.dataset.dragging='1';
+   };
+   m.onpointermove=e=>{
+    if(m.dataset.dragging!=='1')return;
+    const next=point(e);m.style.left=next.x+'%';m.style.top=next.y+'%';
+   };
+   m.onpointerup=e=>{
+    if(m.dataset.dragging!=='1')return;
+    const next=point(e);sl.gapPositions[i]=next;delete m.dataset.dragging;
+    markChanged();positionEditor();
+   };
+   m.onpointercancel=()=>{delete m.dataset.dragging;positionEditor()};
+   box.appendChild(m);
+  });
+  picture.onclick=e=>{
+   const next=point(e);sl.gapPositions=sl.gapPositions||[];sl.gapPositions.push(next);
+   markChanged();positionEditor();
+  };
  }
  function mount(){
   const target=document.getElementById('createInteractiveGame');
