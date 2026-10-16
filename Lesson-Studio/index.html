@@ -2326,7 +2326,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const count=mode==='text'?answers.length:Math.min(answers.length,positions.length);
   const assigned=Array(count).fill(null);
   let selected=null,checked=false;
-  const words=answers.slice(0,count).map((word,i)=>({word,id:i})).sort((a,b)=>{let x=t=>[...t.word].reduce((n,c)=>n*33+c.charCodeAt(0),13)%97;return x(a)-x(b)||b.id-a.id});
+  const words=answers.slice(0,count).map((word,i)=>({word,id:i}));
+  // Shuffle the visible word bank independently of the correct gap order.
+  for(let i=words.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[words[i],words[j]]=[words[j],words[i]];}
+  if(words.length>1&&words.every((w,i)=>w.id===i)){words.push(words.shift());}
   const root=document.createElement('div');root.className='gapDropGame';host.replaceChildren(root);
   function draw(){
    const blanks=()=>assigned.map((id,i)=>'<button type="button" class="gapBlank '+(checked?(id!==null&&words.find(w=>w.id===id)?.word===answers[i]?'correct':'wrong'):'')+'" data-gap="'+i+'">'+(id===null?'Drop here':escapeGap(words.find(w=>w.id===id)?.word||''))+'</button>');
