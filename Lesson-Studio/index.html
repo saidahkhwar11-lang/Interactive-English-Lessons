@@ -1320,6 +1320,13 @@ function focusLessonData(){
 function successCriterionFor(obj){
  const l=String(obj||'').trim().replace(/[.!]+$/,'').toLowerCase();
  if(!l)return '';
+
+ // Generate measurable, topic-specific success criteria before broad skill fallbacks.
+ if(/(?:honey.making|making honey|honey.*process|process.*honey)/.test(l))return 'I can arrange the steps of honey-making in the correct order.';
+ if(/(?:must not|mustn.t|must).*?(?:rule|dut|obligation|prohibition)|(?:rule|dut|obligation).*?(?:must|mustn.t)/.test(l))return 'I can use must and must not correctly to explain rules and duties.';
+ if(/(?:vocab|word|meaning).*(?:bee|honey|hive|nectar|beekeep)|(?:bee|honey|hive|nectar|beekeep).*(?:vocab|word|meaning)/.test(l))return 'I can match bee-related vocabulary to its correct meaning.';
+ if(/(?:sequence|order|arrang).*(?:step|event|process)|(?:step|event|process).*(?:sequence|order|arrang)/.test(l))return 'I can put the steps or events in the correct order.';
+ if(/(?:match|sort|categor).*(?:word|vocab|definition|meaning)|(?:word|vocab|definition|meaning).*(?:match|sort|categor)/.test(l))return 'I can match each vocabulary word with its correct meaning.';
  // Order matters: identify the exact task before broad terms such as "details" or "speaking".
  if(/advantage|disadvantage|benefit|drawback|pros and cons/.test(l))return 'I can list and explain the advantages and disadvantages of the options studied.';
  if(/(?:compar|contrast).*(?:online|store|shopping)|(?:online|store|shopping).*(?:compar|contrast)/.test(l))return 'I can compare online and in-store shopping and explain my preferences.';
