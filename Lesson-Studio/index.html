@@ -1318,43 +1318,36 @@ function focusLessonData(){
  return {focus,objectives:objectives.slice(0,3),keywords};
 }
 function successCriterionFor(obj){
- const l=String(obj||'').trim().replace(/[.!]+$/,'').toLowerCase();
- if(!l)return '';
-
- // Generate measurable, topic-specific success criteria before broad skill fallbacks.
- if(/(?:honey.making|making honey|honey.*process|process.*honey)/.test(l))return 'I can arrange the steps of honey-making in the correct order.';
- if(/(?:must not|mustn.t|must).*?(?:rule|dut|obligation|prohibition)|(?:rule|dut|obligation).*?(?:must|mustn.t)/.test(l))return 'I can use must and must not correctly to explain rules and duties.';
- if(/(?:vocab|word|meaning).*(?:bee|honey|hive|nectar|beekeep)|(?:bee|honey|hive|nectar|beekeep).*(?:vocab|word|meaning)/.test(l))return 'I can match bee-related vocabulary to its correct meaning.';
- if(/(?:sequence|order|arrang).*(?:step|event|process)|(?:step|event|process).*(?:sequence|order|arrang)/.test(l))return 'I can put the steps or events in the correct order.';
- if(/(?:match|sort|categor).*(?:word|vocab|definition|meaning)|(?:word|vocab|definition|meaning).*(?:match|sort|categor)/.test(l))return 'I can match each vocabulary word with its correct meaning.';
- // Order matters: identify the exact task before broad terms such as "details" or "speaking".
- if(/advantage|disadvantage|benefit|drawback|pros and cons/.test(l))return 'I can list and explain the advantages and disadvantages of the options studied.';
- if(/(?:compar|contrast).*(?:online|store|shopping)|(?:online|store|shopping).*(?:compar|contrast)/.test(l))return 'I can compare online and in-store shopping and explain my preferences.';
- if(/(?:listen|audio|spoken|conversation).*(?:detail|specific|information|main idea)|(?:detail|specific information).*(?:listen|audio|conversation)/.test(l))return 'I can identify key details from a listening conversation.';
- if(/(?:listen|pronunc|hear).*(?:stress|reduc|sound)|(?:stress|reduc).*(?:word|form|speech)/.test(l))return 'I can recognise and practise stressed or reduced forms in spoken English.';
- if(/(?:true|false|t\/f)/.test(l))return 'I can decide whether statements are true or false using evidence from the activity.';
- if(/context clue|infer.*mean|meaning.*word/.test(l))return 'I can use clues in a sentence to work out the meaning of unfamiliar words.';
- if(/summari|summary/.test(l))return 'I can summarise the main points in my own words.';
- if(/predict.*(?:picture|visual|topic)/.test(l))return 'I can use visual clues to predict the topic and explain my prediction.';
- if(/predict/.test(l))return 'I can make a prediction and support it with a reason.';
- if(/main idea|supporting detail|key detail|reading.*specific|specific.*reading/.test(l))return 'I can identify the main idea and support it with details from the reading text.';
- if(/(?:mind map|storyboard|outline|graphic organi[sz]er)/.test(l))return 'I can organize my story ideas using a mind map or storyboard.';
- if(/(?:generat|develop|brainstorm).*(?:idea|story)|(?:idea).*(?:creative story)/.test(l))return 'I can develop an original idea for my story.';
- if(/(?:plan|choos|select).*(?:character|setting|story|event|plot)/.test(l))return 'I can choose characters, a setting, a problem, and a solution for my story.';
- if(/(?:direction|route|giving directions|street map)/.test(l))return 'I can give clear, sequenced directions using appropriate phrases.';
- if(/creative writ|story|narrative|character|setting|plot/.test(l))return 'I can develop a clear story plan with characters, a setting, a problem and a solution.';
- if(/email/.test(l))return 'I can write an email with a suitable greeting, clear message and closing.';
- if(/paragraph|writ/.test(l))return 'I can organise my ideas and write clear sentences for the task.';
- if(/vocab|new words|key words|word meaning/.test(l))return 'I can explain and use the lesson vocabulary correctly.';
- if(/role.play|act out|introduc|greet/.test(l))return 'I can take part in a short conversation using suitable expressions.';
- if(/(?:compar|contrast)/.test(l))return 'I can explain similarities and differences using examples.';
- if(/(?:listen|audio)/.test(l))return 'I can answer questions using information I heard.';
- if(/(?:read|comprehen)/.test(l))return 'I can answer questions and support my answers with evidence from the text.';
- if(/(?:speak|discuss|communicat|opinion)/.test(l))return 'I can express my ideas clearly and respond to others.';
- if(/describ/.test(l))return 'I can describe the subject using clear, relevant details.';
- if(/(?:identif|recognis|recogniz)/.test(l))return 'I can identify the requested information and give an accurate example.';
- // Do not invent a criterion when the objective is too vague to interpret.
- return '';
+ const raw=String(obj||'').trim().replace(/^[•✓✔✅\s\d.)-]+/,'').replace(/[.!]+$/,'');
+ if(!raw)return '';
+ // Retain the specific topic, action and evidence from each objective.
+ // Avoid generic skill templates that discard the lesson's subject.
+ let sentence=raw.replace(/^students? (?:will be able to|can|should be able to)\s+/i,'')
+  .replace(/^(?:by the end of (?:this|the) lesson,?\s*)?(?:to\s+)?/i,'')
+  .replace(/^(?:learners? will be able to|pupils? will be able to)\s+/i,'')
+  .replace(/^I can\s+/i,'');
+ const verbs={
+  identify:'identify',understand:'explain',recognize:'recognise',recognise:'recognise',
+  describe:'describe',explain:'explain',compare:'compare',contrast:'contrast',
+  use:'use',apply:'apply',write:'write',read:'read',listen:'identify',speak:'explain',
+  complete:'complete',match:'match',sort:'sort',arrange:'arrange',sequence:'sequence',
+  order:'order',predict:'predict',infer:'infer',summarize:'summarise',summarise:'summarise',
+  create:'create',develop:'develop',plan:'plan',draft:'draft',edit:'edit',
+  demonstrate:'demonstrate',give:'give',answer:'answer',find:'find',select:'select',
+  choose:'choose',classify:'classify',label:'label',discuss:'discuss',retell:'retell',
+  distinguish:'distinguish',practice:'practise',practise:'practise'
+ };
+ sentence=sentence.replace(/^([a-z]+)\b/i,(v)=>verbs[v.toLowerCase()]||v.toLowerCase());
+ // Use concrete success evidence for compound objectives without replacing their content.
+ sentence=sentence.replace(/^identify and understand\b/i,'identify and explain')
+   .replace(/^understand\b/i,'explain')
+   .replace(/^learn about\b/i,'explain')
+   .replace(/^know about\b/i,'explain');
+ if(!/^(identify|explain|recognise|describe|compare|contrast|use|apply|write|read|listen|speak|complete|match|sort|arrange|sequence|order|predict|infer|summarise|create|develop|plan|draft|edit|demonstrate|give|answer|find|select|choose|classify|label|discuss|retell|distinguish|practise)\b/i.test(sentence)){
+  return ''; // Flag ambiguous objectives for teacher review rather than inventing criteria.
+ }
+ sentence=sentence.charAt(0).toLowerCase()+sentence.slice(1);
+ return 'I can '+sentence+'.';
 }
 function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
 function autoLessonPlan(){
