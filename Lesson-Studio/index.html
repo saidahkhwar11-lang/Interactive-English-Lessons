@@ -2144,19 +2144,39 @@ function regenerateThinking(){let sl=thinkingSlide();if(!sl)return;let t=automat
 function openThinkingCard(){let sl=thinkingSlide();if(!sl)return;const box=document.getElementById('thinkingOverlay');box.classList.add('thinkingPlay');const inner=box.querySelector(':scope > div');if(inner)inner.classList.add('thinkingStage');document.getElementById('thinkingContent').innerHTML='<button class="thinkingClose" onclick="closeThinking()" aria-label="Close">✕ Close</button><div class="thinkingCloud"><h2>Think <span>•</span> Connect <span>•</span> Reflect</h2><div class="thinkingTag">Choose a card to explore!</div></div><p class="thinkingHint">✨ Click a card to reveal the question!</p><div class="thinkingChoices">'+[['q','🧠','HOTS','Higher-Order Thinking','Think deeper. Go further!','pink'],['uae','🇦🇪','UAE CHARTER','Values in Action','Good citizens build a brighter UAE!','green'],['life','🎒','STUDENT LIFE','Real Life • Real Choices','How does this relate to you?','blue']].map(([k,icon,name,subtitle,desc,color])=>'<button class="thinkingChoice '+color+'" onclick="revealThinkingQuestion(\''+k+'\')"><span class="thinkingBigIcon">'+icon+'</span><span class="thinkingChoiceTitle">'+name+'</span><span class="thinkingChoiceSubtitle">'+subtitle+'</span><span class="thinkingChoiceDesc">'+desc+'</span><span class="thinkingArrow">➜</span></button>').join('')+'</div><div class="thinkingReset"><button onclick="resetThinkingQuestions()">↻ Restart questions</button></div><p class="thinkingFooter">💭 Think &nbsp; • &nbsp; 🗣️ Discuss &nbsp; • &nbsp; 💬 Share &nbsp; • &nbsp; 🌱 Grow</p>';thinkingShow(box)}
 let thinkingCycle={q:0,uae:0,life:0};function nextThinkingQuestion(k){thinkingCycle[k]=(thinkingCycle[k]||0)+1;revealThinkingQuestion(k)}function resetThinkingQuestions(){thinkingCycle={q:0,uae:0,life:0};openThinkingCard()}
 function revealThinkingQuestion(k){
- let sl=thinkingSlide(),manual=sl.thinkingConnections?.manual===true,t=manual?thinkingFields(sl):automaticThinking(sl,thinkingCycle[k]||0),fun=thinkingFun(sl,t.style||'scenario'),labels={q:'🧠 HOTS CHALLENGE',uae:'🇦🇪 UAE CHARTER',life:'🎒 STUDENT LIFE'},colors={q:'pink',uae:'green',life:'blue'},question=k==='q'?t.q:k==='uae'?t.uae:t.life,answer=k==='q'?(t.answer||''):'';
- document.getElementById('thinkingContent').innerHTML='<button class="thinkingClose" onclick="closeThinking()" aria-label="Close">✕ Close</button><div class="thinkingCloud"><h2>'+labels[k]+'</h2><div class="thinkingTag">Think • Discuss • Share</div></div><div class="thinkingReveal '+colors[k]+'"><div class="thinkingRevealIcon">'+(k==='q'?thinkingEscape(fun.icon):k==='uae'?'🇦🇪':'🎒')+'</div><div class="thinkingQuestionText">'+thinkingEscape(question||'')+'</div>'+(answer?'<button class="thinkingAnswerBtn" onclick="this.nextElementSibling.hidden=false;this.hidden=true">✨ Reveal Answer</button><div class="thinkingAnswer" hidden><b>Answer:</b> '+thinkingEscape(answer)+'</div>':'')+'</div><div class="thinkingReturn"><button onclick="nextThinkingQuestion(\''+k+'\')">🔄 Another Question</button><button onclick="editThinkingLive(\''+k+'\')">✏️ Edit This Question</button><button onclick="openThinkingCard()">← Choose another card</button></div>';
+ const sl=thinkingSlide(),manual=sl.thinkingConnections?.manual===true;
+ const t=manual?thinkingFields(sl):automaticThinking(sl,thinkingCycle[k]||0);
+ const labels={q:'🧠 HOTS CHALLENGE',uae:'🇦🇪 UAE CONNECTION',life:'🎒 REAL-LIFE CONNECTION'};
+ const colors={q:'pink',uae:'green',life:'blue'};
+ const question=String(t[k]||'');
+ const answer=k==='q'?String(t.answer||''):'';
+ const content=document.getElementById('thinkingContent');
+ content.innerHTML='<button class="thinkingClose" id="thinkCloseLive">✕ Close</button><div class="thinkingCloud"><h2>'+labels[k]+'</h2><div class="thinkingTag">Think • Discuss • Share</div></div><div class="thinkingReveal '+colors[k]+'"><div class="thinkingQuestionText">'+thinkingEscape(question)+'</div>'+(answer?'<button class="thinkingAnswerBtn" id="thinkRevealAnswer">✨ Reveal Answer</button><div class="thinkingAnswer" id="thinkAnswerBox" hidden><b>Answer:</b> '+thinkingEscape(answer)+'</div>':'')+'</div><div class="thinkingReturn" style="display:flex;justify-content:center;gap:9px;flex-wrap:wrap"><button id="thinkAnotherLive">🔄 Change Question</button><button id="thinkEditLive">✏️ Edit Question</button><button id="thinkBackLive">← Back to Cards</button></div>';
+ content.querySelector('#thinkCloseLive').onclick=closeThinking;
+ content.querySelector('#thinkBackLive').onclick=openThinkingCard;
+ content.querySelector('#thinkEditLive').onclick=()=>editThinkingLive(k);
+ content.querySelector('#thinkAnotherLive').onclick=()=>{
+  thinkingCycle[k]=(thinkingCycle[k]||0)+1;
+  // Explicitly clear manual override for this one question; preserve other manually edited questions.
+  const draft=automaticThinking(sl,thinkingCycle[k]);
+  sl.thinkingConnections={...thinkingFields(sl),[k]:draft[k],manual:true};
+  if(typeof markChanged==='function')markChanged();
+  revealThinkingQuestion(k);
+ };
+ const ans=content.querySelector('#thinkRevealAnswer');
+ if(ans)ans.onclick=()=>{content.querySelector('#thinkAnswerBox').hidden=false;ans.hidden=true};
 }
 function editThinkingLive(k){
- const sl=thinkingSlide(),t=thinkingFields(sl),box=document.getElementById('thinkingContent');
- const val=sl.thinkingConnections?.manual===true?sl.thinkingConnections[k]:automaticThinking(sl,thinkingCycle[k]||0)[k];
- box.innerHTML='<button class="thinkingClose" onclick="closeThinking()" aria-label="Close">✕ Close</button><div class="thinkingCloud"><h2>✏️ Edit Question</h2><div class="thinkingTag">Save only to this slide</div></div><div style="max-width:750px;margin:20px auto;padding:20px;background:white;border-radius:16px"><label for="thinkingLiveInput" style="font-weight:800;display:block;margin-bottom:12px">Question</label><textarea id="thinkingLiveInput" style="width:100%;min-height:150px;font-size:23px;line-height:1.4;padding:15px;border:2px solid #b6d5e9;border-radius:12px"></textarea><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px"><button id="thinkingLiveSave" style="background:#167d68;color:white;padding:12px 18px;border:0;border-radius:10px;font-weight:bold">💾 Save to This Slide</button><button id="thinkingLiveCancel" style="background:#e8eff5;color:#173e5b;padding:12px 18px;border:0;border-radius:10px">Cancel</button></div></div>';
- document.getElementById('thinkingLiveInput').value=val||'';
- document.getElementById('thinkingLiveCancel').onclick=()=>revealThinkingQuestion(k);
- document.getElementById('thinkingLiveSave').onclick=()=>{
-  const value=document.getElementById('thinkingLiveInput').value.trim();if(!value)return alert('Please enter a question.');
-  const old=sl.thinkingConnections?.manual===true?sl.thinkingConnections:automaticThinking(sl,0);
-  sl.thinkingConnections={q:old.q,uae:old.uae,life:old.life,style:old.style||'scenario',manual:true,[k]:value};
+ const sl=thinkingSlide(),t=thinkingFields(sl),content=document.getElementById('thinkingContent');
+ const current=String(t[k]||'');
+ content.innerHTML='<button class="thinkingClose" id="thinkEditClose">✕ Close</button><div class="thinkingCloud"><h2>✏️ Edit Question</h2><div class="thinkingTag">Changes save only to this lesson slide</div></div><div style="max-width:750px;margin:20px auto;padding:20px;background:white;border-radius:16px"><label for="thinkingLiveInput" style="font-weight:800;display:block;margin-bottom:12px">Question</label><textarea id="thinkingLiveInput" style="width:100%;min-height:150px;font-size:23px;line-height:1.4;padding:15px;border:2px solid #b6d5e9;border-radius:12px"></textarea><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px"><button id="thinkingLiveSave" style="background:#167d68;color:white;padding:12px 18px;border:0;border-radius:10px;font-weight:bold">💾 Save Question</button><button id="thinkingLiveCancel" style="background:#e8eff5;color:#173e5b;padding:12px 18px;border:0;border-radius:10px">Cancel</button></div></div>';
+ content.querySelector('#thinkingLiveInput').value=current;
+ content.querySelector('#thinkEditClose').onclick=closeThinking;
+ content.querySelector('#thinkingLiveCancel').onclick=()=>revealThinkingQuestion(k);
+ content.querySelector('#thinkingLiveSave').onclick=()=>{
+  const value=content.querySelector('#thinkingLiveInput').value.trim();
+  if(!value)return alert('Please enter a question.');
+  sl.thinkingConnections={...thinkingFields(sl),[k]:value,manual:true};
   if(typeof markChanged==='function')markChanged();
   revealThinkingQuestion(k);
  };
