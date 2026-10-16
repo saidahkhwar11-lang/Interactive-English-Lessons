@@ -1931,11 +1931,27 @@ function renderPresentation(){
  }
  if(sl.type==='Crossword'){renderCrosswordChallenge(sl,host);return;}
  if(sl.type==='Mystery'){
+  const textbookImages=(sl.images&&sl.images.length?sl.images:(sl.img?[sl.img]:[])).filter(Boolean);
+  const showTextbook=()=>{
+   if(!textbookImages.length)return;
+   const overlay=document.createElement('div');
+   overlay.style.cssText='position:fixed;inset:0;z-index:2147483100;background:#102c47df;display:flex;align-items:center;justify-content:center;padding:22px';
+   const panel=document.createElement('div');
+   panel.style.cssText='position:relative;background:white;border-radius:15px;padding:55px 15px 15px;max-width:96vw;max-height:95vh;overflow:auto;text-align:center';
+   const close=document.createElement('button');close.textContent='✕ Back to Game';
+   close.style.cssText='position:absolute;top:10px;right:12px;background:#174c74;color:white;border:0;border-radius:9px;padding:10px 15px;font-weight:bold;cursor:pointer';
+   close.onclick=()=>overlay.remove();
+   panel.appendChild(close);
+   textbookImages.forEach(src=>{const pic=document.createElement('img');pic.src=src;pic.alt='Textbook activity';pic.style.cssText='display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:0 auto 12px';panel.appendChild(pic)});
+   overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};
+   (document.fullscreenElement||document.getElementById('presentation')||document.body).appendChild(overlay);
+  };
   const items=(sl.mysteryCards||[]).filter(Boolean).slice(0,9);
   const colors=['#f8c8d8','#bdddf7','#f7dfaa','#d5c5ef','#c7e8d4','#f8ceb5','#bde8e9','#eacde9','#dedbd3'];
   let opened=new Set(),active=-1;
   const draw=()=>{
-   host.innerHTML='<div class="mysteryBoard"><div class="mysteryHeader"><h2>🌈 '+esc2(sl.title||'Color Mystery Cards')+'</h2><span>'+opened.size+' / '+items.length+' opened</span></div><p>'+esc2(sl.mysteryInstructions||'Choose a card. Read the situation, discuss your choice, and explain why.')+'</p><div class="mysteryGrid">'+items.map((q,i)=>'<button type="button" class="mysteryTile'+(opened.has(i)?' visited':'')+'" data-mystery="'+i+'" style="background:'+colors[i]+'"><span>'+(opened.has(i)?'✓':i+1)+'</span><small>'+(opened.has(i)?'Opened':'Pick me!')+'</small></button>').join('')+'</div><div class="mysteryFooter"><button type="button" id="mysteryReset">↻ Reset Cards</button></div></div>';
+   host.innerHTML='<div class="mysteryBoard">'+(textbookImages.length?'<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button id="mysteryShowTextbook" type="button" style="background:#24658e;color:white;border:0;border-radius:10px;padding:10px 18px;font-weight:bold;cursor:pointer">📖 Textbook Picture</button></div>':'')+'<div class="mysteryHeader"><h2>🌈 '+esc2(sl.title||'Color Mystery Cards')+'</h2><span>'+opened.size+' / '+items.length+' opened</span></div><p>'+esc2(sl.mysteryInstructions||'Choose a card. Read the situation, discuss your choice, and explain why.')+'</p><div class="mysteryGrid">'+items.map((q,i)=>'<button type="button" class="mysteryTile'+(opened.has(i)?' visited':'')+'" data-mystery="'+i+'" style="background:'+colors[i]+'"><span>'+(opened.has(i)?'✓':i+1)+'</span><small>'+(opened.has(i)?'Opened':'Pick me!')+'</small></button>').join('')+'</div><div class="mysteryFooter"><button type="button" id="mysteryReset">↻ Reset Cards</button></div></div>';
+   const textbookButton=host.querySelector('#mysteryShowTextbook');if(textbookButton)textbookButton.onclick=showTextbook;
    host.querySelectorAll('[data-mystery]').forEach(b=>b.onclick=()=>{active=+b.dataset.mystery;opened.add(active);showCard()});
    host.querySelector('#mysteryReset').onclick=()=>{opened.clear();draw()};
   };
