@@ -2252,4 +2252,104 @@ function ready(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
 })();
+</script>
+<style>
+#gapDropEditor{display:none;background:#f2f8ff;border:1px solid #b9d7e9;border-radius:12px;padding:12px;margin:10px 0;color:#194767}
+#gapDropEditor textarea{width:100%;min-height:85px;border:1px solid #b8d2e3;border-radius:8px;padding:9px;font:14px Arial}
+#gapDropEditor label{display:block;font-weight:750;margin:10px 0 5px}
+#gapDropEditor button,.gapDropGame button{cursor:pointer}
+#gapImagePositioner{position:relative;max-width:520px;margin:8px auto;border:1px solid #bdd2df}
+#gapImagePositioner img{display:block;width:100%}
+#gapImagePositioner .gapMarker{position:absolute;transform:translate(-50%,-50%);background:#fff;border:2px dashed #267ab2;border-radius:8px;padding:5px 10px;font-weight:bold;pointer-events:none}
+.gapDropGame{background:#f7fbff;border-radius:16px;padding:16px;min-height:75vh;color:#173f5e}
+.gapDropGame h2{margin:0 0 8px}
+.gapDropGame .gapWordBank{display:flex;flex-wrap:wrap;gap:10px;padding:12px;background:#e8f1fb;border-radius:12px;justify-content:center;margin:12px 0}
+.gapDropGame .gapWord{background:#fff;border:2px solid #a9cfe7;border-radius:12px;padding:10px 16px;font-weight:800;font-size:19px;color:#194766}
+.gapDropGame .gapWord.active{background:#ffebaf;border-color:#c88c18}
+.gapDropGame .gapWord.used{opacity:.4}
+.gapDropGame .gapBlank{display:inline-block;min-width:105px;min-height:37px;padding:6px 12px;border:2px dashed #65a6c9;border-radius:8px;background:#fff;vertical-align:middle;margin:3px;font-size:17px;font-weight:bold;color:#17446c}
+.gapDropGame .gapBlank.correct{border-color:#249465;background:#e1f6e8}.gapDropGame .gapBlank.wrong{border-color:#ce6161;background:#ffecec}
+.gapDropGame .gapPassage{background:white;border-radius:12px;padding:20px;font-size:clamp(18px,2vw,25px);line-height:2;white-space:pre-wrap}
+.gapDropGame .gapPicture{position:relative;max-width:100%;width:max-content;margin:0 auto}.gapDropGame .gapPicture img{max-width:100%;max-height:55vh;display:block}
+.gapDropGame .gapPicture .gapBlank{position:absolute;transform:translate(-50%,-50%);min-width:90px;white-space:nowrap}
+.gapDropGame .gapActions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.gapDropGame .gapActions button{padding:10px 18px;border:0;border-radius:10px;background:#2475a6;color:white;font-weight:bold}
+</style>
+<script>
+(function(){
+ const escapeGap=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function current(){return slides[cur]}
+ function editor(){
+  const btn=document.getElementById('gapDropAdd');
+  if(!btn)return;
+  const panel=document.getElementById('gapDropEditor');
+  const sl=current(),active=sl?.type==='GapDrop';
+  panel.style.display=active?'block':'none';
+  if(!active)return;
+  panel.querySelector('#gapMode').value=sl.gapMode||'text';
+  panel.querySelector('#gapPassage').value=sl.gapPassage||'';
+  panel.querySelector('#gapAnswers').value=(sl.gapAnswers||[]).join('\n');
+  panel.querySelector('#gapModeText').style.display=(sl.gapMode||'text')==='text'?'block':'none';
+  panel.querySelector('#gapModePicture').style.display=sl.gapMode==='picture'?'block':'none';
+  positionEditor();
+ }
+ function positionEditor(){
+  const panel=document.getElementById('gapDropEditor');if(!panel||current()?.type!=='GapDrop')return;
+  const sl=current(),box=panel.querySelector('#gapImagePositioner');
+  const img=(sl.images&&sl.images[0])||sl.img;
+  box.innerHTML=img?'<img src="'+escapeGap(img)+'" alt="Click to add a gap">':'<p>Upload your textbook picture using Upload Activity Picture below, then click the picture here to position each gap.</p>';
+  if(!img)return;
+  (sl.gapPositions||[]).forEach((pos,i)=>{let m=document.createElement('span');m.className='gapMarker';m.style.left=pos.x+'%';m.style.top=pos.y+'%';m.textContent='Gap '+(i+1);box.appendChild(m)});
+  box.onclick=e=>{if(e.target.classList.contains('gapMarker'))return;const r=box.getBoundingClientRect();sl.gapPositions=sl.gapPositions||[];sl.gapPositions.push({x:Math.round((e.clientX-r.left)/r.width*1000)/10,y:Math.round((e.clientY-r.top)/r.height*1000)/10});markChanged();positionEditor()};
+ }
+ function mount(){
+  const target=document.getElementById('createInteractiveGame');
+  if(!target||document.getElementById('gapDropAdd'))return;
+  const btn=document.createElement('button');btn.id='gapDropAdd';btn.type='button';btn.textContent='🧩 Drag & Drop – Fill the Gaps';btn.style.cssText='display:block;width:100%;padding:12px;margin:9px 0;background:#e3f1ff;color:#194a73;border:1px solid #9cc9e8;border-radius:11px;font-weight:800;cursor:pointer';
+  target.parentNode.insertBefore(btn,target);
+  const panel=document.createElement('div');panel.id='gapDropEditor';
+  panel.innerHTML='<b>🧩 Drag & Drop Creator</b><label>Activity Mode</label><select id="gapMode"><option value="text">Text with gaps</option><option value="picture">Picture with gaps</option></select><div id="gapModeText"><label>Paste text. Write [answer] where a gap should appear.</label><textarea id="gapPassage" placeholder="Bees collect [nectar] from flowers. They live in a [hive]."></textarea></div><div id="gapModePicture" style="display:none"><p>Upload a textbook picture with the usual Upload Activity Picture button. Then click the image below to place gap boxes in order.</p><div id="gapImagePositioner"></div><button type="button" id="gapUndo">↶ Remove Last Gap</button></div><label>Answer bank (one word or phrase per line)</label><textarea id="gapAnswers" placeholder="nectar&#10;hive"></textarea><p style="font-size:12px">For Text Mode, answers are taken from [brackets] automatically. For Picture Mode, enter answers in the same order as the gap positions. Answers are shuffled for students.</p>';
+  btn.insertAdjacentElement('afterend',panel);
+  btn.onclick=()=>{let sl=current();sl.type='GapDrop';sl.title='Fill the Gaps';sl.time=7;sl.mission='Drag words into the correct gaps, then check your answers.';sl.gapMode=sl.gapMode||'text';sl.gapPositions=sl.gapPositions||[];render();markChanged()};
+  panel.querySelector('#gapMode').onchange=e=>{current().gapMode=e.target.value;markChanged();editor()};
+  panel.querySelector('#gapPassage').oninput=e=>{current().gapPassage=e.target.value;markChanged()};
+  panel.querySelector('#gapAnswers').oninput=e=>{current().gapAnswers=e.target.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);markChanged()};
+  panel.querySelector('#gapUndo').onclick=()=>{current().gapPositions?.pop();markChanged();positionEditor()};
+ }
+ function present(sl,host){
+  const mode=sl.gapMode||'text',source=(sl.images&&sl.images[0])||sl.img;
+  const raw=String(sl.gapPassage||'');
+  const matches=[...raw.matchAll(/\[([^\[\]]+)\]/g)];
+  const answers=mode==='text'?matches.map(x=>x[1].trim()):(sl.gapAnswers||[]);
+  const positions=sl.gapPositions||[];
+  const count=mode==='text'?answers.length:Math.min(answers.length,positions.length);
+  const assigned=Array(count).fill(null);
+  let selected=null,checked=false;
+  const words=answers.slice(0,count).map((word,i)=>({word,id:i})).sort((a,b)=>{let x=t=>[...t.word].reduce((n,c)=>n*33+c.charCodeAt(0),13)%97;return x(a)-x(b)||b.id-a.id});
+  const root=document.createElement('div');root.className='gapDropGame';host.replaceChildren(root);
+  function draw(){
+   const blanks=()=>assigned.map((id,i)=>'<button type="button" class="gapBlank '+(checked?(id!==null&&words.find(w=>w.id===id)?.word===answers[i]?'correct':'wrong'):'')+'" data-gap="'+i+'">'+(id===null?'Drop here':escapeGap(words.find(w=>w.id===id)?.word||''))+'</button>');
+   let pieces=blanks();
+   let content='';
+   if(mode==='text'){
+    let n=0;content='<div class="gapPassage">'+escapeGap(raw).replace(/\[([^\[\]]+)\]/g,()=>pieces[n++]||'_____')+'</div>';
+   }else if(source){
+    content='<div class="gapPicture"><img src="'+escapeGap(source)+'" alt="Textbook activity">'+positions.slice(0,count).map((pos,i)=>'<span style="position:absolute;left:'+pos.x+'%;top:'+pos.y+'%;transform:translate(-50%,-50%)">'+pieces[i]+'</span>').join('')+'</div>';
+   }else content='<p>Upload an activity picture to use Picture Mode.</p>';
+   root.innerHTML='<h2>🧩 '+escapeGap(sl.title||'Fill the Gaps')+'</h2><p>Choose or drag a word, then place it in the correct gap.</p><div class="gapWordBank">'+words.map(w=>'<button draggable="true" data-word="'+w.id+'" class="gapWord '+(selected===w.id?'active':'')+' '+(assigned.includes(w.id)?'used':'')+'">'+escapeGap(w.word)+'</button>').join('')+'</div>'+content+'<div class="gapActions"><button id="gapCheck">✓ Check Answers</button><button id="gapReveal">👀 Reveal Answers</button><button id="gapReset">↻ Reset</button></div>';
+   root.querySelectorAll('[data-word]').forEach(b=>{b.onclick=()=>{selected=Number(b.dataset.word);draw()};b.ondragstart=e=>{selected=Number(b.dataset.word);e.dataTransfer.setData('text/plain',String(selected))}});
+   root.querySelectorAll('[data-gap]').forEach(b=>{
+    const put=()=>{const i=Number(b.dataset.gap);if(selected===null){assigned[i]=null}else{const old=assigned.indexOf(selected);if(old!==-1)assigned[old]=null;assigned[i]=selected;selected=null}checked=false;draw()};
+    b.onclick=put;b.ondragover=e=>e.preventDefault();b.ondrop=e=>{e.preventDefault();let v=Number(e.dataTransfer.getData('text/plain'));if(words.some(w=>w.id===v))selected=v;put()};
+   });
+   root.querySelector('#gapCheck').onclick=()=>{checked=true;draw()};
+   root.querySelector('#gapReveal').onclick=()=>{answers.slice(0,count).forEach((_,i)=>{const w=words.find(w=>w.word===answers[i]&&!assigned.includes(w.id));assigned[i]=w?.id??words.find(w=>w.word===answers[i])?.id??null});checked=true;draw()};
+   root.querySelector('#gapReset').onclick=()=>{assigned.fill(null);selected=null;checked=false;draw()};
+  }
+  draw();
+ }
+ const oldRender=render;render=function(){oldRender();editor()};
+ const oldPresent=renderPresentation;renderPresentation=function(){oldPresent();const sl=slides[presentIndex];if(sl?.type==='GapDrop')present(sl,document.getElementById('presentSlide'))};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
 </script></body></html>
