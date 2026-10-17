@@ -2267,7 +2267,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .gapDropGame .gapWord{background:#fff;border:2px solid #a9cfe7;border-radius:12px;padding:10px 16px;font-weight:800;font-size:19px;color:#194766}
 .gapDropGame .gapWord.active{background:#ffebaf;border-color:#c88c18}
 .gapDropGame .gapWord.used{opacity:.4}
-.gapDropGame .gapBlank{display:inline-block;min-width:105px;min-height:37px;padding:6px 12px;border:2px dashed #65a6c9;border-radius:8px;background:#fff;vertical-align:middle;margin:3px;font-size:17px;font-weight:bold;color:#17446c}
+.gapDropGame .gapBlank{font-size:var(--gap-answer-font-size,22px)!important;display:inline-block;min-width:105px;min-height:37px;padding:6px 12px;border:2px dashed #65a6c9;border-radius:8px;background:#fff;vertical-align:middle;margin:3px;font-size:17px;font-weight:bold;color:#17446c}
 .gapDropGame .gapBlank.correct{border-color:#249465;background:#e1f6e8}.gapDropGame .gapBlank.wrong{border-color:#ce6161;background:#ffecec}
 .gapDropGame .gapPassage{background:white;border-radius:12px;padding:20px;font-size:clamp(18px,2vw,25px);line-height:2;white-space:pre-wrap}
 .gapDropGame .gapPicture{position:relative;max-width:100%;width:max-content;margin:0 auto}.gapDropGame .gapPicture img{max-width:100%;max-height:55vh;display:block}
@@ -2289,6 +2289,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   panel.querySelector('#gapMode').value=sl.gapMode||'text';
   panel.querySelector('#gapPassage').value=sl.gapPassage||'';
   panel.querySelector('#gapAnswers').value=(sl.gapAnswers||[]).join('\n');
+  panel.querySelector('#gapFontSize').value=sl.gapFontSize||22;
+  panel.querySelector('#gapFontSizeValue').textContent=(sl.gapFontSize||22)+' px';
   panel.querySelector('#gapModeText').style.display=(sl.gapMode||'text')==='text'?'block':'none';
   panel.querySelector('#gapModePicture').style.display=sl.gapMode==='picture'?'block':'none';
   positionEditor();
@@ -2337,12 +2339,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const btn=document.createElement('button');btn.id='gapDropAdd';btn.type='button';btn.textContent='🧩 Drag & Drop – Fill the Gaps';btn.style.cssText='display:block;width:100%;padding:12px;margin:9px 0;background:#e3f1ff;color:#194a73;border:1px solid #9cc9e8;border-radius:11px;font-weight:800;cursor:pointer';
   target.parentNode.insertBefore(btn,target);
   const panel=document.createElement('div');panel.id='gapDropEditor';
-  panel.innerHTML='<b>🧩 Drag & Drop Creator</b><label>Activity Mode</label><select id="gapMode"><option value="text">Text with gaps</option><option value="picture">Picture with gaps</option></select><div id="gapModeText"><label>Paste text. Write [answer] where a gap should appear.</label><textarea id="gapPassage" placeholder="Bees collect [nectar] from flowers. They live in a [hive]."></textarea></div><div id="gapModePicture" style="display:none"><p>Upload a textbook picture with the usual Upload Activity Picture button. Then click the image below to place gap boxes in order.</p><div id="gapImagePositioner"></div><p id="gapPositionCount" style="font-weight:bold">0 gap positions placed</p><button type="button" id="gapUndo">↶ Remove Last Gap</button></div><label>Answer bank (one word or phrase per line)</label><textarea id="gapAnswers" placeholder="nectar&#10;hive"></textarea><p style="font-size:12px">For Text Mode, answers are taken from [brackets] automatically. For Picture Mode, enter answers in the same order as the gap positions. Answers are shuffled for students.</p>';
+  panel.innerHTML='<b>🧩 Drag & Drop Creator</b><label>Activity Mode</label><select id="gapMode"><option value="text">Text with gaps</option><option value="picture">Picture with gaps</option></select><div id="gapModeText"><label>Paste text. Write [answer] where a gap should appear.</label><textarea id="gapPassage" placeholder="Bees collect [nectar] from flowers. They live in a [hive]."></textarea></div><div id="gapModePicture" style="display:none"><p>Upload a textbook picture with the usual Upload Activity Picture button. Then click the image below to place gap boxes in order.</p><div id="gapImagePositioner"></div><p id="gapPositionCount" style="font-weight:bold">0 gap positions placed</p><button type="button" id="gapUndo">↶ Remove Last Gap</button></div><label for="gapFontSize">Size of words inside gaps: <span id="gapFontSizeValue">22 px</span></label><input id="gapFontSize" type="range" min="14" max="44" step="2" value="22" style="width:100%"><label>Answer bank (one word or phrase per line)</label><textarea id="gapAnswers" placeholder="nectar&#10;hive"></textarea><p style="font-size:12px">For Text Mode, answers are taken from [brackets] automatically. For Picture Mode, enter answers in the same order as the gap positions. Answers are shuffled for students.</p>';
   btn.insertAdjacentElement('afterend',panel);
   btn.onclick=()=>{let sl=current();sl.type='GapDrop';sl.title='Fill the Gaps';sl.time=7;sl.mission='Drag words into the correct gaps, then check your answers.';sl.gapMode=sl.gapMode||'text';sl.gapPositions=sl.gapPositions||[];render();markChanged()};
   panel.querySelector('#gapMode').onchange=e=>{current().gapMode=e.target.value;markChanged();editor()};
   panel.querySelector('#gapPassage').oninput=e=>{current().gapPassage=e.target.value;markChanged()};
   panel.querySelector('#gapAnswers').oninput=e=>{current().gapAnswers=e.target.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);markChanged()};
+  panel.querySelector('#gapFontSize').oninput=e=>{current().gapFontSize=Number(e.target.value);panel.querySelector('#gapFontSizeValue').textContent=e.target.value+' px';markChanged()};
   panel.querySelector('#gapUndo').onclick=()=>{current().gapPositions?.pop();markChanged();positionEditor()};
  }
  function present(sl,host){
@@ -2358,7 +2361,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   // Shuffle the visible word bank independently of the correct gap order.
   for(let i=words.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[words[i],words[j]]=[words[j],words[i]];}
   if(words.length>1&&words.every((w,i)=>w.id===i)){words.push(words.shift());}
-  const root=document.createElement('div');root.className='gapDropGame';host.replaceChildren(root);
+  const root=document.createElement('div');root.className='gapDropGame';root.style.setProperty('--gap-answer-font-size',(sl.gapFontSize||22)+'px');host.replaceChildren(root);
   function draw(){
    const blanks=()=>assigned.map((id,i)=>'<button type="button" class="gapBlank '+(checked?(id!==null&&words.find(w=>w.id===id)?.word===answers[i]?'correct':'wrong'):'')+'" data-gap="'+i+'">'+(id===null?'Drop here':escapeGap(words.find(w=>w.id===id)?.word||''))+'</button>');
    let pieces=blanks();
