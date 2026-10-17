@@ -2193,6 +2193,13 @@ general:[{q:'💡 What is one choice you would change in this lesson? Why?',uae:
 const objectives=(typeof overallLessonObjectives==='function'?overallLessonObjectives():[]).filter(Boolean);
 const topic=(sl.lesson||slides[0]?.lesson||sl.title||'the lesson').trim();
 const context=(topic+' '+objectives.join(' ')+' '+(sl.mission||'')).toLowerCase();
+if(/falcon|falconer|talon|hood|beak|falconry/.test(context)){
+ const variants=[
+ {q:'🦅 Your falcon looks frightened. What should you do first?',uae:'🇦🇪 Why is caring for falcons part of respecting UAE heritage?',life:'💭 What must you do to keep an animal safe?',style:'scenario'},
+ {q:'🧩 I protect a falconer’s hand from sharp talons. What am I?',uae:'🤝 How can patience help us care for animals?',life:'🐦 Your friend wants to shout near a resting falcon. What would you say?',answer:'A falconry glove.',style:'riddle'},
+ {q:'🎭 A falcon does not return to your glove. Should you shout or stay calm? Why?',uae:'🇦🇪 What does falconry teach us about responsibility?',life:'🐾 What must we not do when an animal is scared?',style:'scenario'}
+ ];return variants[((offset%variants.length)+variants.length)%variants.length];
+}
 if(/bee|beekeeper|honey|nectar|hive|honeycomb/.test(context)){
  const variants=[
  {q:'Why must beekeepers leave some honey for bees? What might happen if they take it all?',uae:'How can protecting bees help plants and farms in the UAE?',life:'What must we do, and what must we not do, when we see bees near our home or school?',style:'scenario'},
@@ -2202,7 +2209,7 @@ if(/bee|beekeeper|honey|nectar|hive|honeycomb/.test(context)){
 if(type==='general'){
  const target=objectives.find(o=>/\b(?:identify|describe|compare|explain|write|read|use|arrange|sequence|match|summari|predict|listen|create|plan|give|analyse|analyze)\b/i.test(o))||objectives[0]||sl.mission||topic;
  const focus=String(target).replace(/^[•\d.\s]+/,'').replace(/[.!?]+$/,'');
- return {q:'What could go wrong when completing this task: '+focus+'? How would you improve the result?',uae:'How could responsibility and cooperation help us succeed when learning about '+topic+'?',life:'Where could you use the skill from '+topic+' outside this classroom? Give a specific example.',style:'scenario'};
+ return {q:'💡 What is one surprising thing you learned about '+topic+'?',uae:'🇦🇪 How can we show respect or responsibility when learning about '+topic+'?',life:'🎒 How could you use this idea in real life?',style:'scenario'};
 }
 let options=sets[type],seed=(title+'|'+(sl.title||'')).split('').reduce((a,c)=>a+c.charCodeAt(0),0),item=options[((seed+offset)%options.length+options.length)%options.length];return {...item}}
 function openThinkingEditor(){let sl=thinkingSlide();if(!sl)return;let box=document.getElementById('thinkingOverlay'),t=thinkingFields(sl);document.getElementById('thinkingContent').innerHTML='<div style="display:grid;gap:12px">'+'<label style="display:grid;gap:6px;font-weight:700">🎨 Fun Question Style<select id="think_style" onchange="changeThinkingStyle()" style="padding:9px;border:1px solid #cad9eb;border-radius:10px">'+['scenario','riddle','idiom','picture'].map(k=>'<option value="'+k+'" '+((t.style||'scenario')===k?'selected':'')+'>'+thinkingStyleLabel(k)+'</option>').join('')+'</select></label><div id="think_fun_preview" style="text-align:center;border-radius:14px;padding:10px;background:#eef7ff;font-size:18px"></div>'+[['q','🧠 HOTS Question'],['uae','🇦🇪 UAE Charter Connection'],['life','🏫 Student Life Connection']].map(([k,label])=>'<label style="display:grid;gap:6px;font-weight:700">'+label+'<textarea id="think_'+k+'" style="min-height:74px;width:100%;border:1px solid #cad9eb;border-radius:10px;padding:10px;font:inherit">'+thinkingEscape(t[k]||'')+'</textarea></label>').join('')+'<div style="display:flex;gap:9px;flex-wrap:wrap"><button onclick="saveThinking()" style="background:#316c9c;color:white;border:0;border-radius:10px;padding:10px 16px">Save to this slide</button><button onclick="regenerateThinking()" style="background:#e8eef8;border:0;border-radius:10px;padding:10px 16px">Suggest another draft</button></div><small style="color:#667b95">Suggested prompts use lesson-title keywords. Review and edit before presenting.</small></div>';thinkingShow(box);updateThinkingPreview()}
