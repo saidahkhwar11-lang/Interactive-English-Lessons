@@ -1643,8 +1643,7 @@ async function autoSaveCurrent(){
   autoLessonPlan();
   let snap=snapshot(activeLessonId);snap.published=true;await dbPut(snap);
   let secret=localStorage.getItem('LessonPlanSecret:'+activeLessonId);
-  if(secret)try{await publishVisitorPlan(activeLessonId,secret)}catch(e){}
-  setSaveStatus('✓ Auto-saved');
+  if(secret){try{await publishVisitorPlan(activeLessonId,secret);setSaveStatus('✓ Auto-saved & QR plan updated')}catch(e){console.error('QR lesson plan publication failed',e);setSaveStatus('✓ Saved locally · QR plan not updated');return}}else{setSaveStatus('✓ Saved locally · click Save to publish QR plan');return}
  }catch(e){setSaveStatus('Save failed')}finally{autoSaveBusy=false}
 }
 async function publishVisitorPlan(id,secret){
