@@ -1397,29 +1397,35 @@ function focusLessonData(){
 function successCriterionFor(obj,lessonSlides=[]){
  const raw=String(obj||'').replace(/^[•✓✔✅\s\d.)-]+/,'').trim().replace(/[.!]+$/,'');
  if(!raw)return '';
- const cleaned=raw.replace(/^(grammar|vocabulary|writing|reading|listening|speaking)\s*:\s*/i,'').trim();
- const context=lessonSlides.map(sl=>[sl.title,sl.mission,(sl.objectives||[]).join(' '),(sl.scrambleSentences||[]).join(' '),sl.imageText].filter(Boolean).join(' ')).join(' ').toLowerCase();
- const lower=cleaned.toLowerCase();
- const animal=/horse|animal|disabilit|guide|obstacle|train/.test(context+' '+lower);
- const can=/\bcan(?:not|'t|’t)?\b/.test(lower+' '+context);
- if(/^vocabulary\\s*:/i.test(raw)||/match.*(word|meaning)|vocab|word.*meaning/.test(lower)){
-  return 'I can match '+(animal?'words about service animals':'the new vocabulary words')+' with their correct meanings.';
+ const category=(raw.match(/^(grammar|vocabulary|writing|reading|listening|speaking)\s*:/i)||[])[1]?.toLowerCase()||'';
+ const goal=raw.replace(/^(grammar|vocabulary|writing|reading|listening|speaking)\s*:\s*/i,'').trim();
+ const context=lessonSlides.map(sl=>[sl.title,sl.mission,(sl.objectives||[]).join(' '),(sl.scrambleSentences||[]).join(' ')].filter(Boolean).join(' ')).join(' ').toLowerCase();
+ const lower=goal.toLowerCase(),all=lower+' '+context;
+ const animal=/horse|animal|disabilit|obstacle|guide horse|service/.test(all);
+ const can=/\bcan(?:not|'t|’t)?\b/.test(all);
+ if(category==='grammar'||/\bcan(?:not|'t|’t)?\b/.test(lower))
+  return 'I can write sentences using can and can’t'+(animal?' about service animals':' correctly')+'.';
+ if(category==='vocabulary'||/match.*(word|meaning)|word.*meaning|vocab/.test(lower))
+  return 'I can match '+(animal?'animal-related words':'new words')+' to their meanings.';
+ if(category==='writing'||/write|step.by.step|sequence|draft|paragraph/.test(lower)){
+  if(/step.by.step|sequence|guide|steps/.test(all))return 'I can write ordered steps'+(animal?' for training a guide horse':'')+' using sequence words.';
+  if(/story|creative/.test(all))return 'I can write a story with a clear beginning, middle, and ending.';
+  return 'I can write clear sentences for the task.';
  }
- if(/^writing\\s*:/i.test(raw)||/sequence|step.by.step|steps|guide|writing|write/.test(lower)){
-  if(/step.by.step|guide|steps|sequence/.test(lower)){
-   return 'I can write a clear step-by-step guide'+(animal?' explaining how to train a guide horse':'')+' using sequence words'+(can?' and can/can’t correctly':'')+'.';
-  }
-  return 'I can write '+(context.includes('sentence')?'complete sentences with correct word order':'a clear response to the writing task')+'.';
- }
- if(/\bcan(?:not|'t|’t)?\b|grammar/.test(lower)){
-  return 'I can write correct sentences using can and can’t'+(animal?' to explain what service animals are able or unable to do':' to describe abilities')+'.';
- }
- if(/listen|facts|information|detail/.test(lower)){
-  return 'I can identify key facts and details'+(animal?' about service animals':' from the listening activity')+' and check my answers.';
- }
- if(/read|main idea|predict/.test(lower))return 'I can find the main idea and supporting details in the reading text.';
- let sentence=cleaned.replace(/^students? (?:will be able to|can)\s+/i,'').replace(/^to\s+/i,'').replace(/^I can\s+/i,'');
- return 'I can '+sentence.charAt(0).toLowerCase()+sentence.slice(1)+'.';
+ if(category==='listening'||/listen|audio|interview/.test(lower))
+  return 'I can answer questions using details I hear.';
+ if(category==='reading'||/read|main idea|context clue/.test(lower))
+  return 'I can find key information in the reading text.';
+ if(category==='speaking'||/speak|share|discuss|present/.test(lower))
+  return 'I can share my ideas clearly with the class.';
+ if(/predict/.test(lower))return 'I can make a prediction and explain why.';
+ if(/sort|classify/.test(lower))return 'I can group the items correctly and explain my choices.';
+ if(/compare/.test(lower))return 'I can explain one similarity and one difference.';
+ const verb=(goal.match(/\b(identify|explain|describe|use|write|read|listen|match|arrange|choose|find|complete|compare|sort|predict|share|create|summarise|summarize)\b/i)||[])[1]?.toLowerCase();
+ if(!verb)return 'I can show what I learned by completing the activity.';
+ const object=goal.replace(/^.*?\b(identify|explain|describe|use|write|read|listen|match|arrange|choose|find|complete|compare|sort|predict|share|create|summarise|summarize)\b\s*/i,'').replace(/[.!]+$/,'').trim();
+ const brief=object.split(/\s+/).slice(0,9).join(' ');
+ return 'I can '+verb+(brief?' '+brief:'')+'.';
 }
 function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
 function autoLessonPlan(){
