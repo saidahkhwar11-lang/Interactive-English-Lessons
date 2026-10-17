@@ -1125,6 +1125,29 @@ $('gradeSelect').onchange=()=>{
 [['eTitle','title'],['eTime','time'],['ePage','page'],['eMission','mission']].forEach(x=>$(x[0]).oninput=e=>{slides[cur][x[1]]=x[1]==='time'?Math.max(1,+e.target.value||1):e.target.value;if(x[1]==='mission')updateAutoObjective();render();markChanged()});
 $('eWorkMode').onchange=e=>{slides[cur].workMode=e.target.value;markChanged();render()};
 $('showInstructions').onchange=e=>{slides[cur].showInstructions=e.target.checked;render();markChanged()};
+// Allow teachers to remove a selected game without deleting its slide.
+(function(){
+ const gameButton=document.getElementById('createSentenceScramble');
+ if(!gameButton||document.getElementById('removeSelectedGame'))return;
+ const btn=document.createElement('button');
+ btn.type='button';btn.id='removeSelectedGame';btn.textContent='✕ Remove Game from This Slide';
+ btn.style.cssText='display:none;width:100%;padding:11px;margin:10px 0;border:1px solid #e9adb3;border-radius:11px;background:#fff0f1;color:#922c3b;font-weight:850;cursor:pointer';
+ gameButton.parentElement.insertBefore(btn,gameButton);
+ const gameTypes=new Set(['SentenceScramble','StorySort','Sorting','Detective','Crossword','Mystery','Game','GapDrop','PictureReveal','VocabSort']);
+ const refresh=()=>{const sl=slides[cur];btn.style.display=sl&&gameTypes.has(sl.type)?'block':'none'};
+ btn.onclick=()=>{
+  const sl=slides[cur];if(!sl||!gameTypes.has(sl.type))return;
+  if(!confirm('Remove the game from this slide? The slide and its picture will stay.'))return;
+  sl.type='Activity';
+  sl.title='Activity';
+  sl.mission='Add student instructions.';
+  sl.obj='';sl.objectives=[];
+  render();markChanged();refresh();toast('Game removed · slide kept ✓');
+ };
+ const oldRenderGame=render;
+ render=function(){oldRenderGame();refresh()};
+ refresh();
+})();
 $('createSentenceScramble').onclick=()=>{const sl=slides[cur];if(sl.type!=='SentenceScramble'){sl.type='SentenceScramble';sl.title='Sentence Scramble Challenge';sl.scrambleSentences=['The brave girl helped her friend.','Where does the story take place?','How did the hero solve the problem?'];sl.mission='Arrange the mixed-up words to make a correct sentence or question. Check your answer and try again if needed.';}render();markChanged();toast('Sentence Scramble ready ✓')};
 $('scrambleTime').onchange=e=>{slides[cur].scrambleTime=Number(e.target.value);markChanged()};
 $('scrambleSentences').oninput=e=>{slides[cur].scrambleSentences=e.target.value.split(/\r?\n/).map(x=>x.trim().replace(/^\[\s*/,'').replace(/\s*\]$/,'')).filter(Boolean);markChanged()};
