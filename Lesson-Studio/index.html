@@ -1243,6 +1243,17 @@ function procedureDetailFor(sl,pictureText,grade){
   const teacher='Set the five-minute silent reading timer and monitor independent reading.';
   return{student,teacher};
  }
+ if(sl.type==='SentenceScramble'){
+  const items=(sl.scrambleSentences||[]).map(v=>String(v||'').trim()).filter(Boolean);
+  const sample=items.slice(0,3).join(' | ');
+  const canGrammar=items.some(v=>/\\bcan(?:not|'t|’t)?\\b/i.test(v));
+  const target=canGrammar?'using can and can’t correctly':'with correct word order and sentence structure';
+  const context=sample?' Example target sentences: '+sample+'.':'';
+  return{
+   student:'Read the mixed-up words, rearrange them into complete meaningful sentences '+target+', check each sentence, and correct any mistakes.'+context,
+   teacher:'Introduce the sentence-building task'+(sl.page&&sl.page!=='—'?' on page '+sl.page:'')+'. Ask students to identify the subject, modal or verb, and remaining sentence parts; have them arrange the words, explain their choices, and correct errors using feedback. Assess accurate word order and '+(canGrammar?'use of can/can’t.':'sentence structure.')
+  };
+ }
  if(currentGame){
   const topic=actualDetails.length?actualDetails.join(' '):'the prompts saved on this slide';
   const action=sl.type==='Crossword'?'select numbered crossword clues, discuss possible words, and reveal answers in the grid':sl.type==='Mystery'?'choose colored cards, discuss each prompt, and share reasons': 'answer the saved multiple-choice questions and review feedback';
