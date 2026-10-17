@@ -840,7 +840,7 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
- modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newHighlight" style="background:#fff1a4;color:#6c4c00">🖍 Highlight</button><button class="newPen" style="background:#dcefff;color:#174b73">✏ Draw / Write</button><button class="newUndo">↶ Undo</button><button class="newClear">🗑 Clear Ink</button><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newTick" style="background:#e7f8ee;color:#176a42">✓ Tick Answer</button><button class="newCircle" style="background:#fff0db;color:#9a560b">⭕ Circle Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label class="answerSizeLabel">Text / Tick size <input class="newFont" type="range" min="25" max="195" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><label>Ink Color <input class="inkColor" type="color" value="#ffe000"></label><label>Pen / Highlight Width <input class="inkWidth" type="range" min="4" max="38" value="16"></label><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newHighlight" style="background:#fff1a4;color:#6c4c00">🖍 Highlight</button><button class="newUndo">↶ Undo</button><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newTick" style="background:#e7f8ee;color:#176a42">✓ Tick Answer</button><button class="newCircle" style="background:#fff0db;color:#9a560b">⭕ Circle Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label class="answerSizeLabel">Text / Tick size <input class="newFont" type="range" min="25" max="195" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><label>Highlight Color <input class="inkColor" type="color" value="#ffe000"></label><p class="answerZoomHint">Select Highlight, then drag a neat rectangle over a word or phrase. Use Undo to remove the last highlight.</p><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
  let selected=null,adding=false,addingCircle=false,addingTick=false,preview=false;
@@ -851,36 +851,37 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  layer.setAttribute('viewBox','0 0 1000 1000');layer.setAttribute('preserveAspectRatio','none');
  layer.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;touch-action:none;z-index:4';
  stage.appendChild(layer);
- const inkColor=modal.querySelector('.inkColor'),inkWidth=modal.querySelector('.inkWidth');
+ const inkColor=modal.querySelector('.inkColor');
  const inkPoint=e=>{const r=img.getBoundingClientRect();return [Math.max(0,Math.min(1000,(e.clientX-r.left)/r.width*1000)),Math.max(0,Math.min(1000,(e.clientY-r.top)/r.height*1000))]};
  const inkDraw=()=>{
   layer.replaceChildren();
   inkItems().forEach(item=>{
+   if(item.mode==='highlight'&&item.rect){
+    const [x,y,w,h]=item.rect;
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',x);rect.setAttribute('y',y);rect.setAttribute('width',w);rect.setAttribute('height',h);
+    rect.setAttribute('rx','3');rect.setAttribute('fill',item.color||'#ffe000');rect.setAttribute('opacity','0.48');
+    layer.appendChild(rect);return;
+   }
    if(!item.points?.length)return;
    const path=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-   path.setAttribute('points',item.points.map(p=>p.join(',')).join(' '));
-   path.setAttribute('fill','none');path.setAttribute('stroke',item.color);
-   path.setAttribute('stroke-width',item.width);path.setAttribute('stroke-linecap','round');
-   path.setAttribute('stroke-linejoin','round');
-   path.setAttribute('opacity',item.mode==='highlight'?'0.38':'1');
-   layer.appendChild(path);
+   path.setAttribute('points',item.points.map(pt=>pt.join(',')).join(' '));
+   path.setAttribute('fill','none');path.setAttribute('stroke',item.color||'#ffe000');
+   path.setAttribute('stroke-width',item.width||20);path.setAttribute('stroke-linecap','round');
+   path.setAttribute('stroke-linejoin','round');path.setAttribute('opacity','0.38');layer.appendChild(path);
   });
  };
  const setInkMode=mode=>{
-  inkMode=inkMode===mode?'':mode;
-  adding=false;addingCircle=false;addingTick=false;
+  inkMode=inkMode===mode?'':mode;adding=false;addingCircle=false;addingTick=false;
   layer.style.pointerEvents=inkMode?'auto':'none';
   layer.style.cursor=inkMode?'crosshair':'default';
   modal.querySelector('.newHighlight').classList.toggle('active',inkMode==='highlight');
-  modal.querySelector('.newPen').classList.toggle('active',inkMode==='pen');
  };
  modal.querySelector('.newHighlight').onclick=()=>setInkMode('highlight');
- modal.querySelector('.newPen').onclick=()=>setInkMode('pen');
  modal.querySelector('.newUndo').onclick=()=>{for(let i=ink.length-1;i>=0;i--){if((ink[i].imageIndex||0)===imageIndex){ink.splice(i,1);break}}inkDraw();markChanged()};
- modal.querySelector('.newClear').onclick=()=>{if(!inkItems().length||!confirm('Clear highlights and pen marks on this picture?'))return;for(let i=ink.length-1;i>=0;i--)if((ink[i].imageIndex||0)===imageIndex)ink.splice(i,1);inkDraw();markChanged()};
- layer.onpointerdown=e=>{if(!inkMode||preview)return;e.preventDefault();inking={imageIndex,mode:inkMode,color:inkMode==='highlight'?inkColor.value:inkColor.value,width:Number(inkWidth.value)*(inkMode==='highlight'?2:0.65),points:[inkPoint(e)]};layer.setPointerCapture(e.pointerId);ink.push(inking);inkDraw()};
- layer.onpointermove=e=>{if(!inking)return;inking.points.push(inkPoint(e));inkDraw()};
- layer.onpointerup=()=>{if(inking){inking=null;markChanged()}};
+ layer.onpointerdown=e=>{if(!inkMode||preview)return;e.preventDefault();const start=inkPoint(e);inking={imageIndex,mode:'highlight',color:inkColor.value,rect:[start[0],start[1],1,1],start};layer.setPointerCapture(e.pointerId);ink.push(inking);inkDraw()};
+ layer.onpointermove=e=>{if(!inking)return;const pt=inkPoint(e),x=Math.min(inking.start[0],pt[0]),y=Math.min(inking.start[1],pt[1]);inking.rect=[x,y,Math.max(1,Math.abs(pt[0]-inking.start[0])),Math.max(1,Math.abs(pt[1]-inking.start[1]))];inkDraw()};
+ layer.onpointerup=()=>{if(inking){if(inking.rect[2]<3||inking.rect[3]<3)ink.splice(ink.indexOf(inking),1);inking=null;inkDraw();markChanged()}};
  layer.onpointercancel=()=>{inking=null};
  inkDraw();
 
