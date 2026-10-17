@@ -2274,6 +2274,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .gapDropGame .gapPicture .gapBlank{position:absolute;transform:translate(-50%,-50%);min-width:90px;white-space:nowrap}
 .gapDropGame .gapActions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
 .gapDropGame .gapActions button{padding:10px 18px;border:0;border-radius:10px;background:#2475a6;color:white;font-weight:bold}
+
+/* Unfilled image drop zones remain invisible so the textbook's original blanks are unobstructed. */
+.gapDropGame .gapPicture .gapBlank.empty{background:transparent!important;border:2px solid transparent!important;box-shadow:none!important;color:transparent!important;min-height:38px;cursor:pointer}
+.gapDropGame .gapPicture .gapBlank.empty:hover,.gapDropGame .gapPicture .gapBlank.empty:focus-visible{border-color:#3b91bf!important;background:#e9f7ffb8!important;outline:none}
+.gapDropGame .gapPicture .gapBlank:not(.empty){background:#e9fff3;border:2px dashed #21966b;box-shadow:0 2px 8px #17496c22}
 </style>
 <script>
 (function(){
@@ -2363,7 +2368,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   if(words.length>1&&words.every((w,i)=>w.id===i)){words.push(words.shift());}
   const root=document.createElement('div');root.className='gapDropGame';root.style.setProperty('--gap-answer-font-size',(sl.gapFontSize||22)+'px');host.replaceChildren(root);
   function draw(){
-   const blanks=()=>assigned.map((id,i)=>'<button type="button" class="gapBlank '+(checked?(id!==null&&words.find(w=>w.id===id)?.word===answers[i]?'correct':'wrong'):'')+'" data-gap="'+i+'">'+(id===null?'Drop here':escapeGap(words.find(w=>w.id===id)?.word||''))+'</button>');
+   const blanks=()=>assigned.map((id,i)=>'<button type="button" aria-label="Gap '+(i+1)+'" class="gapBlank '+(id===null?'empty ':'')+(checked?(id!==null&&words.find(w=>w.id===id)?.word===answers[i]?'correct':'wrong'):'')+'" data-gap="'+i+'">'+(id===null?'':escapeGap(words.find(w=>w.id===id)?.word||''))+'</button>');
    let pieces=blanks();
    let content='';
    if(mode==='text'){
