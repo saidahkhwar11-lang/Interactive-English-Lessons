@@ -2041,10 +2041,21 @@ function renderPresentation(){
 }
 function installClickRevealOnImage(sl,stage,img,imageIndex){
  const entries=normaliseAnswerBoxes(sl).filter(a=>(a.imageIndex||0)===imageIndex).sort((a,b)=>(a.order||0)-(b.order||0));
+ const highlights=(sl.answerInk||[]).filter(a=>(a.imageIndex||0)===imageIndex&&a.mode==='highlight'&&(a.rect||a.points?.length));
+ const highlightLayer=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ highlightLayer.setAttribute('viewBox','0 0 1000 1000');highlightLayer.setAttribute('preserveAspectRatio','none');
+ highlightLayer.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:15';
+ stage.appendChild(highlightLayer);
+ const highlightShapes=highlights.map(a=>{
+  const el=document.createElementNS('http://www.w3.org/2000/svg',a.rect?'rect':'polyline');
+  if(a.rect){const [x,y,w,h]=a.rect;el.setAttribute('x',x);el.setAttribute('y',y);el.setAttribute('width',w);el.setAttribute('height',h);el.setAttribute('rx','3');el.setAttribute('fill',a.color||'#ffe000')}
+  else{el.setAttribute('points',a.points.map(p=>p.join(',')).join(' '));el.setAttribute('fill','none');el.setAttribute('stroke',a.color||'#ffe000');el.setAttribute('stroke-width',a.width||20);el.setAttribute('stroke-linecap','round')}
+  el.setAttribute('opacity','.48');el.style.display='none';highlightLayer.appendChild(el);return el;
+ });
  const boxes=entries.map(a=>{const box=document.createElement('div');box.className='presentSavedAnswer kind-'+(a.kind||'text');box.textContent=a.kind==='tick'?'✓':a.kind==='cross'?'✕':a.kind==='arrow'?'➜':(a.kind==='circle'||a.kind==='highlight')?'':(a.text||'');box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';stage.appendChild(box);return box});
  const matching=addPresentationMatchLines(sl,stage,img,imageIndex);
  let next=0;
- stage.addEventListener('click',e=>{if(e.target.closest('button'))return;e.preventDefault();e.stopPropagation();if(next<boxes.length){boxes[next].classList.add('show');fitSavedAnswerFont(boxes[next],entries[next]);next++;return}if(matching)matching.reveal()});
+ stage.addEventListener('click',e=>{if(e.target.closest('button'))return;e.preventDefault();e.stopPropagation();if(next<highlightShapes.length){highlightShapes[next].style.display='';next++;return}const answerIndex=next-highlightShapes.length;if(answerIndex<boxes.length){boxes[answerIndex].classList.add('show');fitSavedAnswerFont(boxes[answerIndex],entries[answerIndex]);next++;return}if(matching)matching.reveal()});
  stage.style.cursor='pointer';
  const fit=()=>boxes.forEach((box,i)=>{if(box.classList.contains('show'))fitSavedAnswerFont(box,entries[i])});
  if(img.complete&&img.naturalWidth)requestAnimationFrame(fit);else img.addEventListener('load',fit,{once:true});
