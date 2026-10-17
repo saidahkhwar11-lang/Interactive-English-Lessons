@@ -840,10 +840,10 @@ function applyLessonTheme(){
 function openAnswerZoomEditor(sl,imageIndex=0){
  const imgs=sl.images||[];if(!imgs[imageIndex])return;
  const modal=document.createElement('div');modal.className='answerZoomEditor answerStudioNew';
- modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newHighlight" style="background:#fff1a4;color:#6c4c00">🖍 Highlight</button><button class="newUndo">↶ Undo</button><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newTick" style="background:#e7f8ee;color:#176a42">✓ Tick Answer</button><button class="newCircle" style="background:#fff0db;color:#9a560b">⭕ Circle Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label class="answerSizeLabel">Text / Tick size <input class="newFont" type="range" min="25" max="195" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><label>Highlight Color <input class="inkColor" type="color" value="#ffe000"></label><p class="answerZoomHint">Select Highlight, then drag a neat rectangle over a word or phrase. Use Undo to remove the last highlight.</p><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
+ modal.innerHTML='<div class="answerZoomTop"><b>✦ Answer Studio</b><button class="newHighlight" style="background:#fff1a4;color:#6c4c00">🖍 Highlight</button><button class="newUndo">↶ Undo</button><button class="newMatch" style="background:#e1f4ff;color:#14547d">🔗 Matching Lines</button><button class="newAdd">＋ Add Answer</button><button class="newTick" style="background:#e7f8ee;color:#176a42">✓ Tick Answer</button><button class="newCross" style="background:#ffebed;color:#a52a3a">✕ Cross Answer</button><button class="newCircle" style="background:#fff0db;color:#9a560b">⭕ Circle Answer</button><button class="newPreview">👁 Preview</button><button class="done">✓ Save & Close</button></div><div class="answerZoomBody"><div class="answerZoomCanvas"><div class="answerZoomStage"><img alt="Worksheet"></div></div><aside class="answerZoomSide"><h3>Answer Settings</h3><p class="answerZoomHint">Click Add Answer, then click the exact spot on the worksheet. Drag to move; pull the corner to resize.</p><textarea placeholder="Type your answer"></textarea><label class="answerSizeLabel">Text / Tick size <input class="newFont" type="range" min="25" max="195" value="65"></label><div class="fontRow"><button class="newSmaller">A−</button><button class="newBigger">A＋</button></div><button class="deleteSel">Delete Selected Answer</button><label>Highlight Color <input class="inkColor" type="color" value="#ffe000"></label><p class="answerZoomHint">Select Highlight, then drag a neat rectangle over a word or phrase. Use Undo to remove the last highlight.</p><h3>Answers</h3><div class="answerZoomList"></div></aside></div>';
  document.body.appendChild(modal);
  const stage=modal.querySelector('.answerZoomStage'),img=stage.querySelector('img'),ta=modal.querySelector('textarea'),list=modal.querySelector('.answerZoomList'),font=modal.querySelector('.newFont');
- let selected=null,adding=false,addingCircle=false,addingTick=false,preview=false;
+ let selected=null,adding=false,addingCircle=false,addingTick=false,addingCross=false,preview=false;
  let inkMode='',inking=null;
  const ink=sl.answerInk||(sl.answerInk=[]);
  const inkItems=()=>ink.filter(x=>(x.imageIndex||0)===imageIndex);
@@ -872,7 +872,7 @@ function openAnswerZoomEditor(sl,imageIndex=0){
   });
  };
  const setInkMode=mode=>{
-  inkMode=inkMode===mode?'':mode;adding=false;addingCircle=false;addingTick=false;
+  inkMode=inkMode===mode?'':mode;adding=false;addingCircle=false;addingTick=false;addingCross=false;
   layer.style.pointerEvents=inkMode?'auto':'none';
   layer.style.cursor=inkMode?'crosshair':'default';
   modal.querySelector('.newHighlight').classList.toggle('active',inkMode==='highlight');
@@ -885,21 +885,21 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  layer.onpointercancel=()=>{inking=null};
  inkDraw();
 
- const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>['text','circle','tick'].includes(x.kind||'text'));
+ const answers=()=>answerBoxesForImage(sl,imageIndex).filter(x=>['text','circle','tick','cross'].includes(x.kind||'text'));
  const choose=a=>{selected=a;ta.value=a.text||'';font.value=Math.max(25,Math.min(195,Math.round((a.fontScale||1)*65)));stage.querySelectorAll('.designAnswerBox').forEach((el,i)=>el.classList.toggle('selectedAnswer',answers()[i]===a))};
  const paint=()=>{
   stage.querySelectorAll('.designAnswerBox').forEach(x=>x.remove());
   answers().forEach((a,i)=>{
    const box=document.createElement('div');box.className='designAnswerBox kind-'+(a.kind||'text')+(selected===a?' selectedAnswer':'');
    box.style.left=a.x+'%';box.style.top=a.y+'%';box.style.width=a.w+'%';box.style.height=a.h+'%';
-   box.textContent=a.kind==='circle'?'':a.kind==='tick'?'✓':(a.text||'Type answer');
+   box.textContent=a.kind==='circle'?'':a.kind==='tick'?'✓':a.kind==='cross'?'✕':(a.text||'Type answer');
    if(!preview){const handle=document.createElement('span');handle.className='ansResize';box.appendChild(handle);
     handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();choose(a);let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,w=a.w,h=a.h;const move=ev=>{a.w=Math.max(3,Math.min(100-a.x,w+(ev.clientX-sx)/rect.width*100));a.h=Math.max(2,Math.min(100-a.y,h+(ev.clientY-sy)/rect.height*100));box.style.width=a.w+'%';box.style.height=a.h+'%';fitSavedAnswerFont(box,a)};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
     box.onpointerdown=e=>{if(e.target===handle)return;e.preventDefault();e.stopPropagation();selected=a;ta.value=a.text||'';font.value=Math.max(25,Math.min(195,Math.round((a.fontScale||1)*65)));stage.querySelectorAll('.designAnswerBox').forEach(x=>x.classList.remove('selectedAnswer'));box.classList.add('selectedAnswer');let rect=stage.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,x=a.x,y=a.y;const move=ev=>{a.x=Math.max(0,Math.min(100-a.w,x+(ev.clientX-sx)/rect.width*100));a.y=Math.max(0,Math.min(100-a.h,y+(ev.clientY-sy)/rect.height*100));box.style.left=a.x+'%';box.style.top=a.y+'%'};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);markChanged()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)};
    }
    stage.appendChild(box);fitSavedAnswerFont(box,a);
   });
-  list.innerHTML='';answers().forEach((a,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+(a.kind==='tick'?'✓ Tick':a.kind==='circle'?'⭕ Circle':(a.text||'New answer'));btn.className=a===selected?'selectedAnswer':'';btn.onclick=()=>choose(a);list.appendChild(btn)});
+  list.innerHTML='';answers().forEach((a,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+(a.kind==='tick'?'✓ Tick':a.kind==='cross'?'✕ Cross':a.kind==='circle'?'⭕ Circle':(a.text||'New answer'));btn.className=a===selected?'selectedAnswer':'';btn.onclick=()=>choose(a);list.appendChild(btn)});
  };
  modal.querySelector('.newMatch').onclick=()=>{
  const overlay=document.createElement('div');overlay.className='animalAnswerReview';
@@ -915,10 +915,11 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  overlay.querySelector('.clearMatch').onclick=()=>{if(!confirm('Clear matching lines on this image?'))return;sl.matchLines=sl.matchLines.filter(a=>(a.imageIndex||0)!==imageIndex);draw();markChanged()};
  overlay.querySelector('.doneMatch').onclick=()=>{overlay.remove();markChanged();toast('Matching lines saved ✓')};draw();
  };
- modal.querySelector('.newTick').onclick=()=>{setInkMode('');adding=true;addingCircle=false;addingTick=true;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newTick').textContent='Click to tick…';paint()};
- modal.querySelector('.newCircle').onclick=()=>{setInkMode('');adding=true;addingCircle=true;addingTick=false;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newCircle').textContent='Click to circle…';paint()};
- modal.querySelector('.newAdd').onclick=()=>{setInkMode('');adding=true;addingCircle=false;addingTick=false;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
- stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:addingTick?'tick':addingCircle?'circle':'text',imageIndex,x,y,w:addingTick?5:addingCircle?10:12,h:addingTick?6:addingCircle?7:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;addingCircle=false;addingTick=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newCircle').textContent='⭕ Circle Answer';modal.querySelector('.newTick').textContent='✓ Tick Answer';choose(a);if(a.kind==='text')ta.focus();markChanged()};
+ modal.querySelector('.newTick').onclick=()=>{setInkMode('');adding=true;addingCircle=false;addingTick=true;addingCross=false;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newTick').textContent='Click to tick…';paint()};
+ modal.querySelector('.newCross').onclick=()=>{setInkMode('');adding=true;addingCircle=false;addingTick=false;addingCross=true;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newCross').textContent='Click to cross…';paint()};
+ modal.querySelector('.newCircle').onclick=()=>{setInkMode('');adding=true;addingCircle=true;addingTick=false;addingCross=false;preview=false;stage.style.cursor='crosshair';modal.querySelector('.newCircle').textContent='Click to circle…';paint()};
+ modal.querySelector('.newAdd').onclick=()=>{setInkMode('');adding=true;addingCircle=false;addingTick=false;addingCross=false;preview=false;modal.querySelector('.newPreview').textContent='👁 Preview';stage.style.cursor='crosshair';modal.querySelector('.newAdd').textContent='Click worksheet…';paint()};
+ stage.onclick=e=>{if(!adding||e.target.closest('.designAnswerBox'))return;const rect=stage.getBoundingClientRect(),x=Math.max(0,Math.min(88,(e.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(94,(e.clientY-rect.top)/rect.height*100));const a={kind:addingTick?'tick':addingCross?'cross':addingCircle?'circle':'text',imageIndex,x,y,w:(addingTick||addingCross)?5:addingCircle?10:12,h:(addingTick||addingCross)?6:addingCircle?7:5,text:'',fontPct:55,fontScale:1,order:normaliseAnswerBoxes(sl).length};normaliseAnswerBoxes(sl).push(a);adding=false;addingCircle=false;addingTick=false;addingCross=false;stage.style.cursor='';modal.querySelector('.newAdd').textContent='＋ Add Answer';modal.querySelector('.newCircle').textContent='⭕ Circle Answer';modal.querySelector('.newTick').textContent='✓ Tick Answer';modal.querySelector('.newCross').textContent='✕ Cross Answer';choose(a);if(a.kind==='text')ta.focus();markChanged()};
  ta.oninput=()=>{if(!selected||selected.kind!=='text')return;selected.text=ta.value;paint();markChanged()};
  font.oninput=()=>{if(!selected)return;selected.fontScale=Number(font.value)/65;paint();markChanged()};
  modal.querySelector('.newSmaller').onclick=()=>{font.value=Math.max(25,Number(font.value)-10);font.oninput()};
