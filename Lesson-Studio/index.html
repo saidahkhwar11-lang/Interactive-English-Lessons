@@ -2372,6 +2372,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .gapDropGame .gapPicture .gapBlank.empty{background:transparent!important;border:2px solid transparent!important;box-shadow:none!important;color:transparent!important;min-height:38px;cursor:pointer}
 .gapDropGame .gapPicture .gapBlank.empty:hover,.gapDropGame .gapPicture .gapBlank.empty:focus-visible{border-color:#3b91bf!important;background:#e9f7ffb8!important;outline:none}
 .gapDropGame .gapPicture .gapBlank:not(.empty){background:#e9fff3;border:2px dashed #21966b;box-shadow:0 2px 8px #17496c22}
+/* Checked answers must override the normal green filled-gap appearance. */
+.gapDropGame .gapPicture .gapBlank.wrong,.gapDropGame .gapPassage .gapBlank.wrong{background:#ffe2e2!important;border:3px solid #d13f46!important;color:#8d1720!important}
+.gapDropGame .gapPicture .gapBlank.correct,.gapDropGame .gapPassage .gapBlank.correct{background:#dff6e7!important;border:3px solid #248d58!important;color:#135e39!important}
+.gapDropGame .gapPicture .gapBlank.empty.wrong{background:#ffe2e2!important;border:3px dashed #d13f46!important;color:#8d1720!important}
+.gapDropGame .gapFeedback{margin:12px auto;padding:12px 18px;max-width:760px;border-radius:12px;text-align:center;font-size:20px;font-weight:850;background:#fff0e9;color:#9b2933;border:2px solid #e6a5a5}
+.gapDropGame .gapFeedback.allCorrect{background:#e1f8ea;color:#146641;border-color:#79cba0}
+
 </style>
 <script>
 (function(){
@@ -2469,7 +2476,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    }else if(source){
     content='<div class="gapPicture"><img src="'+escapeGap(source)+'" alt="Textbook activity">'+positions.slice(0,count).map((pos,i)=>'<span style="position:absolute;left:'+pos.x+'%;top:'+pos.y+'%;transform:translate(-50%,-50%)">'+pieces[i]+'</span>').join('')+'</div>';
    }else content='<p>Upload an activity picture to use Picture Mode.</p>';
-   root.innerHTML='<h2>🧩 '+escapeGap(sl.title||'Fill the Gaps')+'</h2><p>Choose or drag a word, then place it in the correct gap.</p><div class="gapWordBank">'+words.map(w=>'<button draggable="true" data-word="'+w.id+'" class="gapWord '+(selected===w.id?'active':'')+' '+(assigned.includes(w.id)?'used':'')+'">'+escapeGap(w.word)+'</button>').join('')+'</div>'+content+'<div class="gapActions"><button id="gapCheck">✓ Check Answers</button><button id="gapReveal">👀 Reveal Answers</button><button id="gapReset">↻ Reset</button></div>';
+   root.innerHTML='<h2>🧩 '+escapeGap(sl.title||'Fill the Gaps')+'</h2><p>Choose or drag a word, then place it in the correct gap.</p><div class="gapWordBank">'+words.map(w=>'<button draggable="true" data-word="'+w.id+'" class="gapWord '+(selected===w.id?'active':'')+' '+(assigned.includes(w.id)?'used':'')+'">'+escapeGap(w.word)+'</button>').join('')+'</div>'+content+(checked?'<div class="gapFeedback '+(assigned.every((id,i)=>id!==null&&words.find(w=>w.id===id)?.word===answers[i])?'allCorrect':'')+'" role="status">'+(()=>{const right=assigned.filter((id,i)=>id!==null&&words.find(w=>w.id===id)?.word===answers[i]).length;return right===count?'✓ Excellent! All '+count+' answers are correct!':'✕ '+right+' of '+count+' correct. Red boxes show wrong or missing answers. Try again!'})()+'</div>':'')+'<div class="gapActions"><button id="gapCheck">✓ Check Answers</button><button id="gapReveal">👀 Reveal Answers</button><button id="gapReset">↻ Reset</button></div>';
    root.querySelectorAll('[data-word]').forEach(b=>{b.onclick=()=>{selected=Number(b.dataset.word);draw()};b.ondragstart=e=>{selected=Number(b.dataset.word);e.dataTransfer.setData('text/plain',String(selected))}});
    root.querySelectorAll('[data-gap]').forEach(b=>{
     const put=()=>{const i=Number(b.dataset.gap);if(selected===null){assigned[i]=null}else{const old=assigned.indexOf(selected);if(old!==-1)assigned[old]=null;assigned[i]=selected;selected=null}checked=false;draw()};
