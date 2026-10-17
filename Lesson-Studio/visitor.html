@@ -19,6 +19,16 @@ async function load(){
     plenary:p.plenary||p.assessment||x.assessment_followup||'',skills:p.skills||'',realWorld:p.realWorld||'',
     crossCurricular:p.crossCurricular||'',uae:p.uae||'',flow:p.flow||x.lesson_flow||[]
   };
+  // Legacy published records may omit success criteria even when objectives exist.
+  // Use the exact published lesson-plan criteria when available; otherwise mirror
+  // its learning objectives as student-facing, measurable success statements.
+  if(!String(d.success||'').trim()&&String(d.objectives||'').trim()){
+    const objectives=String(d.objectives).split(/\n+/).map(v=>v.replace(/^[\\s•✓✔✅\\d.)-]+/,'').trim()).filter(Boolean);
+    d.success=objectives.map(v=>{
+      const clean=v.replace(/[.!]+$/,'').replace(/^students? (?:will be able to|can)\\s+/i,'').replace(/^to\\s+/i,'').replace(/^I can\\s+/i,'');
+      return '✅ I can '+clean.charAt(0).toLowerCase()+clean.slice(1)+'.';
+    }).join('\\n');
+  }
   if(!String(d.plenary||'').trim()&&Array.isArray(d.flow)&&d.flow.length){const last=d.flow[d.flow.length-1];d.plenary='Exit Ticket — '+(last.stage||'Final Activity')+': '+(last.activity||last.students||'Students complete the final task.')+' Teacher checks responses to assess the lesson objective.';}
   d.date=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date());
   let flowRows=(d.flow||[]).map(z=>'<tr><td>'+esc(z.stage||'')+'</td><td><div class="pre">'+esc(z.activity||z.students||'')+'</div></td><td><div class="pre">'+esc(z.differentiation||z.support||'')+'</div></td><td><div class="pre">'+esc(z.tool||'')+'</div></td></tr>').join('');
