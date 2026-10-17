@@ -1398,7 +1398,7 @@ function autoLessonPlan(){
  // Editor inputs already save through their oninput handlers.
  // Do not call a separate sync helper here; older builds do not define one.
  migrateFocusStructuredData();
- let focusData=focusLessonData(),overall=focusData.objectives,realSlides=slides.filter(sl=>sl.type!=='Focus');
+ let focusData=focusLessonData(),overall=focusData.objectives.length?focusData.objectives:overallLessonObjectives(),realSlides=slides.filter(sl=>sl.type!=='Focus');
  // Procedures should include every created activity slide except Focus.
  // Reading Routine is included too because it is part of the created lesson.
  let procedureSlides=realSlides.filter(sl=>sl&&sl.title);
@@ -1409,10 +1409,17 @@ function autoLessonPlan(){
  setLP('lpObjectives',overall.map(o=>'• '+o).join('\n'));
  const posterText=String(focusData.focus?.imageText||'');
  const explicitCriteria=[...posterText.matchAll(/(?:✅|✔|✓|•|[-–])?\s*(I can\s+[^.!?\n]{8,180}[.!]?)/gi)].map(m=>m[1].trim());
- const successList=explicitCriteria.length?[...new Set(explicitCriteria)]:[...new Set(overall.map(o=>successCriterionFor(o)).filter(Boolean))];
+ const successList=overall.map((o,i)=>{
+  const explicit=explicitCriteria[i];
+  if(explicit)return explicit;
+  const criterion=successCriterionFor(o);
+  if(criterion)return criterion;
+  const clean=String(o||'').trim().replace(/^[•✓✔✅\\s\\d.)-]+/,'').replace(/[.!]+$/,'');
+  return clean?'I can '+clean.charAt(0).toLowerCase()+clean.slice(1)+'.':'';
+ }).filter(Boolean);
  setLP('lpSuccess',successList.map(c=>'✅ '+c).join('\n'));
  if(successList.length<overall.length)toast('Review success criteria: some objectives could not be matched uniquely.');
- if(overall.some(o=>!successCriterionFor(o)))toast('Some objectives need clearer wording before success criteria can be generated. Please review the Lesson Plan.');
+ if(!focusData.objectives.length)toast('Lesson Focus objectives are missing; using activity objectives as a fallback. Add objectives to Lesson Focus for accurate success criteria.');
  setLP('lpVocab',focusData.keywords.join(', '));
  let topicText=((($('lpTitle')?.value||'')||'')+' '+overall.join(' ')).toLowerCase();
  // H.O.T. question: connect the lesson topic to critical thinking and real life.
