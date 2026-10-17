@@ -1492,7 +1492,78 @@ function downloadLessonPlan(printMode=false){
  const vals={};lpIds.forEach(id=>vals[id]=$(id)?.value||'');
  let rows=[...$('lpFlowBody').querySelectorAll('tr')].map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc2(td.querySelector('textarea')?.value||td.innerText).replace(/\n/g,'<br>')+'</td>').join('')+'</tr>').join('');
  let lessonUseLink=activeLessonId?(location.origin+location.pathname+'?mode=visitor&lesson='+encodeURIComponent(activeLessonId)+'&present=1'):'';
- let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>@page{size:A4 portrait;margin:13mm 12mm}body{font-family:Arial;margin:0;color:#173f67;font-size:11pt;line-height:1.4}section{break-inside:avoid-page}tr{break-inside:avoid}thead{display:table-header-group}a{overflow-wrap:anywhere}@media print{body{margin:0}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}h1{color:#123e66}section{margin:14px 0}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{white-space:pre-wrap;border:1px solid #bbb;padding:9px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:7px;vertical-align:top}th{background:#eef4f6}@media print{body{margin:0}}.lpThinkPrint{border:1px solid #cddfee;background:#f7fbff;border-radius:10px;padding:12px}.lpThinkPrint p{font-size:12px;line-height:1.5}.lpThinkPrint .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.lpThinkPrint .cols div{background:white;border:1px solid #e0e8f0;border-radius:8px;padding:9px}@media print{.lpThinkPrint{break-inside:avoid}}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><div class="meta"><div><b>Teacher:</b> '+esc2(vals.lpTeacher)+'</div><div><b>Grade:</b> '+esc2(vals.lpGrade)+'</div><div><b>Date:</b> '+esc2(vals.lpDate)+'</div><div><b>Lesson:</b> '+esc2(vals.lpTitle)+'</div></div><section style="border:2px solid #4f8b72;background:#eef8f3;padding:12px;border-radius:10px"><b>Interactive Lesson Link</b><div style="margin-top:7px"><a href="'+esc2(lessonUseLink)+'" target="_blank" style="font-size:14px;font-weight:700;color:#126b57">Open and use this interactive lesson</a></div><div style="font-size:10px;color:#607985;margin-top:5px;word-break:break-all">'+esc2(lessonUseLink)+'</div></section><section><b>Lesson Topic</b><div class="box">'+esc2(vals.lpTopic)+'</div></section><section><b>Key Learning Objectives</b><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><b>H.O.T. Question(s)</b><div class="box">'+esc2(vals.lpHOT)+'</div></section><section><b>Keywords / New Vocabulary</b><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><b>Success Criteria</b><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h2>Lesson Procedures</h2><table><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr>'+rows+'</table></section><section><b>Plenary / Exit Ticket</b><div class="box">'+esc2(vals.lpAssess)+'</div></section><section><b>Independent Learners / Learning Skills</b><div class="box">'+esc2(vals.lpSkills)+'</div></section><section><b>Real World Connections / Innovation</b><div class="box">'+esc2(vals.lpRealWorld)+'</div></section><section><b>Cross Curricular</b><div class="box">'+esc2(vals.lpCross)+'</div></section><section><b>UAE Culture and Heritage (UAE Vision 2031)</b><div class="box">'+esc2(vals.lpUAE)+'</div></section><section class="lpThinkPrint"><h2>Think • Connect • Reflect — Interactive Question Cards</h2><p><b>Objective:</b> Develop higher-order thinking, responsible citizenship and real-life application through short, meaningful discussions.</p><p><b>Procedure:</b> Students choose one of three cards during presentation, think, discuss and justify their answers. The teacher may show another question or reveal the answer to a riddle.</p><div class="cols"><div><b>HOTS</b><p>Analyze, evaluate, predict and explain ideas with reasons.</p></div><div><b>UAE Charter</b><p>Connect learning to honesty, respect, responsibility and cooperation.</p></div><div><b>Student Life</b><p>Apply ideas to realistic situations at school, home and in the community.</p></div></div><p><b>Assessment:</b> Observe reasoning and participation. Accept justified opinions; reveal answers for riddles.</p></section></body></html>';
+ let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>@page{size:A4 portrait;margin:13mm 12mm}body{font-family:Arial;margin:0;color:#173f67;font-size:11pt;line-height:1.4}section{break-inside:avoid-page}tr{break-inside:avoid}thead{display:table-header-group}a{overflow-wrap:anywhere}@media print{body{margin:0}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}h1{color:#123e66}section{margin:14px 0}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{white-space:pre-wrap;border:1px solid #bbb;padding:9px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:7px;vertical-align:top}th{background:#eef4f6}@media print{body{margin:0}}.lpThinkPrint{border:1px solid #cddfee;background:#f7fbff;border-radius:10px;padding:12px}.lpThinkPrint p{font-size:12px;line-height:1.5}.lpThinkPrint .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.lpThinkPrint .cols div{background:white;border:1px solid #e0e8f0;border-radius:8px;padding:9px}@media print{.lpThinkPrint{break-inside:avoid}}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><div class="meta"><div><b>Teacher:</b> '+esc2(vals.lpTeacher)+'</div><div><b>Grade:</b> '+esc2(vals.lpGrade)+'</div><div><b>Date:</b> '+esc2(vals.lpDate)+'</div><div><b>Lesson:</b> '+esc2(vals.lpTitle)+'</div></div><section style="border:2px solid #4f8b72;background:#eef8f3;padding:12px;border-radius:10px"><b>Interactive Lesson Link</b><div style="margin-top:7px"><a href="'+esc2(lessonUseLink)+'" target="_blank" style="font-size:14px;font-weight:700;color:#126b57">Open and use this interactive lesson</a></div><div style="font-size:10px;color:#607985;margin-top:5px;word-break:break-all">'+esc2(lessonUseLink)+'</div></section><section><b>Lesson Topic</b><div class="box">'+esc2(vals.lpTopic)+'</div></section><section><b>Key Learning Objectives</b><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><b>H.O.T. Question(s)</b><div class="box">'+esc2(vals.lpHOT)+'</div></section><section><b>Keywords / New Vocabulary</b><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><b>Success Criteria</b><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h2>Lesson Procedures</h2><table><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr>'+rows+'</table></section><section><b>Plenary / Exit Ticket</b><div class="box">'+esc2(vals.lpAssess)+'</div></section><section><b>Independent Learners / Learning Skills</b><div class="box">'+esc2(vals.lpSkills)+'</div></section><section><b>Real World Connections / Innovation</b><div class="box">'+esc2(vals.lpRealWorld)+'</div></section><section><b>Cross Curricular</b><div class="box">'+esc2(vals.lpCross)+'</div></section><section><b>UAE Culture and Heritage (UAE Vision 2031)</b><div class="box">'+esc2(vals.lpUAE)+'</div></section><section class="lpThinkPrint"><h2>Think • Connect • Reflect — Interactive Question Cards</h2><p><b>Objective:</b> Develop higher-order thinking, responsible citizenship and real-life application through short, meaningful discussions.</p><p><b>Procedure:</b> Students choose one of three cards during presentation, think, discuss and justify their answers. The teacher may show another question or reveal the answer to a riddle.</p><div class="cols"><div><b>HOTS</b><p>Analyze, evaluate, predict and explain ideas with reasons.</p></div><div><b>UAE Charter</b><p>Connect learning to honesty, respect, responsibility and cooperation.</p></div><div><b>Student Life</b><p>Apply ideas to realistic situations at school, home and in the community.</p></div></div><p><b>Assessment:</b> Observe reasoning and participation. Accept justified opinions; reveal answers for riddles.</p></section>
+<style>
+#zoom .zoomBox{width:min(1180px,94vw);max-height:89vh;padding:10px;display:flex;flex-direction:column;gap:8px}
+#zoomTools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:#edf5fb;border-radius:10px;padding:8px;position:sticky;top:0;z-index:4}
+#zoomTools button{border:1px solid #a8c9dd;background:white;color:#17466b;padding:8px 12px;border-radius:8px;font-weight:750;cursor:pointer}
+#zoomTools button.active{background:#1d628e;color:white}
+#zoomStage{position:relative;margin:0 auto;flex-shrink:0}
+#zoomStage img{width:100%;height:auto;display:block;user-select:none}
+#zoomDraw{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+#zoom .zoomBox{overflow:auto}
+</style>
+<script>
+(function(){
+ const zoom=document.getElementById('zoom'),img=document.getElementById('zoomImg');
+ if(!zoom||!img)return;
+ const box=img.parentElement;
+ const tools=document.createElement('div');tools.id='zoomTools';
+ tools.innerHTML='<button data-tool="move" class="active">↔ View</button><button data-tool="highlight">🖍 Highlight</button><button data-tool="pen">✏️ Pen</button><button data-tool="answer">＋ Add Answer</button><button data-tool="erase">⌫ Eraser</button><button data-action="undo">↶ Undo</button><button data-action="clear">🗑 Clear</button><button data-action="smaller">−</button><button data-action="bigger">＋ Zoom</button>';
+ const stage=document.createElement('div');stage.id='zoomStage';
+ img.parentNode.insertBefore(stage,img);stage.appendChild(img);
+ const canvas=document.createElement('canvas');canvas.id='zoomDraw';stage.appendChild(canvas);
+ box.insertBefore(tools,stage);
+ const ctx=canvas.getContext('2d');
+ let tool='move',scale=1,strokes=[],drawing=null,source='';
+ function dims(){return {w:img.naturalWidth||1000,h:img.naturalHeight||700}}
+ function resize(){
+  const {w,h}=dims();canvas.width=w;canvas.height=h;
+  stage.style.width=Math.min(100*scale,250)+'%';
+  ctx.clearRect(0,0,w,h);
+  strokes.forEach(draw);
+  if(drawing)draw(drawing);
+ }
+ function draw(s){
+  const {w,h}=dims();
+  if(s.kind==='answer'){
+   ctx.font='bold '+Math.round(h*.032)+'px Arial';
+   ctx.textBaseline='top';ctx.lineWidth=Math.max(3,h*.006);ctx.strokeStyle='#ffffff';
+   ctx.strokeText(s.text,s.x*w,s.y*h);ctx.fillStyle='#113f69';ctx.fillText(s.text,s.x*w,s.y*h);return;
+  }
+  if(!s.points?.length)return;
+  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.lineWidth=Math.max(5,h*(s.kind==='highlight'?.025:s.kind==='erase'?.035:.005));
+  ctx.globalAlpha=s.kind==='highlight'?.35:1;
+  ctx.strokeStyle=s.kind==='highlight'?'#ffdc00':s.kind==='erase'?'#ffffff':'#d52538';
+  ctx.beginPath();s.points.forEach((p,i)=>i?ctx.lineTo(p.x*w,p.y*h):ctx.moveTo(p.x*w,p.y*h));ctx.stroke();ctx.restore();
+ }
+ function point(e){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))}}
+ function choose(next){tool=next;tools.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));canvas.style.pointerEvents=tool==='move'?'none':'auto';canvas.style.cursor=tool==='answer'?'text':tool==='move'?'default':'crosshair'}
+ tools.onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.tool){choose(b.dataset.tool);return}
+  switch(b.dataset.action){
+   case 'undo':strokes.pop();break;
+   case 'clear':if(strokes.length&&confirm('Clear all zoom annotations?'))strokes=[];break;
+   case 'bigger':scale=Math.min(2.5,scale+.2);break;
+   case 'smaller':scale=Math.max(.6,scale-.2);break;
+  }resize();
+ };
+ canvas.onpointerdown=e=>{
+  if(tool==='move')return;
+  e.preventDefault();
+  if(tool==='answer'){const t=prompt('Enter the answer or note:');if(t?.trim())strokes.push({kind:'answer',...point(e),text:t.trim()});resize();return}
+  drawing={kind:tool,points:[point(e)]};canvas.setPointerCapture(e.pointerId);
+ };
+ canvas.onpointermove=e=>{if(!drawing)return;drawing.points.push(point(e));resize()};
+ canvas.onpointerup=e=>{if(!drawing)return;strokes.push(drawing);drawing=null;resize()};
+ canvas.onpointercancel=()=>{drawing=null;resize()};
+ img.addEventListener('load',resize);
+ new MutationObserver(()=>{if(img.getAttribute('src')!==source){source=img.getAttribute('src');strokes=[];scale=1;choose('move');if(img.complete)resize()}}).observe(img,{attributes:true,attributeFilter:['src']});
+ choose('move');if(img.complete)resize();
+})();
+</script></body></html>';
  if(printMode){let w=window.open('','_blank');if(!w){alert('Please allow pop-ups to print the lesson plan.');return}w.document.open();w.document.write(doc);w.document.close();w.focus();setTimeout(()=>w.print(),400);return}let blob=new Blob([doc],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(vals.lpTitle||'lesson-plan').replace(/[^a-z0-9]+/gi,'-')+'.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 async function safeOpenLessonPlan(){$('lpModal').classList.add('open');try{autoLessonPlan();const focus=slides.find(sl=>sl.type==='Focus');if(focus&&!focusLessonData().objectives.length){const box=$('lpObjectives');if(box)box.placeholder='Reading current Learning Goals poster…';await readCurrentGoalsPoster();autoLessonPlan();if(!focusLessonData().objectives.length){if(box)box.placeholder='Poster text could not be read reliably. Enter the objectives on the Lesson Focus slide.';toast('Please add the goals as text on the Lesson Focus slide to complete the plan.')}}}catch(e){console.error('Lesson Plan generation error:',e)}}
