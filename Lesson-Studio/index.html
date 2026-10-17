@@ -2226,6 +2226,20 @@ function thinkingStyleLabel(k){return({scenario:'🎭 Scenario',riddle:'🧩 Rid
 function styledThinking(sl,style,offset=0){
  const context=[sl.lesson,slides[0]?.lesson,sl.title,sl.mission,(typeof overallLessonObjectives==='function'?overallLessonObjectives().join(' '):'')].join(' ').toLowerCase();
  const topic=/falcon|talon|hood|beak|falconry/.test(context)?'falcon':/bee|honey|hive|nectar/.test(context)?'bee':/online|shopping|customer|commerce/.test(context)?'shopping':/animal|habitat|wildlife/.test(context)?'animal':/direction|map|route|campus/.test(context)?'directions':'general';
+ if(/horse|service animal|guide animal|seeing.eye|disability|obstacle/.test(context)){
+  const training=/train|training|step.by.step|sequence|guide/.test(context);
+  const options={
+   scenario:training?[
+    ['🐴 A guide horse stops at an obstacle. What should its trainer do?','🇦🇪 How can we show kindness when training a service horse?','🏫 A guide horse needs rest. What should its trainer do?'],
+    ['🐴 A horse is frightened by traffic. What can its trainer do?','🇦🇪 Why must we respect people who use service animals?','🎒 You see a working guide horse. Should you distract it? Why?']
+   ]:[['🐴 A guide horse stops at a crossing. Why might it stop?','🇦🇪 How can service animals help people in our community?','🏫 You meet someone with a guide horse. How can you help politely?']],
+   riddle:[['🧩 I help a blind person move safely and avoid obstacles. What am I?','🇦🇪 I mean caring for people and animals. What value am I?','🎒 I help a working horse stay healthy after training. What am I?']],
+   idiom:[['💬 “Practice makes perfect.” How does it help train a guide horse?','🇦🇪 “A helping hand.” How do service animals show this idea?','🎒 “Take it easy.” Why is this good advice when training a horse?']]
+  };
+  const rows=options[style]||options.scenario;
+  const row=rows[((offset%rows.length)+rows.length)%rows.length];
+  return {q:row[0],uae:row[1],life:row[2],style};
+ }
  const bank={
  falcon:{
  scenario:[['🦅 A falcon looks scared. What would you do?','🇦🇪 A visitor wants to learn falconry. How would you welcome them?','🎒 Your friend makes loud noises near a bird. What do you do?'],['🧤 You forgot your falconry glove. Should you train? Why?','🇦🇪 How would you show respect for this UAE tradition?','🐦 A bird needs rest. What should its trainer do?']],
