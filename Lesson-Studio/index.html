@@ -877,7 +877,7 @@ function openAnswerZoomEditor(sl,imageIndex=0){
  modal.querySelector('.newHighlight').onclick=()=>setInkMode('highlight');
  modal.querySelector('.newPen').onclick=()=>setInkMode('pen');
  modal.querySelector('.newUndo').onclick=()=>{for(let i=ink.length-1;i>=0;i--){if((ink[i].imageIndex||0)===imageIndex){ink.splice(i,1);break}}inkDraw();markChanged()};
- modal.querySelector('.newClear').onclick=()=>{if(!inkItems().length||!confirm('Clear highlights and pen marks on this picture?'))return;sl.answerInk=ink.filter(x=>(x.imageIndex||0)!==imageIndex);inkDraw();markChanged()};
+ modal.querySelector('.newClear').onclick=()=>{if(!inkItems().length||!confirm('Clear highlights and pen marks on this picture?'))return;for(let i=ink.length-1;i>=0;i--)if((ink[i].imageIndex||0)===imageIndex)ink.splice(i,1);inkDraw();markChanged()};
  layer.onpointerdown=e=>{if(!inkMode||preview)return;e.preventDefault();inking={imageIndex,mode:inkMode,color:inkMode==='highlight'?inkColor.value:inkColor.value,width:Number(inkWidth.value)*(inkMode==='highlight'?2:0.65),points:[inkPoint(e)]};layer.setPointerCapture(e.pointerId);ink.push(inking);inkDraw()};
  layer.onpointermove=e=>{if(!inking)return;inking.points.push(inkPoint(e));inkDraw()};
  layer.onpointerup=()=>{if(inking){inking=null;markChanged()}};
