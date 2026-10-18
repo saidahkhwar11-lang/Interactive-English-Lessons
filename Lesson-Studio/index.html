@@ -1172,7 +1172,8 @@ $('createInteractiveGame').onclick=()=>{let sl=slides[cur];if(sl.type==='Game')r
 $('cancelInteractiveGame').onclick=()=>{let sl=slides[cur];if(sl.type!=='Game')return;if(!confirm('Cancel the interactive game and restore this slide?'))return;sl.type=sl.gamePreviousType||(cur===0?'Reading':'Activity');sl.title=sl.gamePreviousTitle||(sl.type==='Reading'?'Reading Routine':'Main Activity');delete sl.gameQuestions;delete sl.gamePreviousType;delete sl.gamePreviousTitle;render();markChanged();toast('Original slide restored ✓')};
 $('vocabGameQuestions').oninput=e=>{slides[cur].gameQuestions=e.target.value.split(/\n/).map(line=>line.split('|').map(v=>v.trim())).filter(p=>p.length>=4&&p.slice(0,4).every(Boolean)).map(p=>({q:p[0],correct:p[1],wrong:[p[2],p[3]]}));markChanged()};
 $('revealPicturesSetting').onchange=e=>{slides[cur].revealPictures=e.target.checked;markChanged();toast(e.target.checked?'Pictures will reveal one by one ✓':'Pictures will show together ✓')};
-$('eSuccessCriteria').oninput=e=>{slides[cur].successCriteria=e.target.value.split(/\n+/).map(x=>x.trim()).filter(Boolean).slice(0,3);markChanged()};\n$('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);markChanged()};
+$('eSuccessCriteria').oninput=e=>{slides[cur].successCriteria=e.target.value.split(/\n+/).map(x=>x.trim()).filter(Boolean).slice(0,3);markChanged()};
+$('eKeywords').oninput=e=>{slides[cur].keywords=e.target.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);markChanged()};
 $('eLesson').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.lesson=v);$('lessonTitle').textContent=v||'Untitled Lesson';markChanged()};
 
 $('eSub').oninput=e=>{let v=e.target.value;slides.forEach(sl=>sl.sub=v);$('sub').textContent=v||'Grade · Unit · Lesson';markChanged()};
@@ -1451,7 +1452,8 @@ function autoLessonPlan(){
  setLP('lpObjectives',overall.map(o=>'• '+o).join('\n'));
  const posterText=String(focusData.focus?.imageText||'');
  const explicitCriteria=[...posterText.matchAll(/(?:✅|✔|✓|•|[-–])?\s*(I can\s+[^.!?\n]{8,180}[.!]?)/gi)].map(m=>m[1].trim());
- const manualCriteria=(focusData.focus?.successCriteria||[]).map(x=>String(x).trim()).filter(Boolean);\n const successList=manualCriteria.length?manualCriteria:overall.map((o,i)=>{
+ const manualCriteria=(focusData.focus?.successCriteria||[]).map(x=>String(x).trim()).filter(Boolean);
+ const successList=manualCriteria.length?manualCriteria:overall.map((o,i)=>{
   const explicit=explicitCriteria[i];
   if(explicit)return explicit;
   const criterion=successCriterionFor(o,realSlides);
