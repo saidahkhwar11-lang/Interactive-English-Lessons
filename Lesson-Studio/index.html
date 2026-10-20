@@ -1038,13 +1038,21 @@ if(g){let remove=document.createElement('button');remove.className='btn';remove.
 el.appendChild(row);
 }
 function syncSecretPresentation(sl){
-let host=document.getElementById('presentTop');if(!host)return;
-let b=document.getElementById('presentSecretMissionButton');if(b)b.remove();
+let old=document.getElementById('presentSecretMissionWrap');if(old)old.remove();
 if(!sl||!sl.secretMission)return;
-b=document.createElement('button');b.id='presentSecretMissionButton';b.className='btn';b.style.background='#6142a4';b.textContent='🔐 Play '+sl.secretMission.name;
-b.onclick=()=>window.open('./secret-mission/index.html?play='+encodeURIComponent(sl.secretMission.id),'_blank');
-host.appendChild(b);
+let visual=document.querySelector('#presentSlide .presentVisual');
+if(!visual)return;
+let wrap=document.createElement('div');wrap.id='presentSecretMissionWrap';
+wrap.style.cssText='width:100%;display:flex;justify-content:center;align-items:center;margin:16px auto 4px;flex-shrink:0;';
+let button=document.createElement('button');button.id='presentSecretMissionButton';button.className='btn';
+button.style.cssText='background:linear-gradient(110deg,#673ca6,#8d43ce);color:#fff;border-radius:20px;padding:15px 32px;font-size:clamp(17px,2vw,25px);font-weight:900;box-shadow:0 5px 12px #3a22602b;max-width:95%;white-space:normal;';
+button.textContent='🔐 Play '+sl.secretMission.name;
+button.onclick=()=>window.open('./secret-mission/index.html?play='+encodeURIComponent(sl.secretMission.id),'_blank');
+wrap.appendChild(button);
+visual.style.flexDirection='column';
+visual.appendChild(wrap);
 }
+
 function render(){queueMicrotask(syncSecretEditor);migrateFocusStructuredData();applyLessonTheme();let s=slides[cur];const removeAudioButton=$('removeSlideAudio');if(removeAudioButton)removeAudioButton.style.display=s.aud?'block':'none';s.images=s.images||[];if(s.img&&!s.images.includes(s.img))s.images.unshift(s.img);if(s.type==='Focus'&&(!s.obj||s.obj==='Objective'))s.obj='Introduce the lesson topic, learning objectives, and key vocabulary.';
  const designDefaults=['','Add student instructions.','Practise the main lesson skill.','Complete the activity.','Read today’s objectives and key words aloud. Practise with your teacher.'];
  const visualOnly=!!s.img&&s.type==='Focus'&&designDefaults.includes((s.mission||'').trim())&&(!s.page||s.page==='—')&&!s.aud;
