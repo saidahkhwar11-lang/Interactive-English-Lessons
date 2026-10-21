@@ -1467,6 +1467,88 @@ function successCriterionFor(obj,lessonSlides=[]){
  return 'I can '+verb+(brief?' '+brief:'')+'.';
 }
 function currentLessonPlanDate(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date())}
+
+// Clear, evidence-based lesson plan descriptions: preserve the activity, not its full question bank.
+function conciseLessonProcedure(sl,grade){
+ const title=String(sl.title||'').trim();
+ const mission=String(sl.mission||'').trim();
+ const low=(title+' '+mission+' '+(sl.skill||'')).toLowerCase();
+ const page=sl.page&&sl.page!=='—'?' on page '+sl.page:'';
+ const mode=String(sl.workMode||'').toLowerCase();
+ const isExit=/exit|plenary|alef.*writing.*summar/i.test(low);
+ const isMission=/secret mission|crack the code|6.digit|unlock/i.test(low);
+ const isSummary=/summari|main idea.*supporting detail|paragraph.*own words/i.test(low);
+ const isStarter=/starter|warm.up|recall previous|shopping methods|scenario card/i.test(low);
+ const hasPrompts=Array.isArray(sl.mysteryCards)&&sl.mysteryCards.length;
+ const explicit=mission&&!/^(add student instructions|complete the activity|practise the main lesson skill)/i.test(mission);
+ const compact=t=>String(t||'').replace(/\s+/g,' ').trim().replace(/[.!]+$/,'');
+ let teacher='',student='',afl='',support='',challenge='';
+ if(sl.type==='Reading'){
+   teacher='Set a five-minute silent reading timer and support students in accessing the assigned text.';
+   student=grade==='6'?'Read the teacher-provided text independently and identify an interesting idea.':'Read independently in Alef Library and identify an interesting idea.';
+   afl='Check reading engagement and ask students to share one accurate detail.';
+   support='Help students access and follow the reading text.';
+   challenge='Explain an interesting detail or unfamiliar word.';
+ }else if(isMission){
+   teacher='Organize six teams, distribute their mission cards and demonstrate how correct answers form a six-digit lock code. Monitor teamwork and verify codes.';
+   student='Read Paragraphs B and C, answer six questions about main ideas, vocabulary and supporting details, then enter the team code to unlock the mission.';
+   afl='Use team answers and codes to identify gaps in reading comprehension.';
+   support='Allow teammates to reread the relevant lines and discuss clues.';
+   challenge='Justify answers using evidence from the paragraphs.';
+ }else if(isExit){
+   teacher='Direct students to the specified Alef lesson and check their independent responses.';
+   student=explicit?compact(mission)+'.':'Complete the assigned Alef writing activity independently.';
+   afl='Review responses to check understanding of summarizing.';
+   support='Help students locate the task and use a summary starter.';
+   challenge='Write independently and check clarity and accuracy.';
+ }else if(isSummary){
+   teacher='Model reading, context clues, main idea, supporting details and summary writing with Paragraph A'+page+'. Reveal each stage and discuss the choices before students apply the method.';
+   student='Analyse Paragraph A with the teacher, then apply the same steps to Paragraphs B and C and write short summaries in their own words.';
+   afl='Check annotations and summaries for accurate main ideas, relevant details and original wording.';
+   support='Provide a model, context-clue prompts and summary sentence starters.';
+   challenge='Explain why chosen details are important and refine the summary independently.';
+ }else if(isStarter||sl.type==='Mystery'){
+   teacher='Present the saved scenario cards one at a time and invite students to explain their decisions.';
+   student='Choose a shopping method for each scenario and explain the choice using a reason.'; 
+   if(!/shop|online|store|buy|purchase/i.test(low)){student='Choose a saved card, discuss its prompt and justify the response.';teacher='Present the saved discussion cards one at a time and invite students to justify their answers.'}
+   afl='Listen for relevant reasoning and clear spoken responses.';
+   support='Provide a sentence starter and partner rehearsal.';
+   challenge='Compare two possible choices and defend a decision.';
+ }else if(sl.type==='SentenceScramble'){
+   teacher='Model how to identify sentence parts, then guide students as they reorder and check the words.';
+   student='Arrange the words into meaningful sentences, check word order and correct errors.';
+   afl='Check sentence structure and ask students to explain corrections.';
+   support='Model the first sentence and identify key words.';
+   challenge='Explain the grammatical choices and write an original example.';
+ }else if(sl.type==='Crossword'){
+   teacher='Introduce the vocabulary crossword, guide students through clues and reveal answers for checking.';
+   student='Use the clues to complete the crossword and explain word meanings.';
+   afl='Check vocabulary choices and the clues students used.';
+   support='Provide an initial letter or a context clue.';
+   challenge='Use selected words in original sentences.';
+ }else if(sl.type==='Game'||(sl.questions||[]).length){
+   teacher='Explain the rules and guide students through the saved questions, revealing answers after discussion.';
+   student='Answer the questions and explain their choices using lesson evidence.';
+   afl='Check responses and address misunderstandings.';
+   support='Allow discussion and provide one relevant clue.';
+   challenge='Justify why alternatives are incorrect.';
+ }else if(explicit){
+   const sentences=compact(mission).split(/(?<=[.!?])\s+/).filter(Boolean);
+   const core=sentences.slice(0,2).join(' ').slice(0,350).replace(/[,:; ]+$/,'');
+   teacher='Introduce '+(title||'the activity')+page+', model the first step if needed, and monitor progress.';
+   student=core+'.';
+   afl='Check completed responses against the activity objective.';
+   support='Model an example and provide prompts where needed.';
+   challenge='Explain choices and complete the task independently.';
+ }else{
+   teacher='Introduce '+(title||'the activity')+page+' and model the expected response.';
+   student='Complete the activity and explain the response.';
+   afl='Check accuracy and understanding during the task.';
+   support='Provide an example or guided prompt.';
+   challenge='Extend the response with evidence or an explanation.';
+ }
+ return {teacher,student,afl,support,challenge};
+}
 function autoLessonPlan(){
  const setLP=(id,value)=>{const el=$(id);if(el)el.value=value==null?'':value};
  // Editor inputs already save through their oninput handlers.
@@ -1534,21 +1616,13 @@ function autoLessonPlan(){
    else if(!activityDetail)activityDetail='Complete the '+(sl.title||'activity').toLowerCase()+' task shown on the slide.';
    mission=activityDetail;
    template=false;
-   // Build distinct procedures from the activity title, typed instructions and validated picture text.
-   let pd=procedureDetailFor(sl,pictureText,$('gradeSelect').value);
-   let student=pd.student,teacher=pd.teacher;
-   let qCount=(sl.questions||[]).length,procLow=((sl.title||'')+' '+mission).toLowerCase();
-   let afl=sl.type==='Crossword'?'AFL: Check vocabulary choices as students reveal crossword answers and explain clue-word connections.'
-     :sl.type==='Mystery'?'AFL: Listen to students justify their responses to the saved discussion prompts.'
-     :sl.type==='Game'?'AFL: Check responses to the saved quiz questions and address misconceptions.'
-     :qCount?'AFL: Use the '+qCount+' saved question'+(qCount>1?'s':'')+' and reveal answers progressively to check understanding.'
-     :(/partner|speaking|discuss/.test(procLow)?'AFL: Listen to partner responses and check use of the target language and supporting reasons.'
-     :/vocab|habitat|diet|behavior|match/.test(procLow)?'AFL: Check matches and ask students to explain why each example belongs to habitat, diet or behavior.'
-     :/read|bear|hyena|giraffe/.test(procLow)?'AFL: Check that students locate accurate details in the text and justify answers with textual evidence.'
-     :/sort|sorting/.test(procLow)?'AFL: Monitor group sorting decisions and ask students to justify selected categories.'
-     :'AFL: Check responses during the task and use targeted questioning to identify misconceptions.');
-   let main='<b>'+esc2(sl.title)+'</b>'+(sl.workMode?'<br><b>Work Mode:</b> '+esc2(sl.workMode):'')+'<br><b>Teacher Role:</b> '+esc2(teacher)+'<br><b>Student Role:</b> '+esc2(student)+'<br>'+esc2(afl);
-   let diff=supportChallengeFor(sl,$('gradeSelect').value).replace('Support:','L / Support:').replace('Challenge:','H / Challenge:')+'\nM / Medium: Complete the task with normal teacher prompts.';
+   // Distinct roles, task-specific assessment and differentiated access without copying prompts.
+   const pd=conciseLessonProcedure(sl,$('gradeSelect').value);
+   const main='<b>'+esc2(sl.title)+'</b>'+(sl.workMode?'<br><b>Work Mode:</b> '+esc2(sl.workMode):'')+
+     '<br><b>Teacher Role:</b> '+esc2(pd.teacher)+
+     '<br><b>Student Role:</b> '+esc2(pd.student)+
+     '<br><b>AFL:</b> '+esc2(pd.afl);
+   const diff='L / Support: '+pd.support+'\\nH / Challenge: '+pd.challenge;
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
    let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(i===procedureSlides.length-1?'Plenary / Exit Ticket':'Main Activity '+i));
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(stage)+'<br><small>'+esc2(sl.title)+'</small></td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
@@ -1617,7 +1691,7 @@ function downloadLessonPlan(printMode=false){
  const vals={};lpIds.forEach(id=>vals[id]=$(id)?.value||'');
  let rows=[...$('lpFlowBody').querySelectorAll('tr')].map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc2(td.querySelector('textarea')?.value||td.innerText).replace(/\n/g,'<br>')+'</td>').join('')+'</tr>').join('');
  let lessonUseLink=activeLessonId?(location.origin+location.pathname+'?mode=visitor&lesson='+encodeURIComponent(activeLessonId)+'&present=1'):'';
- let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>@page{size:A4 portrait;margin:13mm 12mm}body{font-family:Arial;margin:0;color:#173f67;font-size:11pt;line-height:1.4}section{break-inside:avoid-page}tr{break-inside:avoid}thead{display:table-header-group}a{overflow-wrap:anywhere}@media print{body{margin:0}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}h1{color:#123e66}section{margin:14px 0}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{white-space:pre-wrap;border:1px solid #bbb;padding:9px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:7px;vertical-align:top}th{background:#eef4f6}@media print{body{margin:0}}.lpThinkPrint{border:1px solid #cddfee;background:#f7fbff;border-radius:10px;padding:12px}.lpThinkPrint p{font-size:12px;line-height:1.5}.lpThinkPrint .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.lpThinkPrint .cols div{background:white;border:1px solid #e0e8f0;border-radius:8px;padding:9px}@media print{.lpThinkPrint{break-inside:avoid}}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><div class="meta"><div><b>Teacher:</b> '+esc2(vals.lpTeacher)+'</div><div><b>Grade:</b> '+esc2(vals.lpGrade)+'</div><div><b>Date:</b> '+esc2(vals.lpDate)+'</div><div><b>Lesson:</b> '+esc2(vals.lpTitle)+'</div></div><section style="border:2px solid #4f8b72;background:#eef8f3;padding:12px;border-radius:10px"><b>Interactive Lesson Link</b><div style="margin-top:7px"><a href="'+esc2(lessonUseLink)+'" target="_blank" style="font-size:14px;font-weight:700;color:#126b57">Open and use this interactive lesson</a></div><div style="font-size:10px;color:#607985;margin-top:5px;word-break:break-all">'+esc2(lessonUseLink)+'</div></section><section><b>Lesson Topic</b><div class="box">'+esc2(vals.lpTopic)+'</div></section><section><b>Key Learning Objectives</b><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><b>H.O.T. Question(s)</b><div class="box">'+esc2(vals.lpHOT)+'</div></section><section><b>Keywords / New Vocabulary</b><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><b>Success Criteria</b><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h2>Lesson Procedures</h2><table><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr>'+rows+'</table></section><section><b>Plenary / Exit Ticket</b><div class="box">'+esc2(vals.lpAssess)+'</div></section><section><b>Independent Learners / Learning Skills</b><div class="box">'+esc2(vals.lpSkills)+'</div></section><section><b>Real World Connections / Innovation</b><div class="box">'+esc2(vals.lpRealWorld)+'</div></section><section><b>Cross Curricular</b><div class="box">'+esc2(vals.lpCross)+'</div></section><section><b>UAE Culture and Heritage (UAE Vision 2031)</b><div class="box">'+esc2(vals.lpUAE)+'</div></section><section class="lpThinkPrint"><h2>Think • Connect • Reflect — Interactive Question Cards</h2><p><b>Objective:</b> Develop higher-order thinking, responsible citizenship and real-life application through short, meaningful discussions.</p><p><b>Procedure:</b> Students choose one of three cards during presentation, think, discuss and justify their answers. The teacher may show another question or reveal the answer to a riddle.</p><div class="cols"><div><b>HOTS</b><p>Analyze, evaluate, predict and explain ideas with reasons.</p></div><div><b>UAE Charter</b><p>Connect learning to honesty, respect, responsibility and cooperation.</p></div><div><b>Student Life</b><p>Apply ideas to realistic situations at school, home and in the community.</p></div></div><p><b>Assessment:</b> Observe reasoning and participation. Accept justified opinions; reveal answers for riddles.</p></section></body></html>';
+ let doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc2(vals.lpTitle||'Lesson Plan')+'</title><style>@page{size:A4 portrait;margin:13mm 12mm}body{font-family:Arial;margin:0;color:#173f67;font-size:11pt;line-height:1.4}section{break-inside:avoid-page}tr{break-inside:avoid}thead{display:table-header-group}a{overflow-wrap:anywhere}@media print{body{margin:0}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}h1{color:#123e66}section{margin:14px 0}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{white-space:pre-wrap;border:1px solid #bbb;padding:9px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:7px;vertical-align:top}th{background:#eef4f6}@media print{body{margin:0}}.lpThinkPrint{border:1px solid #cddfee;background:#f7fbff;border-radius:10px;padding:12px}.lpThinkPrint p{font-size:12px;line-height:1.5}.lpThinkPrint .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.lpThinkPrint .cols div{background:white;border:1px solid #e0e8f0;border-radius:8px;padding:9px}@media print{.lpThinkPrint{break-inside:avoid}}</style></head><body><h1>Al Reyadah School · Lesson Plan</h1><div class="meta"><div><b>Teacher:</b> '+esc2(vals.lpTeacher)+'</div><div><b>Grade:</b> '+esc2(vals.lpGrade)+'</div><div><b>Date:</b> '+esc2(vals.lpDate)+'</div><div><b>Lesson:</b> '+esc2(vals.lpTitle)+'</div></div><section style="border:2px solid #4f8b72;background:#eef8f3;padding:12px;border-radius:10px"><b>Interactive Lesson Link</b><div style="margin-top:7px"><a href="'+esc2(lessonUseLink)+'" target="_blank" style="font-size:14px;font-weight:700;color:#126b57">Open and use this interactive lesson</a></div><div style="font-size:10px;color:#607985;margin-top:5px;word-break:break-all">'+esc2(lessonUseLink)+'</div></section><section><b>Lesson Topic</b><div class="box">'+esc2(vals.lpTopic)+'</div></section><section><b>Key Learning Objectives</b><div class="box">'+esc2(vals.lpObjectives)+'</div></section><section><b>H.O.T. Question(s)</b><div class="box">'+esc2(vals.lpHOT)+'</div></section><section><b>Keywords / New Vocabulary</b><div class="box">'+esc2(vals.lpVocab)+'</div></section><section><b>Success Criteria</b><div class="box">'+esc2(vals.lpSuccess)+'</div></section><section><h2>Lesson Procedures</h2><table><tr><th>Timing / Stage</th><th>Main Activities linked to LO / AFL Strategy</th><th>Differentiation</th><th>E-Implementation Tool</th></tr>'+rows+'</table></section><section><b>Independent Learners / Learning Skills</b><div class="box">'+esc2(vals.lpSkills)+'</div></section><section><b>Real World Connections / Innovation</b><div class="box">'+esc2(vals.lpRealWorld)+'</div></section><section><b>Cross Curricular</b><div class="box">'+esc2(vals.lpCross)+'</div></section><section><b>UAE Culture and Heritage (UAE Vision 2031)</b><div class="box">'+esc2(vals.lpUAE)+'</div></section><section class="lpThinkPrint"><h2>Think • Connect • Reflect — Interactive Question Cards</h2><p><b>Objective:</b> Develop higher-order thinking, responsible citizenship and real-life application through short, meaningful discussions.</p><p><b>Procedure:</b> Students choose one of three cards during presentation, think, discuss and justify their answers. The teacher may show another question or reveal the answer to a riddle.</p><div class="cols"><div><b>HOTS</b><p>Analyze, evaluate, predict and explain ideas with reasons.</p></div><div><b>UAE Charter</b><p>Connect learning to honesty, respect, responsibility and cooperation.</p></div><div><b>Student Life</b><p>Apply ideas to realistic situations at school, home and in the community.</p></div></div><p><b>Assessment:</b> Observe reasoning and participation. Accept justified opinions; reveal answers for riddles.</p></section></body></html>';
  if(printMode){let w=window.open('','_blank');if(!w){alert('Please allow pop-ups to print the lesson plan.');return}w.document.open();w.document.write(doc);w.document.close();w.focus();setTimeout(()=>w.print(),400);return}let blob=new Blob([doc],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(vals.lpTitle||'lesson-plan').replace(/[^a-z0-9]+/gi,'-')+'.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 async function safeOpenLessonPlan(){$('lpModal').classList.add('open');try{autoLessonPlan();const focus=slides.find(sl=>sl.type==='Focus');if(focus&&!focusLessonData().objectives.length){const box=$('lpObjectives');if(box)box.placeholder='Reading current Learning Goals poster…';await readCurrentGoalsPoster();autoLessonPlan();if(!focusLessonData().objectives.length){if(box)box.placeholder='Poster text could not be read reliably. Enter the objectives on the Lesson Focus slide.';toast('Please add the goals as text on the Lesson Focus slide to complete the plan.')}}}catch(e){console.error('Lesson Plan generation error:',e)}}
