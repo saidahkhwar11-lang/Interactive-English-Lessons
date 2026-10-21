@@ -1622,7 +1622,7 @@ function autoLessonPlan(){
      '<br><b>Teacher Role:</b> '+esc2(pd.teacher)+
      '<br><b>Student Role:</b> '+esc2(pd.student)+
      '<br><b>AFL:</b> '+esc2(pd.afl);
-   const diff='L / Support: '+pd.support+'\\nH / Challenge: '+pd.challenge;
+   const diff='L / Support: '+pd.support+'\nH / Challenge: '+pd.challenge;
    let tool=(sl.aud?'Audio; ':'')+(sl.img?'Activity image; ':'')+((sl.questions||[]).length?'Interactive Q&A; ':'')+'Lesson Studio';
    let stage=sl.type==='Reading'?'Reading Routine':(/starter|warm up/i.test(sl.title||'')?'Warm up / Starter':(i===procedureSlides.length-1?'Plenary / Exit Ticket':'Main Activity '+i));
    tr.innerHTML='<td><b>'+esc2(sl.time)+' mins</b><br>'+esc2(stage)+'<br><small>'+esc2(sl.title)+'</small></td><td>'+main+'</td><td><textarea>'+esc2(diff)+'</textarea></td><td><textarea>'+esc2(tool)+'</textarea></td>';
