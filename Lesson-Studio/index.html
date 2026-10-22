@@ -1790,10 +1790,15 @@ async function autoSaveCurrent(){
  if(!activeLessonId||!slides[0]||slides[0]._savedLessonId!==activeLessonId||autoSaveBusy)return;autoSaveBusy=true;
  try{
   autoLessonPlan();
-  let snap=snapshot(activeLessonId);snap.published=true;await dbPut(snap);
+  let snap=snapshot(activeLessonId);await dbPut(snap);
+  // The visitor opens the CLOUD lesson, not the browser's IndexedDB copy.
+  // Publish the complete slides and their embedded media on every auto-save.
+  await publishCloudLesson(snap);
   let secret=localStorage.getItem('LessonPlanSecret:'+activeLessonId);
-  if(secret){try{await publishVisitorPlan(activeLessonId,secret);setSaveStatus('✓ Auto-saved & QR plan updated')}catch(e){console.error('QR lesson plan publication failed',e);setSaveStatus('✓ Saved locally · QR plan not updated');return}}else{setSaveStatus('✓ Saved locally · click Save to publish QR plan');return}
- }catch(e){setSaveStatus('Save failed')}finally{autoSaveBusy=false}
+  if(secret){await publishVisitorPlan(activeLessonId,secret)}
+  snap.published=true;await dbPut(snap);
+  setSaveStatus('✓ Auto-saved & shared online');
+ }catch(e){console.error('Online lesson auto-save failed',e);setSaveStatus('Saved locally · online sharing failed; click Update Saved Lesson')}finally{autoSaveBusy=false}
 }
 async function publishVisitorPlan(id,secret){
  const plan=visitorPlanData();
