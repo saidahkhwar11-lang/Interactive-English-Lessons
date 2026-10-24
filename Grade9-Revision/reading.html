@@ -34,8 +34,16 @@ if(old&&Array.isArray(old.best)&&old.best.length===2){p.best[0]=old.best[0];p.be
 name=localStorage.getItem(KEY+'-name')||localStorage.getItem('g9-reading-eot1-v1-name')||''}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){E('warning').classList.remove('hidden')}}
 function saveName(){name=E('student').value;try{localStorage.setItem(KEY+'-name',name)}catch(e){E('warning').classList.remove('hidden')}}
-function homeRefresh(){E('student').value=name;E('marks').textContent=p.best.reduce((a,b)=>a+b,0);E('points').textContent=p.best.reduce((a,b)=>a+b,0)*10;E('completed').textContent=p.done.filter(Boolean).length;E('tiles').innerHTML=D.map((d,i)=>`<div class="tile"><span class="chip">Part ${d.part} · Exam ${d.examNumber} · ${d.level} · ${d.marksPerQuestion*8} marks</span><h2>${esc(d.title)} — Exam ${d.examNumber}</h2><p>${d.textType} text · ${d.passage.trim().split(/\s+/).length} words · 8 questions</p><p>${p.done[i]?'✓ Completed':p.access[d.part==='3A'?0:1]?'Available':'🔒 Locked'} · Best: ${p.best[i]}/${d.marksPerQuestion*8}</p><button class="btn" onclick="${p.access[d.part==='3A'?0:1]?'openLesson('+i+')':'unlock('+(d.part==='3A'?0:1)+')'}">${p.access[d.part==='3A'?0:1]?(drafts[i]?'Resume with lesson password →':'Open / Repeat →'):'Enter topic code'}</button></div>`).join('')}
-function unlock(i){let code=prompt('Enter the lesson password for Reading Part '+(i===0?'3A':'3B'));if(code===null)return;if(code.trim()!==CODES[i]){alert('Incorrect code. Ask your teacher.');return}p.access[i]=true;save();homeRefresh();alert('Lesson unlocked.')}
+function homeRefresh(){
+ E('student').value=name;E('student').readOnly=true;
+ E('marks').textContent=p.best.reduce((a,b)=>a+b,0);
+ E('points').textContent=p.best.reduce((a,b)=>a+b,0)*10;
+ E('completed').textContent=p.done.filter(Boolean).length;
+ E('tiles').innerHTML=D.map((d,i)=>{
+ const allowed=!!window.Grade9Gate?.isOpen('reading',i);
+ return `<div class="tile"><span class="chip">Part ${d.part} · Exam ${d.examNumber} · ${d.level} · ${d.marksPerQuestion*8} marks</span><h2>${esc(d.title)} — Exam ${d.examNumber}</h2><p>${d.textType} text · ${d.passage.trim().split(/\\s+/).length} words · 8 questions</p><p>${p.done[i]?'✓ Completed':allowed?'Available':'🔒 Waiting for teacher'} · Best: ${p.best[i]}/${d.marksPerQuestion*8}</p><button class="btn" onclick="${allowed?'openLesson('+i+')':'window.Grade9Gate.notify()'}">${allowed?(drafts[i]?'Resume saved exam →':'Open / Repeat →'):'🔒 Waiting for teacher'}</button></div>`;
+ }).join('');
+}
 function makeOrder(i){order[i]=D[i].questions.map(()=>{let a=[0,1,2];for(let j=2;j>0;j--){let k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a})}
 const RESUME_KEY=KEY+'-reading-drafts-v1';
 let drafts={};
@@ -52,19 +60,13 @@ function clearDraft(i){
 function leaveExam(){
  saveDraft();stopTimer();back();
 }
-function requestResumeCode(i){
- const part=D[i].part==='3A'?0:1;
- const code=prompt('Enter your Reading Part '+D[i].part+' lesson password to resume this exam:');
- if(code===null)return false;
- if(code.trim()!==CODES[part]){alert('Incorrect lesson password. Ask your teacher.');return false}
- return true;
-}
+function requestResumeCode(i){return true}
 let questionPage=0;
 function openLesson(i){
  const part=D[i].part==='3A'?0:1;
- if(!p.access[part])return unlock(part);
+ if(!window.Grade9Gate?.isOpen('reading',i))return window.Grade9Gate?.notify();
  const draft=drafts[i];
- if(draft&&!requestResumeCode(i))return;
+ 
  n=i;
  if(draft){
    s=Number.isInteger(draft.slide)?Math.max(0,Math.min(5,draft.slide)):0;
@@ -152,4 +154,7 @@ html.exam-guard-locked{overflow:hidden!important}
 .exam-guard-banner{display:none!important;position:fixed;bottom:12px;right:12px;z-index:9998;background:#fff6e1;color:#60471c;border:1px solid #e7cb8b;padding:10px 14px;border-radius:11px;font:14px Arial,sans-serif;max-width:300px;box-shadow:0 5px 18px #14234822}
 body.exam-guard-in-progress,body.exam-guard-in-progress *:not(input):not(textarea){-webkit-user-select:none!important;user-select:none!important}
 @media print{.exam-guard-shield,.exam-guard-banner{display:none!important}}
-</style></html>
+</style><script src="student-gate.js"></script><script>
+document.addEventListener('grade9-ready',e=>{name=e.detail.full_name;const input=document.getElementById('student');if(input){input.value=name;input.readOnly=true}saveName();homeRefresh()});
+document.addEventListener('grade9-controls-updated',()=>homeRefresh());
+</script></html>
