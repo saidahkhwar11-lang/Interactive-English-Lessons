@@ -157,4 +157,4 @@ body.exam-guard-in-progress,body.exam-guard-in-progress *:not(input):not(textare
 </style><script src="student-gate.js"></script><script>
 document.addEventListener('grade9-ready',e=>{name=e.detail.full_name;const input=document.getElementById('student');if(input){input.value=name;input.readOnly=true}saveName();homeRefresh()});
 document.addEventListener('grade9-controls-updated',()=>homeRefresh());
-</script></html>
+document.addEventListener('grade9-teacher-preview',()=>{const idx=Number(new URLSearchParams(location.search).get('lesson'));if(Number.isInteger(idx)&&idx>=0&&idx<6){homeRefresh();openLesson(idx)}});</script></html>
