@@ -240,5 +240,4 @@ document.addEventListener('keydown',e=>{if(guardLocked)return;
  if(e.key==='PrintScreen'||e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(key))){block(e)}
 },true);
 })();
-</script></html>
-<script src="student-gate.js"></script><script>document.addEventListener('grade9-ready',e=>{const input=document.getElementById('studentName');if(input){input.value=e.detail.full_name;input.readOnly=true;saveName()}refreshLibrary()});document.addEventListener('grade9-controls-updated',()=>refreshLibrary());</script>
+</script><script src="student-gate.js"></script><script>document.addEventListener('grade9-ready',e=>{const input=document.getElementById('studentName');if(input){input.value=e.detail.full_name;input.readOnly=true;saveName()}refreshLibrary()});document.addEventListener('grade9-controls-updated',()=>refreshLibrary());</script></html>
