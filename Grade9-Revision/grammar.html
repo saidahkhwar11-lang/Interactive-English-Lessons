@@ -1,0 +1,250 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grade 9 Grammar Library</title><style>body{margin:0;background:#edf1fa;color:#24304b;font:20px Arial}*{box-sizing:border-box}button{cursor:pointer;font:inherit}.btn{border:0;border-radius:11px;padding:12px 16px;background:#6d57d2;color:white;font-weight:bold}.light{background:white;color:#6754bd;border:1px solid #d7ddeb}.hero{background:linear-gradient(110deg,#35296e,#755cda);color:white;padding:35px}.hero h1{font-size:50px;margin:8px 0}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:17px;padding:25px}.tile,.slide{background:white;border:1px solid #e0e5f1;border-radius:21px;padding:25px;box-shadow:0 7px 24px #28345b10}.tile h2{font-size:27px}.tile p{color:#65728d}.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}aside{background:#1d2a4a;color:white;padding:17px 12px}aside button{width:100%;text-align:left;margin:3px 0;background:transparent;color:#d9e1f4;border:0;padding:13px;border-radius:10px;font-size:16px}aside button.active{background:#ffffff2c}main{padding:14px 24px;min-width:0}.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.tools button{font-size:15px}.clock{font-size:26px;font-weight:bold;color:#6551c3}.slide{min-height:calc(100vh - 155px);padding:clamp(24px,3vw,45px)}.slide h1{font-size:calc(48px * var(--scale,1));margin:10px 0 24px}.slide h2{font-size:calc(28px * var(--scale,1))}.slide p{font-size:calc(22px * var(--scale,1));line-height:1.5}.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.card{background:#edf4ff;border-radius:16px;padding:23px}.card:nth-child(2){background:#e9f8f0}.q{background:#f9fbff;border:1px solid #dfe5f0;border-radius:15px;padding:19px;margin:13px 0}.stem{font-size:calc(23px * var(--scale,1));font-weight:bold;margin-bottom:12px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.choice{border:2px solid #dce2ec;background:white;border-radius:12px;padding:14px;text-align:left;font-size:calc(21px * var(--scale,1))}.selected{border-color:#745bd8;background:#f0ecff}.correct{border-color:#25a877;background:#e4f8ed}.email{font-size:calc(22px * var(--scale,1));line-height:1.7;padding:24px;border:2px solid #d9e4f6;border-radius:17px;background:#f8fbff}.email b{color:#6955bb}.note{padding:15px;background:#f0edff;border-left:5px solid #745bd8;border-radius:10px;font-size:20px;margin:18px 0}.feedback{background:#e5f7ee;color:#206d4b;border-radius:11px;padding:12px;margin-top:10px}.footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.footer button:disabled{opacity:.4}.focus .app{grid-template-columns:1fr}.focus aside{display:none}.hidden{display:none}.score{font-size:26px;font-weight:bold;background:#e5f7ee;padding:18px;border-radius:12px;margin:14px 0}.kicker{color:#6c56c8;font-weight:bold;letter-spacing:1px;font-size:15px}.progress{height:7px;background:#dde3f0;margin:10px 0;border-radius:6px}.progress div{height:100%;background:#6e59d6}@media(max-width:900px){.grid,.choices{grid-template-columns:1fr}.app{grid-template-columns:180px 1fr}} .dashboard{margin:22px 25px 0;background:white;border:1px solid #e0e4f2;border-radius:19px;padding:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}.dashboard>div:not(.progress){display:flex;flex-direction:column;gap:4px}.dashboard strong{font-size:34px;color:#6751c7}.dashboard span{font-size:15px;color:#68758d}.tile-stats{font-size:16px;font-weight:bold;color:#6253b6;margin:15px 0}.locked-tile{opacity:.62}.tile .btn:disabled{opacity:.55;cursor:not-allowed}.finish-card{margin:22px 25px 0;background:#e8f7ee;border:1px solid #b6e2c8;border-radius:18px;padding:22px}.finish-card h2{margin:0;font-size:28px}.finish-card p{font-size:18px}.tile .btn{width:100%}@media print{.tiles,.hero,.dashboard,.tools,.app{display:none!important}.finish-card{display:block!important}}  .studentbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:14px 25px}.studentbar label{font-size:16px;font-weight:bold}.studentbar input{display:block;margin-top:6px;padding:12px 14px;border:1px solid #cbd5e5;border-radius:11px;font-size:18px;min-width:260px}.report-panel{background:white;border:1px solid #dce4f0;border-radius:19px;margin:14px 25px;padding:25px}.report-title h2{font-size:30px}.report-table{width:100%;border-collapse:collapse;font-size:17px}.report-table th,.report-table td{border-bottom:1px solid #dfe5f0;padding:13px;text-align:left}.report-table thead,.report-table tfoot{background:#eeedfa}.report-panel>p{font-size:19px}@media print{body *{visibility:hidden!important}#reportPanel,#reportPanel *{visibility:visible!important}#reportPanel{display:block!important;position:absolute;top:0;left:0;width:100%;margin:0;border:0}.no-print{display:none!important}}  
+.report-open{overflow:hidden}
+.report-panel{position:fixed!important;inset:3vh 4vw!important;z-index:9999;overflow:auto;max-width:none!important;margin:0!important;padding:25px 30px!important;box-shadow:0 0 0 100vmax rgba(22,31,56,.65),0 20px 60px #14234855;border-radius:20px}
+.report-head{position:sticky;top:-25px;z-index:5;background:white;border-bottom:1px solid #e0e5f0;display:flex;align-items:center;justify-content:space-between;padding:12px 0 18px;gap:16px;font-size:15px;font-weight:900;color:#6552bf}
+.storage-warning{margin:12px 25px;padding:14px 18px;background:#fff2d8;border:1px solid #e7c67e;border-radius:12px;font-size:16px;color:#674800}
+@media(max-width:650px){.report-panel{inset:1vh 2vw!important;padding:16px!important}.report-head{top:-16px}}
+@media print{.report-open{overflow:visible}.report-panel{position:static!important;inset:auto!important;overflow:visible!important;box-shadow:none!important;padding:0!important}}
+
+/* Compact, one-sheet student report print layout */
+@page { size: A4 landscape; margin: 9mm; }
+@media print {
+ html,body{width:100%!important;height:auto!important;margin:0!important;padding:0!important;background:#fff!important;overflow:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ body *{visibility:hidden!important}
+ #reportPanel,#reportPanel *{visibility:visible!important}
+ #reportPanel{display:block!important;position:absolute!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;inset:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;font-family:Arial,sans-serif!important}
+ #reportPanel .report-head,#reportPanel button,#reportPanel .no-print{display:none!important}
+ #reportPanel .report-title{margin:0 0 6px!important;padding:0!important}
+ #reportPanel .report-title h2{font-size:19pt!important;line-height:1.1!important;margin:0 0 7px!important;color:#24304b!important}
+ #reportPanel .report-title p{font-size:10pt!important;line-height:1.2!important;margin:2px 0!important}
+ #reportPanel .report-table{width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:9pt!important;line-height:1.1!important;margin:6px 0!important}
+ #reportPanel .report-table th,#reportPanel .report-table td{font-size:9pt!important;padding:5px 6px!important;line-height:1.1!important;overflow-wrap:anywhere!important;border-bottom:1px solid #d8deea!important}
+ #reportPanel .report-table th:first-child,#reportPanel .report-table td:first-child{width:34%!important}
+ #reportPanel .report-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ #reportPanel .report-table thead{display:table-header-group!important}
+ #reportPanel .report-table tfoot{display:table-row-group!important}
+ #reportPanel > p{font-size:10pt!important;line-height:1.2!important;margin:5px 0!important}
+ #reportPanel .small{font-size:8pt!important}
+ .finish-card,.hero,.dashboard,.tiles,.studentbar,.storage-warning,.app{display:none!important}
+}
+</style><div id="home"><div class="hero"><b>GRADE 9 GENERAL · END-OF-TERM 1</b><h1>Grammar Lesson Library</h1><p>7 lessons · Full screen · Slide timers · Exam-style student answers</p></div><div class="dashboard"><div><strong id="pointsTotal">0</strong><span>⭐ Total revision points</span></div><div><strong id="completedTotal">0</strong><span>Lessons completed / 7</span></div><div class="progress" style="width:100%;margin:4px 0"><div id="overallBar"></div></div></div><div id="finishCard" class="finish-card hidden"><h2>🏆 Grammar Champion!</h2><p>You completed all seven Grade 9 grammar lessons. Your revision points are saved in this browser.</p><button class="btn light" onclick="window.print()">Print your achievement</button></div><div class="studentbar"><label>Student name <input id="studentName" placeholder="Enter your name" oninput="saveName()" autocomplete="name"></label><span style="font-size:15px;color:#64728d">Ask your teacher for each lesson’s access code.</span><button class="btn light" onclick="renderReport()">View my report</button></div><div id="reportPanel" class="report-panel hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Student revision report"></div><div id="storageWarning" class="storage-warning hidden">This browser is blocking local saving. Your name and points may not be retained. Open the file in a regular browser window and allow site storage.</div><div id="tiles" class="tiles"></div><p style="padding:0 25px;font-size:15px">Original practice content aligned with the exam format, not an official exam paper. Works offline.</p></div><div id="lesson" class="hidden"><div class="app"><aside><h2>✦ Grammar Studio</h2><button onclick="home()">← All lessons</button><div id="agenda"></div></aside><main><div class="tools"><b id="tag" style="margin-right:auto"></b><span id="clock" class="clock"></span><button class="btn light" onclick="timerToggle()" id="timerBtn">▶ Timer</button><button class="btn light" onclick="timerReset()">↻</button><button class="btn light" onclick="document.body.classList.toggle('focus')">☰ Agenda</button><button class="btn light" onclick="font(.1)">A+</button><button class="btn light" onclick="font(-.1)">A−</button><button class="btn light" onclick="full()">⛶ Full screen</button></div><div class="progress"><div id="bar"></div></div><section class="slide" id="slide"></section><div class="footer"><button class="btn light" id="prev" onclick="go(s-1)">← Previous</button><span id="count"></span><button class="btn" id="next" onclick="go(s+1)">Next →</button></div></main></div></div><script>const L=[{"title": "Verb Patterns", "code": "G.19.2", "subtitle": "to-infinitive / -ing", "theme": "Getting There · Places in a City", "rule1": "plan, decide, want, hope, need", "rule2": "enjoy, avoid, suggest, finish, keep", "example1": "We decided to visit the museum.", "example2": "She enjoys exploring the city.", "passage": "Dear Sara, Our class has decided (1) ___ the new community library next Thursday. Our teacher hopes (2) ___ before nine o’clock, so we will meet at the bus station early. Many students enjoy (3) ___ around the old neighbourhood and learning about its history. However, our teacher suggested (4) ___ public transport because the roads near the shopping mall are usually busy. We also need (5) ___ a short survey about the services available in the area. Please bring your notebook and comfortable shoes. The library has useful facilities, including study rooms, a computer area, and a quiet reading space. After our visit, we can explore the nearby park and discuss what makes a neighbourhood convenient. We will meet outside the school gate at eight o’clock and travel together. If you have questions about the route or destination, please ask me before Wednesday. Best wishes, Mona.", "exam": [{"options": ["to visit", "visit", "visiting"], "correct": 0}, {"options": ["to arrive", "arriving", "arrive"], "correct": 0}, {"options": ["walking", "to walk", "walk"], "correct": 0}, {"options": ["using", "to use", "use"], "correct": 0}, {"options": ["to complete", "completing", "complete"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["plan", "decide", "want", "hope", "need"], "practice": [{"options": ["to visit", "visit", "visiting"], "correct": 0}, {"options": ["to arrive", "arriving", "arrive"], "correct": 0}, {"options": ["walking", "to walk", "walk"], "correct": 0}]}, {"title": "Future Plans", "code": "G.15.2", "subtitle": "going to", "theme": "Living Together, Learning Together · Getting There", "rule1": "am/is/are going to + base verb", "rule2": "am/is/are not going to + base verb", "example1": "We are going to visit the library.", "example2": "She isn't going to drive.", "passage": "Dear Sara, Our class (1) ___ visit the city centre on Thursday. I (2) ___ bring a street map so that we can find the library easily. My two friends (3) ___ travel by bus because the station is close to their homes. Our teacher (4) ___ meet us near the shopping mall at nine o’clock. We (5) ___ explore the industrial area because it is too far away. Instead, we will walk through the peaceful residential neighbourhood. The city has several useful facilities, including a community centre, a sports hall, and a public park. Please wear comfortable shoes and bring water. We can stop at the museum after lunch if we have enough time. I will send everyone the route and meeting point later today. Let me know if you need further directions. I hope the weather will be pleasant and that we will all enjoy the visit. See you soon, Fatima.", "exam": [{"options": ["is going to", "are going to", "going to"], "correct": 0}, {"options": ["am going to", "is going to", "are going to"], "correct": 0}, {"options": ["are going to", "is going to", "am going to"], "correct": 0}, {"options": ["is going to", "are going to", "am going to"], "correct": 0}, {"options": ["aren't going to", "isn't going to", "am not going to"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["am/is/are going to + base verb"], "practice": [{"options": ["is going to", "are going to", "going to"], "correct": 0}, {"options": ["am going to", "is going to", "are going to"], "correct": 0}, {"options": ["are going to", "is going to", "am going to"], "correct": 0}]}, {"title": "Coordinating Conjunctions", "code": "G.6.1", "subtitle": "and / but / or / so", "theme": "Living Together, Learning Together · Getting There", "rule1": "and = addition; but = contrast", "rule2": "or = choice; so = result", "example1": "The library is modern and convenient.", "example2": "The road is busy, so we will take the bus.", "passage": "Dear Students, The city library is convenient, (1) ___ it is close to the bus station. The building is old, (2) ___ its facilities are modern and comfortable. You can travel by bus (3) ___ walk from the shopping mall. There is a busy road nearby, (4) ___ please use the pedestrian crossing. The library has a quiet study room (5) ___ a computer area for visitors. Our group will meet outside the main entrance at nine o’clock. Please bring your notebooks and a copy of the route map. After the tour, we will complete a short survey about the services available in the neighbourhood. The staff will explain how residents use the library, and we can ask questions about opening hours. Remember to be polite when speaking to the staff and to keep the reading areas peaceful. We hope you enjoy the visit. Kind regards, Your Teacher.", "exam": [{"options": ["and", "but", "or"], "correct": 0}, {"options": ["but", "so", "or"], "correct": 0}, {"options": ["or", "so", "and"], "correct": 0}, {"options": ["so", "but", "or"], "correct": 0}, {"options": ["and", "but", "so"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["and", "but", "or", "so"], "practice": [{"options": ["and", "but", "or"], "correct": 0}, {"options": ["but", "so", "or"], "correct": 0}, {"options": ["or", "so", "and"], "correct": 0}]}, {"title": "Adverbial Linkers", "code": "G.2.5", "subtitle": "however / therefore / first / finally", "theme": "Living Together, Learning Together · Getting There", "rule1": "however = contrast; therefore = result", "rule2": "first / next / finally = sequence", "example1": "The road is closed. Therefore, we need a new route.", "example2": "The route is longer. However, it is quieter.", "passage": "Dear Students, We have changed the route for our visit to the city centre. The main road is closed for repairs. (1) ___, we will use the road behind the shopping mall. The new route is longer. (2) ___, it is usually quieter and has less traffic. (3) ___, please check the map attached to this email before leaving home. Next, travel to the central bus station and wait near the information desk. Some buses may arrive late because of the roadworks. (4) ___, you should leave home a little earlier than usual. Our teacher will meet us at the station and guide us to the museum. (5) ___, we will return to school together at the end of the visit. Please contact me if you need help finding the meeting point. I hope everyone has a safe and enjoyable journey. Best wishes, Hala.", "exam": [{"options": ["Therefore", "However", "Meanwhile"], "correct": 0}, {"options": ["However", "Therefore", "Finally"], "correct": 0}, {"options": ["First", "Finally", "Therefore"], "correct": 0}, {"options": ["Therefore", "However", "Meanwhile"], "correct": 0}, {"options": ["Finally", "However", "For example"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["however", "therefore", "first", "finally"], "practice": [{"options": ["Therefore", "However", "Meanwhile"], "correct": 0}, {"options": ["However", "Therefore", "Finally"], "correct": 0}, {"options": ["First", "Finally", "Therefore"], "correct": 0}]}, {"title": "Indirect Questions", "code": "G.17.4", "subtitle": "polite questions", "theme": "Living Together, Learning Together · Getting There", "rule1": "Could you tell me + statement order", "rule2": "Do you know if/whether + statement order", "example1": "Could you tell me where the station is?", "example2": "Do you know if the museum is open?", "passage": "Dear Receptionist, Our class is planning a visit to your museum next week, and I would like to ask a few questions. Could you tell me where (1) ___? Some students will travel by bus, so I also need to know how (2) ___ from the central bus station. Do you know if (3) ___ on Thursdays? We hope to arrive early and have enough time to explore the exhibitions. Could you explain when (4) ___? Our teacher also wants to know whether (5) ___ a quiet room where students can complete their worksheets. We are especially interested in learning about the history of our city and its residential neighbourhoods. Please let us know if we need to book tickets in advance. Thank you for your help. We look forward to visiting your museum and learning more about the local community. Kind regards, Sara.", "exam": [{"options": ["the entrance is", "is the entrance", "does the entrance"], "correct": 0}, {"options": ["we can get there", "can we get there", "do we get there"], "correct": 0}, {"options": ["the museum is open", "is the museum open", "does the museum open"], "correct": 0}, {"options": ["the tour begins", "does the tour begin", "begins the tour"], "correct": 0}, {"options": ["there is", "is there", "does there"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["polite questions"], "practice": [{"options": ["the entrance is", "is the entrance", "does the entrance"], "correct": 0}, {"options": ["we can get there", "can we get there", "do we get there"], "correct": 0}, {"options": ["the museum is open", "is the museum open", "does the museum open"], "correct": 0}]}, {"title": "Prepositions of Place", "code": "G.12.1", "subtitle": "in / on / at / next to / between", "theme": "Living Together, Learning Together · Getting There", "rule1": "in = inside; on = street or surface; at = point", "rule2": "next to = beside; between = two landmarks", "example1": "The hotel is on Central Street.", "example2": "The park is between the school and hospital.", "passage": "Hi Mona, Our group will meet (1) ___ the entrance to the shopping mall at nine o’clock. The mall is (2) ___ Central Street, close to the main bus station. You will see a small café (3) ___ the library, so it is easy to recognise. The information desk is (4) ___ the ground floor of the mall, just inside the main doors. The public park is (5) ___ the library and the sports centre. After everyone arrives, we will walk through the residential neighbourhood and complete our survey about local services. Please check the street map before you leave home. If you cannot find the meeting point, call me and I will explain the route. Remember to bring your notebook and a bottle of water. I hope the traffic will be light so that everyone arrives on time. See you soon, Sara.", "exam": [{"options": ["at", "between", "on"], "correct": 0}, {"options": ["on", "in", "between"], "correct": 0}, {"options": ["next to", "between", "into"], "correct": 0}, {"options": ["on", "between", "at"], "correct": 0}, {"options": ["between", "at", "in"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["in", "on", "at", "next to", "between"], "practice": [{"options": ["at", "between", "on"], "correct": 0}, {"options": ["on", "in", "between"], "correct": 0}, {"options": ["next to", "between", "into"], "correct": 0}]}, {"title": "Dependent Prepositions", "code": "G.12.4", "subtitle": "interested in / depend on / good at", "theme": "Living Together, Learning Together · Getting There", "rule1": "adjective + preposition: interested in; good at", "rule2": "verb + preposition: depend on; look for", "example1": "Sara is interested in city planning.", "example2": "We depend on public transport.", "passage": "Dear Students, Next week, we will complete a survey about transport and services in our neighbourhood. Many residents depend (1) ___ public buses to travel to work or school. Our class is interested (2) ___ learning how convenient local services are. Sara is good (3) ___ reading street maps, so she will help us plan the route. We will look (4) ___ the main entrance to the community centre when we arrive. Some residents are worried (5) ___ heavy traffic near the shopping mall. Please ask polite questions and record the answers carefully. We want to understand which facilities are most useful to families, students, and older people. After the survey, we will return to school and compare our results. Remember to bring your notebook and arrive at the bus station on time. If you need help finding the destination, ask the teacher for directions before leaving. Best wishes, Mona.", "exam": [{"options": ["on", "in", "for"], "correct": 0}, {"options": ["in", "at", "on"], "correct": 0}, {"options": ["at", "in", "on"], "correct": 0}, {"options": ["for", "to", "on"], "correct": 0}, {"options": ["about", "in", "at"], "correct": 0}], "duration": [3, 3, 5, 6, 7, 6, 10, 3], "vocab": ["interested in", "depend on", "good at"], "practice": [{"options": ["on", "in", "for"], "correct": 0}, {"options": ["in", "at", "on"], "correct": 0}, {"options": ["at", "in", "on"], "correct": 0}]}];
+const practiceStems=[["We decided ___ the community library.", "Our teacher hopes ___ before nine o’clock.", "Many students enjoy ___ around the neighbourhood."], ["Our class ___ visit the city centre.", "I ___ bring a street map.", "My two friends ___ travel by bus."], ["The library is convenient, ___ it is close to the bus station.", "The building is old, ___ its facilities are modern.", "You can travel by bus ___ walk from the shopping mall."], ["The road is closed. ___, we will use another route.", "The route is longer. ___, it is quieter.", "___, check the street map before leaving."], ["Could you tell me where ___?", "I need to know how ___ from the bus station.", "Do you know if ___ on Thursdays?"], ["We will meet ___ the shopping mall entrance.", "The mall is ___ Central Street.", "There is a café ___ the library."], ["Many residents depend ___ public buses.", "Our class is interested ___ learning about city services.", "Sara is good ___ reading street maps."]];
+const stages=['Welcome','Objectives','Grammar Rule','Guided Practice','Exam-Style Practice','Exit Ticket'],mins=[2,3,6,8,10,3];
+const focus=[{"objectives": ["Distinguish verbs followed by to + infinitive from verbs followed by -ing.", "Complete sentences using the correct verb pattern after common verbs."], "criteria": ["I can use to visit after decide and visiting after enjoy.", "I can choose the correct verb form after want, hope, avoid and suggest."]}, {"objectives": ["Form affirmative and negative sentences about future plans using am/is/are going to.", "Use going to + base verb with the correct subject."], "criteria": ["I can describe my future plans using going to.", "I can choose am, is or are and use the base verb correctly."]}, {"objectives": ["Use and, but, or and so to link ideas with addition, contrast, choice and result.", "Choose the conjunction that expresses the intended meaning."], "criteria": ["I can join ideas with and, but, or or so.", "I can explain whether the connection shows a contrast, choice or result."]}, {"objectives": ["Use however and therefore to connect contrasting ideas and results.", "Use sequencing linkers such as first and finally to organise instructions."], "criteria": ["I can show contrast with however and results with therefore.", "I can order travel instructions using first and finally."]}, {"objectives": ["Form polite indirect questions using Could you tell me…? and Do you know…?", "Use statement word order and if/whether in indirect questions."], "criteria": ["I can ask politely where the bus station is.", "I can form indirect questions without reversing the subject and verb."]}, {"objectives": ["Use in, on and at to describe places and meeting points.", "Use next to and between to describe the position of city landmarks."], "criteria": ["I can say where a place is using in, on or at.", "I can describe a landmark using next to or between."]}, {"objectives": ["Use the correct prepositions after common adjectives and verbs.", "Apply combinations such as interested in, good at, depend on and look for in context."], "criteria": ["I can use interested in and good at correctly.", "I can choose on after depend and for after look."]}];
+let n=0,s=0,sec=0,timer=null,answers={},submitted={},key={},scale=1,teacherUnlocked=false;
+const STORE='grade9-eot1-grammar-revision-v2';
+let progress={best:Array(7).fill(0),completed:Array(7).fill(false),guided:Array(7).fill(0)};
+try {const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved&&Array.isArray(saved.best)&&saved.best.length===7)progress=saved;}catch(e){}
+function saveProgress(){
+ try{localStorage.setItem(STORE,JSON.stringify(progress));}catch(e){storageWarning();}
+}
+function storageWarning(){
+ const banner=E('storageWarning');
+ if(banner)banner.classList.remove('hidden');
+}
+function points(i){return (progress.best[i]||0)+(progress.guided[i]||0)}
+function totalPoints(){return L.reduce((a,_,i)=>a+points(i),0)}
+const ACCESS_CODES=["G9-L1-CEDAR-4826", "G9-L2-NOVA-7319", "G9-L3-CORAL-2658", "G9-L4-MAPLE-9043", "G9-L5-ORBIT-5172", "G9-L6-PEARL-6834", "G9-L7-BLOOM-1497"];
+let access=Array(7).fill(false);
+try{const x=JSON.parse(localStorage.getItem(STORE+'-access')||'null');if(Array.isArray(x)&&x.length===7)access=x.map(Boolean)}catch(e){}
+function saveAccess(){try{localStorage.setItem(STORE+'-access',JSON.stringify(access))}catch(e){storageWarning();}}
+function isUnlocked(i){return access[i]===true}
+function refreshLibrary(){
+ E('tiles').innerHTML=L.map((x,i)=>`<div class="tile ${!isUnlocked(i)?'locked-tile':''}">
+ <div style="color:#6751b7;font-weight:900;font-size:14px">LESSON ${i+1} · ${x.code}</div>
+ <h2>${esc(x.title)}</h2><p>${esc(x.subtitle)}</p>
+ <div class="tile-stats">${progress.completed[i]?'✓ Completed':isUnlocked(i)?'Available for revision':'🔒 Teacher code required'} · ${points(i)} / 65 points</div>
+ <button class="btn" onclick="${isUnlocked(i)?'openLesson('+i+')':'unlockLesson('+i+')'}">${isUnlocked(i)?'Open / Repeat Lesson →':'🔒 Enter Lesson Code'}</button>
+ </div>`).join('');
+ E('pointsTotal').textContent=totalPoints();
+ E('completedTotal').textContent=progress.completed.filter(Boolean).length;
+ E('overallBar').style.width=(progress.completed.filter(Boolean).length/7*100)+'%';
+ E('finishCard').classList.toggle('hidden',!progress.completed.every(Boolean));
+}
+function unlockLesson(i){
+ const entered=prompt('Enter the access code shared by your teacher for Lesson '+(i+1)+':');
+ if(entered===null)return;
+ if(entered.trim()===ACCESS_CODES[i]){
+   access[i]=true;saveAccess();refreshLibrary();
+   alert('Lesson '+(i+1)+' unlocked. You can now begin or repeat it.');
+ }else alert('That code does not match Lesson '+(i+1)+'. Ask your teacher for the correct code.');
+}
+const E=id=>document.getElementById(id),esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function saveName(){
+ try{localStorage.setItem(STORE+'-name',E('studentName').value)}catch(e){storageWarning();}
+}
+function closeReport(){
+ E('reportPanel').classList.add('hidden');
+ E('reportPanel').setAttribute('aria-hidden','true');
+ document.body.classList.remove('report-open');
+}
+function renderReport(){
+ const name=E('studentName').value.trim()||'Student';
+ const rows=L.map((l,i)=>`<tr><td>${i+1}. ${esc(l.title)}</td><td>${progress.completed[i]?'Completed':'Not completed'}</td><td>${progress.guided[i]||0} / 15</td><td>${progress.best[i]||0} / 50</td><td>${points(i)} / 65</td></tr>`).join('');
+ const done=progress.completed.filter(Boolean).length;
+ E('reportPanel').innerHTML=`<div class="report-head"><span>STUDENT REVISION REPORT</span><button type="button" class="btn light no-print" id="closeReportTop" onclick="closeReport()" aria-label="Close report">✕ Close</button></div><div class="report-title"><h2>Grade 9 Grammar Revision Report</h2><p><b>Student:</b> ${esc(name)}</p><p><b>Lessons completed:</b> ${done} / 7</p></div><div style="overflow:auto"><table class="report-table"><thead><tr><th>Lesson</th><th>Status</th><th>Guided</th><th>Exam points</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><th>Total</th><th>${done}/7</th><th>${progress.guided.reduce((a,b)=>a+b,0)} / 105</th><th>${progress.best.reduce((a,b)=>a+b,0)} / 350</th><th>${totalPoints()} / 455</th></tr></tfoot></table></div><p><b>Overall result:</b> ${(totalPoints()/455*100).toFixed(1)}%</p><p class="small">Scores reflect each lesson's highest earned guided-practice and exam points. Incomplete lessons are shown as incomplete.</p><button class="btn" onclick="window.print()">Print / Save report as PDF</button> <button class="btn light no-print" onclick="closeReport()">Close report</button>`;
+ E('reportPanel').classList.remove('hidden');
+ E('reportPanel').setAttribute('aria-hidden','false');
+ document.body.classList.add('report-open');
+ E('closeReportTop').focus();
+
+}
+refreshLibrary();
+try{
+ E('studentName').value=localStorage.getItem(STORE+'-name')||'';
+ const testKey=STORE+'-storage-test';
+ localStorage.setItem(testKey,'ok');
+ if(localStorage.getItem(testKey)!=='ok')storageWarning();
+ localStorage.removeItem(testKey);
+}catch(e){storageWarning();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!E('reportPanel').classList.contains('hidden'))closeReport()});
+
+function openLesson(i){if(!isUnlocked(i)){unlockLesson(i);return;}n=i;s=0;if(!optionOrder[n+'e'])makeOrder(n+'e',L[n].exam.length);if(!optionOrder[n+'p'])makeOrder(n+'p',L[n].practice.length);E('home').classList.add('hidden');E('lesson').classList.remove('hidden');render()}
+function finishRevision(){home();renderReport()}
+function home(){refreshLibrary();stop();E('lesson').classList.add('hidden');E('home').classList.remove('hidden');scrollTo(0,0)}
+function go(i){
+if(i<0||i>=6)return;
+if(i===5&&!submitted[n]&&!progress.completed[n]){
+ alert('Complete and submit all five exam questions before opening the Exit Ticket.');
+ return;
+}
+s=i;
+if(i===5&&submitted[n]&&!progress.completed[n]){
+ progress.completed[n]=true;saveProgress();
+}
+render();
+}
+function render(){let x=L[n];E('tag').textContent=`Lesson ${n+1} · ${x.code} · ${x.title}`;E('agenda').innerHTML=stages.map((t,i)=>`<button class="${s===i?'active':''}" onclick="go(${i})">${i+1}. ${t}<br><small>${mins[i]} minutes</small></button>`).join('');E('bar').style.width=(s+1)/6*100+'%';E('count').textContent=`Slide ${s+1} / 6`;E('prev').disabled=s===0;E('next').disabled=s===5;stop();sec=mins[s]*60;clock();draw();scrollTo(0,0)}
+function draw(){let x=L[n],h=`<div class="kicker">Grade 9 General · ${x.code} · ${esc(x.theme)}</div>`,b='';
+if(s===0)b=`<h1>${esc(x.title)}</h1><div class="grid"><div class="card"><h2>Grammar focus</h2><p>${esc(x.subtitle)}</p></div><div class="card"><h2>Today's mission</h2><p>Learn the rule, choose the correct form, and practise the exam format.</p></div></div>`;
+if(s===1)b=`<h1>Objectives & Success Criteria</h1><div class="grid"><div class="card"><h2>Learning Objectives</h2>${focus[n].objectives.map((o,j)=>`<p>${j+1}. ${esc(o)}</p>`).join('')}</div><div class="card"><h2>Success Criteria — I can…</h2>${focus[n].criteria.map(c=>`<p>✓ ${esc(c)}</p>`).join('')}</div></div>`;
+if(s===2)b=`<h1>Grammar Rule</h1><div class="grid"><div class="card"><h2>Pattern A</h2><p><b>${esc(x.rule1)}</b></p><p>${esc(x.example1)}</p></div><div class="card"><h2>Pattern B</h2><p><b>${esc(x.rule2)}</b></p><p>${esc(x.example2)}</p></div></div><div class="note">Look carefully at the context before choosing the grammar form.</div>`;
+if(s===3)b=`<h1>Guided Practice</h1><div class="note">Choose A, B, or C. Earn up to 15 points for three correct answers. You can practise again!</div><div id="qs"></div><button class="btn light" onclick="resetPractice()">Reset answers</button>`;
+if(s===4)b=`<h1>Exam-Style Grammar</h1><div class="note">Read the email and answer five A/B/C questions. Earn 10 revision points for each correct answer. Submit, then complete the Exit Ticket. Your teacher will provide the next lesson's access code.</div><div class="email">${esc(x.passage).replace(/\(\d\) ___/g,m=>'<b>'+m+'</b>')}</div><div id="qs"></div><button class="btn" id="submit" onclick="submit()">Submit answers</button> <button class="btn light" onclick="resetExam()">Try again</button> <div id="score"></div><p style="font-size:15px;color:#64728a">Original practice text; same five-gap, three-option, two-mark format as the EOT grammar specification.</p>`;
+if(s===5)b=`<h1>Exit Ticket</h1><div class="card"><h2>Show what you learned</h2><p>1. Write one correct sentence using today's grammar.</p><p>2. Explain the rule to a partner.</p><p>3. Write another sentence about places or transport.</p></div>`;
+if(s===5)b+=`<div class="score">Your lesson points: ${points(n)} / 65 ⭐</div><div class="note">${progress.completed[n]?'✓ Lesson completed. The next lesson still requires its own teacher code.':'Submit the exam activity to finish this lesson.'}</div><button class="btn" ${!progress.completed[n]?'disabled':''} onclick="home()">Return to lesson library →</button>`;
+E('slide').innerHTML=h+b;if(s===3||s===4)questions()}
+let optionOrder={};
+function makeOrder(group,questionCount){
+ optionOrder[group]=Array.from({length:questionCount},()=> {
+  const a=[0,1,2];
+  for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}
+  return a;
+ });
+}
+function orderFor(group,count){if(!optionOrder[group]||optionOrder[group].length!==count)makeOrder(group,count);return optionOrder[group]}
+function correctAt(group,q,i){return orderFor(group,q.length)[i].indexOf(q[i].correct)}
+function questions(){
+ const x=L[n],isExam=s===4,group=n+(isExam?'e':'p'),a=answers[group]||{},q=isExam?x.exam:x.practice;
+ const locked=isExam&&submitted[n],order=orderFor(group,q.length);
+ E('qs').innerHTML=q.map((it,i)=>{
+  const correctDisplay=correctAt(group,q,i);
+  return `<div class="q"><div class="stem">${isExam?'Question '+(i+1):esc(practiceStems[n][i])}${isExam?' · 2 marks':''}</div>
+  <div class="choices">${order[i].map((original,j)=>`<button ${locked?'disabled':''}
+  class="choice ${a[i]===j?'selected':''} ${locked&&a[i]===j&&j===correctDisplay?'correct':''}"
+  onclick="choose(${i},${j})">${'ABC'[j]}. ${esc(it.options[original])}</button>`).join('')}</div>
+  ${!isExam&&a[i]!==undefined?`<div class="feedback">${a[i]===correctDisplay?'✓ Correct!':'Try again. Review the grammar rule and choose again.'}</div>`:''}
+  </div>`;
+ }).join('');
+ if(isExam){
+  E('submit').disabled=locked||Object.keys(a).length!==5;
+  const score=q.filter((it,i)=>a[i]===correctAt(group,q,i)).length;
+  E('score').innerHTML=locked?`<div class="score">Latest exam attempt: ${score*2} / 10 marks<br>⭐ Best revision points: ${points(n)} / 65</div>
+  <div class="note">Exam submitted. Open the Exit Ticket to complete this lesson. You may retry to improve your points.</div>`:'';
+ }
+}
+function choose(i,j){
+ const isExam=s===4,group=n+(isExam?'e':'p');
+ if(isExam&&submitted[n])return;
+ if(!answers[group])answers[group]={};
+ answers[group][i]=j;
+ if(!isExam){
+  const q=L[n].practice,correct=q.filter((it,k)=>answers[group][k]===correctAt(group,q,k)).length;
+  progress.guided[n]=Math.max(progress.guided[n]||0,correct*5);saveProgress();
+ }
+ questions();
+}
+function submit(){
+ const group=n+'e',a=answers[group]||{},q=L[n].exam;
+ if(Object.keys(a).length!==5)return;
+ submitted[n]=true;
+ const correct=q.filter((it,i)=>a[i]===correctAt(group,q,i)).length;
+ progress.best[n]=Math.max(progress.best[n]||0,correct*10);
+ saveProgress();questions();
+}
+function resetExam(){answers[n+'e']={};submitted[n]=false;makeOrder(n+'e',L[n].exam.length);questions()}
+function resetPractice(){answers[n+'p']={};makeOrder(n+'p',L[n].practice.length);questions()}
+function clock(){E('clock').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
+function stop(){clearInterval(timer);timer=null;E('timerBtn').textContent='▶ Timer'}
+function timerToggle(){if(timer){stop();return}E('timerBtn').textContent='Ⅱ Pause';timer=setInterval(()=>{if(sec>0){sec--;clock()}else stop()},1000)}
+function timerReset(){stop();sec=mins[s]*60;clock()}function font(d){scale=Math.max(.8,Math.min(1.6,scale+d));document.documentElement.style.setProperty('--scale',scale)}
+async function full(){if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}
+document.addEventListener('keydown',e=>{if(E('lesson').classList.contains('hidden'))return;if(e.key==='ArrowRight')go(s+1);if(e.key==='ArrowLeft')go(s-1)});
+</script><style>
+html.exam-guard-locked{overflow:hidden!important}
+.exam-guard-shield{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#1c294a,#322c6c);color:#fff;display:flex;align-items:center;justify-content:center;padding:22px;font-family:Arial,sans-serif}
+.exam-guard-panel{background:#fff;color:#24314c;max-width:540px;width:100%;padding:30px;border-radius:20px;box-shadow:0 24px 65px #10172c80;text-align:center}
+.exam-guard-panel h2{font-size:30px;margin:12px 0}.exam-guard-panel p{font-size:18px;line-height:1.5}
+.exam-guard-panel input{width:100%;padding:14px;border:2px solid #d6dded;border-radius:10px;font-size:19px;margin:12px 0}
+.exam-guard-panel button{background:#6652ca;border:0;color:white;border-radius:11px;padding:13px 19px;font-size:18px;font-weight:bold;cursor:pointer}
+.exam-guard-error{color:#a72c42;font-size:15px;min-height:23px}
+.exam-guard-banner{position:fixed;bottom:12px;right:12px;z-index:9998;background:#fff6e1;color:#60471c;border:1px solid #e7cb8b;padding:10px 14px;border-radius:11px;font:14px Arial,sans-serif;max-width:300px;box-shadow:0 5px 18px #14234822}
+body.exam-guard-in-progress,body.exam-guard-in-progress *:not(input):not(textarea){-webkit-user-select:none!important;user-select:none!important}
+@media print{.exam-guard-shield,.exam-guard-banner{display:none!important}}
+</style><script>
+(function(){
+'use strict';
+const GUARD_KEY='grade9-grammar-guard-v1';
+const TEACHER_CODE='123@123';
+const START_SLIDE=4;
+let guardActive=false,guardLocked=false,ignoreBlurUntil=Date.now()+900;
+function getState(){try{return JSON.parse(localStorage.getItem(GUARD_KEY)||'{}')}catch(e){return {}}}
+function saveState(state){try{localStorage.setItem(GUARD_KEY,JSON.stringify(state))}catch(e){}}
+function isSubmitted(){try{return !!submitted[n]}catch(e){return false}}
+function isExamSlide(){try{return !E('lesson').classList.contains('hidden') && s>=START_SLIDE && s<=4}catch(e){return false}}
+function shield(){
+ if(document.getElementById('examGuardShield'))return;
+ const d=document.createElement('div');d.id='examGuardShield';d.className='exam-guard-shield';
+ d.innerHTML='<div class="exam-guard-panel"><div style="font-size:42px">🔒</div><h2>Exam attempt closed</h2><p>The student left the active exam tab. The teacher can reopen the attempt. Previously saved scores remain unchanged. The interrupted attempt is not scored.</p><label for="guardCode" style="font-weight:bold">Teacher reopening password</label><input id="guardCode" type="password" autocomplete="off" placeholder="Enter teacher password"><div class="exam-guard-error" id="guardError"></div><button id="guardUnlock">Teacher: Reopen exam</button></div>';
+ document.body.appendChild(d);document.documentElement.classList.add('exam-guard-locked');
+ d.querySelector('#guardUnlock').addEventListener('click',()=>{
+  const v=d.querySelector('#guardCode').value;
+  if(v!==TEACHER_CODE){d.querySelector('#guardError').textContent='Incorrect password. Ask your teacher.';return}
+  guardLocked=false;guardActive=false;saveState({active:false,locked:false});d.remove();document.documentElement.classList.remove('exam-guard-locked');document.body.classList.remove('exam-guard-in-progress');
+  // Discard the interrupted attempt; teacher can begin a fresh one.
+  try{answers[n+'e']={};submitted[n]=false;makeOrder(n+'e',L[n].exam.length); }catch(e){}
+  try{go(3);}catch(e){}
+  ignoreBlurUntil=Date.now()+1000;
+ });
+ d.querySelector('#guardCode').addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('#guardUnlock').click()});
+}
+function lock(reason){if(guardLocked||!guardActive)return;guardLocked=true;guardActive=false;saveState({active:false,locked:true,reason:reason});shield()}
+function begin(){if(guardLocked)return;if(guardActive)return;guardActive=true;saveState({active:true,locked:false});document.body.classList.add('exam-guard-in-progress')}
+function finish(){if(!guardActive)return;guardActive=false;saveState({active:false,locked:false});document.body.classList.remove('exam-guard-in-progress')}
+// Browser refresh/close cannot be prevented. An unfinished attempt is marked closed on the next open.
+const prior=getState();if(prior.locked){guardLocked=true;saveState({active:false,locked:true});setTimeout(shield,0)}else if(prior.active){saveState({active:false,locked:false});try{answers[n+'e']={};submitted[n]=false;}catch(e){}}
+const oldRender=render;
+render=function(){if(guardLocked){shield();return}oldRender.apply(this,arguments);if(isExamSlide()&&!isSubmitted())begin()};
+const oldGo=go;
+go=function(target){if(guardLocked){shield();return}
+ if(guardActive && (target<START_SLIDE||target>4)){lock('Left exam area');return}
+ return oldGo.apply(this,arguments)};
+const oldSubmit=submit;
+submit=function(){if(guardLocked)return;const was=isSubmitted();const r=oldSubmit.apply(this,arguments);if(!was&&isSubmitted())finish();return r};
+const oldResetExam=resetExam;
+resetExam=function(){if(guardLocked)return;const r=oldResetExam.apply(this,arguments);begin();return r};
+const oldHome=home;
+home=function(){if(guardActive){lock('Left exam');return}return oldHome.apply(this,arguments)};
+
+window.addEventListener('pagehide',()=>{if(guardActive)saveState({active:false,locked:false,reason:'Unfinished attempt will restart after refresh'})});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&guardActive)lock('Switched away from exam')});
+// Do not lock on blur: file dialogs, browser UI and touch interactions can trigger false positives.
+function block(e){if(guardLocked)return;if(!guardActive && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;e.preventDefault();e.stopImmediatePropagation()}
+['copy','cut','paste','contextmenu','dragstart'].forEach(t=>document.addEventListener(t,block,true));
+document.addEventListener('keydown',e=>{if(guardLocked)return;
+ if(!guardActive&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;
+ const key=e.key.toLowerCase();if((e.ctrlKey||e.metaKey)&&['c','v','x','a','p','s','u'].includes(key)){block(e);return}
+ if(e.key==='PrintScreen'||e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(key))){block(e)}
+},true);
+})();
+</script></html>
