@@ -44,31 +44,24 @@ function storageWarning(){
 }
 function points(i){return (progress.best[i]||0)+(progress.guided[i]||0)}
 function totalPoints(){return L.reduce((a,_,i)=>a+points(i),0)}
-const ACCESS_CODES=["G9-L1-CEDAR-4826", "G9-L2-NOVA-7319", "G9-L3-CORAL-2658", "G9-L4-MAPLE-9043", "G9-L5-ORBIT-5172", "G9-L6-PEARL-6834", "G9-L7-BLOOM-1497"];
+const ACCESS_CODES=[];
 let access=Array(7).fill(false);
 try{const x=JSON.parse(localStorage.getItem(STORE+'-access')||'null');if(Array.isArray(x)&&x.length===7)access=x.map(Boolean)}catch(e){}
 function saveAccess(){try{localStorage.setItem(STORE+'-access',JSON.stringify(access))}catch(e){storageWarning();}}
-function isUnlocked(i){return access[i]===true}
+function isUnlocked(i){return !!window.Grade9Gate?.isOpen('grammar',i)}
 function refreshLibrary(){
  E('tiles').innerHTML=L.map((x,i)=>`<div class="tile ${!isUnlocked(i)?'locked-tile':''}">
  <div style="color:#6751b7;font-weight:900;font-size:14px">LESSON ${i+1} · ${x.code}</div>
  <h2>${esc(x.title)}</h2><p>${esc(x.subtitle)}</p>
- <div class="tile-stats">${progress.completed[i]?'✓ Completed':isUnlocked(i)?'Available for revision':'🔒 Teacher code required'} · ${points(i)} / 65 points</div>
- <button class="btn" onclick="${isUnlocked(i)?'openLesson('+i+')':'unlockLesson('+i+')'}">${isUnlocked(i)?'Open / Repeat Lesson →':'🔒 Enter Lesson Code'}</button>
+ <div class="tile-stats">${progress.completed[i]?'✓ Completed':isUnlocked(i)?'Available for revision':'🔒 Waiting for teacher'} · ${points(i)} / 65 points</div>
+ <button class="btn" onclick="${isUnlocked(i)?'openLesson('+i+')':'unlockLesson('+i+')'}">${isUnlocked(i)?'Open / Repeat Lesson →':'🔒 Waiting for teacher'}</button>
  </div>`).join('');
  E('pointsTotal').textContent=totalPoints();
  E('completedTotal').textContent=progress.completed.filter(Boolean).length;
  E('overallBar').style.width=(progress.completed.filter(Boolean).length/7*100)+'%';
  E('finishCard').classList.toggle('hidden',!progress.completed.every(Boolean));
 }
-function unlockLesson(i){
- const entered=prompt('Enter the access code shared by your teacher for Lesson '+(i+1)+':');
- if(entered===null)return;
- if(entered.trim()===ACCESS_CODES[i]){
-   access[i]=true;saveAccess();refreshLibrary();
-   alert('Lesson '+(i+1)+' unlocked. You can now begin or repeat it.');
- }else alert('That code does not match Lesson '+(i+1)+'. Ask your teacher for the correct code.');
-}
+function unlockLesson(i){window.Grade9Gate?.notify()}
 const E=id=>document.getElementById(id),esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function saveName(){
  try{localStorage.setItem(STORE+'-name',E('studentName').value)}catch(e){storageWarning();}
@@ -248,3 +241,4 @@ document.addEventListener('keydown',e=>{if(guardLocked)return;
 },true);
 })();
 </script></html>
+<script src="student-gate.js"></script><script>document.addEventListener('grade9-ready',e=>{const input=document.getElementById('studentName');if(input){input.value=e.detail.full_name;input.readOnly=true;saveName()}refreshLibrary()});document.addEventListener('grade9-controls-updated',()=>refreshLibrary());</script>
