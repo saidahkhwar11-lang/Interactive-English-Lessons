@@ -143,18 +143,7 @@ function closeReport(){E('report').classList.add('hidden');document.body.classLi
 function clock(){E('clock').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0')}
 function stopTimer(){clearInterval(timer);timer=null;E('timerBtn').textContent='▶ Timer'}function timerToggle(){if(timer)return stopTimer();E('timerBtn').textContent='Ⅱ Pause';timer=setInterval(()=>{if(secs>0){secs--;clock()}else stopTimer()},1000)}function timerReset(){stopTimer();secs=mins[s]*60;clock()}function font(d){scale=Math.min(1.6,Math.max(.8,scale+d));document.documentElement.style.setProperty('--scale',scale)}async function fullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!E('report').classList.contains('hidden'))closeReport();if(E('app').classList.contains('hidden'))return;if(e.key==='ArrowRight')go(s+1);if(e.key==='ArrowLeft')go(s-1)});E('student').value=name;try{localStorage.setItem(KEY+'-test','ok');localStorage.removeItem(KEY+'-test')}catch(e){E('warning').classList.remove('hidden')}homeRefresh();
-</script><style>
-html.exam-guard-locked{overflow:hidden!important}
-.exam-guard-shield{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#1c294a,#322c6c);color:#fff;display:flex;align-items:center;justify-content:center;padding:22px;font-family:Arial,sans-serif}
-.exam-guard-panel{background:#fff;color:#24314c;max-width:540px;width:100%;padding:30px;border-radius:20px;box-shadow:0 24px 65px #10172c80;text-align:center}
-.exam-guard-panel h2{font-size:30px;margin:12px 0}.exam-guard-panel p{font-size:18px;line-height:1.5}
-.exam-guard-panel input{width:100%;padding:14px;border:2px solid #d6dded;border-radius:10px;font-size:19px;margin:12px 0}
-.exam-guard-panel button{background:#6652ca;border:0;color:white;border-radius:11px;padding:13px 19px;font-size:18px;font-weight:bold;cursor:pointer}
-.exam-guard-error{color:#a72c42;font-size:15px;min-height:23px}
-.exam-guard-banner{display:none!important;position:fixed;bottom:12px;right:12px;z-index:9998;background:#fff6e1;color:#60471c;border:1px solid #e7cb8b;padding:10px 14px;border-radius:11px;font:14px Arial,sans-serif;max-width:300px;box-shadow:0 5px 18px #14234822}
-body.exam-guard-in-progress,body.exam-guard-in-progress *:not(input):not(textarea){-webkit-user-select:none!important;user-select:none!important}
-@media print{.exam-guard-shield,.exam-guard-banner{display:none!important}}
-</style><script src="student-gate.js"></script><script>
+</script><script src="student-gate.js"></script><script>
 document.addEventListener('grade9-ready',e=>{name=e.detail.full_name;const input=document.getElementById('student');if(input){input.value=name;input.readOnly=true}saveName();homeRefresh()});
 document.addEventListener('grade9-controls-updated',()=>homeRefresh());
 document.addEventListener('grade9-teacher-preview',()=>{const idx=Number(new URLSearchParams(location.search).get('lesson'));if(Number.isInteger(idx)&&idx>=0&&idx<6){homeRefresh();openLesson(idx)}});</script></html>
