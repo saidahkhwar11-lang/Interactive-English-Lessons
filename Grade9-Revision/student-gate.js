@@ -3,9 +3,9 @@
 const URL="https://hobfifobduqslvnagwlb.supabase.co";
 const KEY="sb_publishable_fbK9aPfpg1rgqy32fPR59A_uxp-kygF";
 const ROOT="Grade9-Revision";
-const state={student:null,controls:{},ready:false};
+const state={student:null,controls:{},ready:false,teacherPreview:false};
 const gate=window.Grade9Gate={
- isOpen:(category,i)=>state.ready&&state.controls[category+"-"+(i+1)]===true,
+ isOpen:(category,i)=>state.ready&&(state.teacherPreview||state.controls[category+"-"+(i+1)]===true),
  student:()=>state.student,
  refresh:refresh,
  start:start,
@@ -41,7 +41,23 @@ async function refresh(){
   document.dispatchEvent(new Event("grade9-controls-updated"));
  }catch(e){state.controls={};if(state.ready)console.warn("Lesson controls unavailable; lessons stay locked.",e)}
 }
+async function teacherPreview(){
+ if(new URLSearchParams(location.search).get('teacher_preview')!=='1')return false;
+ try{
+  const stored=JSON.parse(localStorage.getItem('sb-hobfifobduqslvnagwlb-auth-token')||'null');
+  if(!stored?.access_token)return false;
+  const r=await fetch(URL+'/auth/v1/user',{headers:{apikey:KEY,Authorization:'Bearer '+stored.access_token},cache:'no-store'});
+  if(!r.ok)return false;
+  const user=await r.json();
+  if(user.email!=='saidah.khwar11@gmail.com')return false;
+  state.teacherPreview=true;state.ready=true;
+  await refresh();
+  document.dispatchEvent(new Event('grade9-teacher-preview'));
+  return true;
+ }catch(e){return false}
+}
 async function start(){
+ if(await teacherPreview())return;
  overlay();
  const saved=localStorage.getItem("g9-revision-student-id");
  if(saved){document.querySelector("#g9id").value=saved;await login(saved)}
