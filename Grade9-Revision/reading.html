@@ -44,15 +44,12 @@ function homeRefresh(){
  return `<div class="tile"><span class="chip">Part ${d.part} · Exam ${d.examNumber} · ${d.level} · ${d.marksPerQuestion*8} marks</span><h2>${esc(d.title)} — Exam ${d.examNumber}</h2><p>${d.textType} text · ${d.passage.trim().split(/\\s+/).length} words · 8 questions</p><p>${p.done[i]?'✓ Completed':allowed?'Available':'🔒 Waiting for teacher'} · Best: ${p.best[i]}/${d.marksPerQuestion*8}</p><button class="btn" onclick="${allowed?'openLesson('+i+')':'window.Grade9Gate.notify()'}">${allowed?(drafts[i]?'Resume saved exam →':'Open / Repeat →'):'🔒 Waiting for teacher'}</button></div>`;
  }).join('');
 }
-function makeOrder(i){order[i]=D[i].questions.map(()=>{let a=[0,1,2];for(let j=2;j>0;j--){let k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a})}
-const RESUME_KEY=KEY+'-reading-drafts-v1';
-let drafts={};
-try{drafts=JSON.parse(localStorage.getItem(RESUME_KEY)||'{}')||{}}catch(e){drafts={}}
-function saveDraft(){
- if(E('app').classList.contains('hidden'))return;
- drafts[n]={slide:s,questionPage,answers:ans[n]||{},order:order[n]||[],submitted:!!submitted[n]};
- try{localStorage.setItem(RESUME_KEY,JSON.stringify(drafts))}catch(e){E('warning').classList.remove('hidden')}
-}
+function makeOrder(i){order[i]=D[i].questions.map((q,j)=>{
+ const correct=q.correct,others=[0,1,2].filter(v=>v!==correct);
+ if((i+j)%2)others.reverse();
+ others.splice((j+i)%3,0,correct);
+ return others;
+})}
 function clearDraft(i){
  delete drafts[i];
  try{localStorage.setItem(RESUME_KEY,JSON.stringify(drafts))}catch(e){}
