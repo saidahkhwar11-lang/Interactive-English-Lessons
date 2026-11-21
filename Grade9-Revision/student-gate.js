@@ -5,17 +5,17 @@ const KEY="sb_publishable_fbK9aPfpg1rgqy32fPR59A_uxp-kygF";
 const ROOT="Grade9-Revision";
 const state={student:null,controls:{},ready:false,teacherPreview:false};
 const gate=window.Grade9Gate={
- isOpen:(category,i)=>state.ready&&(state.teacherPreview||state.controls[category+"-"+(i+1)]===true),
+ isOpen:(category,i)=>state.ready,
  student:()=>state.student,
  refresh:refresh,
  start:start,
- notify:()=>alert("This lesson is locked. Please wait for your teacher to open it.")
+ notify:()=>alert("Please enter your Student ID to begin revision.")
 };
 function overlay(){
  const style=document.createElement("style");
  style.textContent="#g9veil{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(130deg,#302764,#735cd5);display:grid;place-items:center;font:17px Arial,sans-serif;color:#25314d}#g9veil .g9card{width:min(450px,92vw);background:white;border-radius:23px;padding:34px;box-shadow:0 20px 65px #181c3c66}#g9veil h2{font-size:29px;margin:0 0 12px}#g9veil input{width:100%;border:1px solid #ccd4e7;border-radius:12px;padding:15px;font:20px Arial;margin:12px 0}#g9veil button{width:100%;padding:14px;border:0;border-radius:12px;background:#6752ca;color:white;font-size:17px;font-weight:bold;cursor:pointer}#g9veil p{font-size:15px;line-height:1.5;color:#69758e}#g9status{color:#a33e49!important}#g9profile{position:fixed;bottom:12px;left:12px;z-index:100;background:#fff;border:1px solid #d9e0ef;border-radius:12px;padding:8px 13px;font:13px Arial;color:#485675;box-shadow:0 3px 12px #0001}";
  document.head.appendChild(style);
- const div=document.createElement("div");div.id="g9veil";div.innerHTML='<div class="g9card"><h2>Grade 9 Revision</h2><p>Enter your Student ID. Your name and class will be found automatically from the Assessment Tracker.</p><form id="g9form"><input id="g9id" inputmode="numeric" autocomplete="off" placeholder="Student ID" required><button type="submit" id="g9submit">Enter Revision</button></form><p id="g9status" role="alert"></p><p>For Grade 9/4 and 9/5 only. Lessons open when your teacher allows access.</p></div>';
+ const div=document.createElement("div");div.id="g9veil";div.innerHTML='<div class="g9card"><h2>Grade 9 Revision</h2><p>Enter your Student ID. Your name and class will be found automatically from the Assessment Tracker.</p><form id="g9form"><input id="g9id" inputmode="numeric" autocomplete="off" placeholder="Student ID" required><button type="submit" id="g9submit">Enter Revision</button></form><p id="g9status" role="alert"></p><p>For Grade 9/4 and 9/5 only. All revision lessons are available after Student ID login.</p></div>';
  document.body.appendChild(div);
  div.querySelector("#g9form").addEventListener("submit",async e=>{e.preventDefault();await login(div.querySelector("#g9id").value)});
 }
