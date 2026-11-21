@@ -119,10 +119,15 @@ if(s===5)b+=`<div class="score">Your lesson points: ${points(n)} / 65 ⭐</div><
 E('slide').innerHTML=h+b;if(s===3||s===4)questions()}
 let optionOrder={};
 function makeOrder(group,questionCount){
- optionOrder[group]=Array.from({length:questionCount},()=> {
-  const a=[0,1,2];
-  for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}
-  return a;
+ const lesson=Number.parseInt(group,10),isExam=group.endsWith('e');
+ const qs=isExam?L[lesson].exam:L[lesson].practice;
+ const offset=(lesson+(isExam?1:0))%3;
+ optionOrder[group]=Array.from({length:questionCount},(_,i)=>{
+  const correct=qs[i].correct,others=[0,1,2].filter(v=>v!==correct);
+  if((i+lesson)%2)others.reverse();
+  const target=(i+offset)%3;
+  others.splice(target,0,correct);
+  return others;
  });
 }
 function orderFor(group,count){if(!optionOrder[group]||optionOrder[group].length!==count)makeOrder(group,count);return optionOrder[group]}
